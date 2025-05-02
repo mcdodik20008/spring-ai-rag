@@ -1,12 +1,20 @@
 package mcdodik.springai.service
 
+import org.apache.pdfbox.Loader
+import org.apache.pdfbox.pdmodel.PDDocument
+import org.apache.pdfbox.text.PDFTextStripper
 import org.springframework.ai.chat.client.ChatClient
+import org.springframework.ai.document.Document
 import org.springframework.ai.reader.markdown.MarkdownDocumentReader
 import org.springframework.ai.reader.markdown.config.MarkdownDocumentReaderConfig
+import org.springframework.ai.reader.pdf.PagePdfDocumentReader
+import org.springframework.ai.reader.pdf.ParagraphPdfDocumentReader
 import org.springframework.ai.transformer.splitter.TokenTextSplitter
 import org.springframework.ai.vectorstore.VectorStore
 import org.springframework.core.io.ByteArrayResource
+import org.springframework.core.io.InputStreamResource
 import org.springframework.stereotype.Service
+import org.springframework.web.multipart.MultipartFile
 
 @Service
 class RagService(
@@ -28,5 +36,42 @@ class RagService(
 
     fun ask(question: String): String? =
         chat.prompt().user(question).call().content()
+
+    fun ingestPdf(file: MultipartFile) {
+        val text = Loader.loadPDF(file.inputStream.readAllBytes()).use { pdf ->
+            PDFTextStripper()
+                .apply { sortByPosition = true }
+                .getText(pdf)
+                .cleanPdfText()
+        }
+
+        val docs = listOf(
+            Document(text, mapOf("source" to (file.originalFilename ?: "upload.pdf")))
+        )
+
+        vectorStore.write(splitter.apply(docs))
+    }
 }
+
+
+
+/**
+ * Упрощённая нормализация текста, извлечённого из PDF.
+ *
+ *  1. Переводит CRLF → LF
+ *  2. Склеивает перенос‑с‑дефисом (`hyphen-\nated` → `hyphenated`)
+ *  3. Удаляет хвостовые/начальные пробелы в строках
+ *  4. Сжимает 3+ пустых строк до одной
+ *  5. Заменяет не‑разрывный пробел (U+00A0) на обычный
+ *  6. Сводит подряд идущие пробелы к одному
+ */
+fun String.cleanPdfText(): String =
+    this
+        .replace("\r\n", "\n")                          // CRLF → LF
+        .replace(Regex("-\\s*\\n\\s*"), "")             // de‑hyphen
+        .replace(Regex("\\u00A0"), " ")                 // nbsp → space
+        .replace(Regex("(?m)^\\s+|\\s+\$"), "")         // trim each line
+        .replace(Regex("\\s{2,}"), " ")                 // collapse spaces
+        .replace(Regex("\\n{3,}"), "\n\n")              // collapse blank lines
+
 

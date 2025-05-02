@@ -1,18 +1,14 @@
 package mcdodik.springai.service
 
 import org.apache.pdfbox.Loader
-import org.apache.pdfbox.pdmodel.PDDocument
 import org.apache.pdfbox.text.PDFTextStripper
 import org.springframework.ai.chat.client.ChatClient
 import org.springframework.ai.document.Document
 import org.springframework.ai.reader.markdown.MarkdownDocumentReader
 import org.springframework.ai.reader.markdown.config.MarkdownDocumentReaderConfig
-import org.springframework.ai.reader.pdf.PagePdfDocumentReader
-import org.springframework.ai.reader.pdf.ParagraphPdfDocumentReader
 import org.springframework.ai.transformer.splitter.TokenTextSplitter
 import org.springframework.ai.vectorstore.VectorStore
 import org.springframework.core.io.ByteArrayResource
-import org.springframework.core.io.InputStreamResource
 import org.springframework.stereotype.Service
 import org.springframework.web.multipart.MultipartFile
 
@@ -24,6 +20,9 @@ class RagService(
 
     private val splitter: TokenTextSplitter = TokenTextSplitter.builder().withChunkSize(300).build()
 
+    fun ask(question: String): String? =
+        chat.prompt().user(question).call().content()
+
     fun ingest(markdown: String) {
         val resource = object : ByteArrayResource(markdown.toByteArray()) {
             override fun getFilename(): String = "inline.md"
@@ -33,9 +32,6 @@ class RagService(
             splitter.apply(documentReader.read())
         )
     }
-
-    fun ask(question: String): String? =
-        chat.prompt().user(question).call().content()
 
     fun ingestPdf(file: MultipartFile) {
         val text = Loader.loadPDF(file.inputStream.readAllBytes()).use { pdf ->

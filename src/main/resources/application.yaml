@@ -8,6 +8,10 @@ spring:
 
   ai:
     ollama:
+      embedding:
+        model: nomic-embed-text
+        options:
+          num-ctx: 8192
       base-url: http://localhost:11434
       chat:
         options:
@@ -22,4 +26,3 @@ logging:
   level:
     sql: debug
     web: debug
-    #root: debug

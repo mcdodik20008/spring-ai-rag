@@ -13,7 +13,7 @@ class AiConfig {
     @Bean
     fun chatClient(chatModel: OllamaChatModel, vectorStore: VectorStore): ChatClient =
         ChatClient.builder(chatModel)
-            .defaultSystem("You are a concise Kotlin assistant.")
+            .defaultSystem("You are a helpful assistant. Use the following documents to answer the user question:")
             .defaultAdvisors(QuestionAnswerAdvisor(vectorStore))
             .build()
 }

@@ -1,0 +1,21 @@
+version: '3.9'
+
+services:
+  pgvector:
+    image: ankane/pgvector
+    container_name: pgvector
+    restart: unless-stopped
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}:rag
+      POSTGRES_USER: ${POSTGRES_USER}:rag
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}:rag
+    volumes:
+      - ./db:/var/lib/postgresql/data
+      - ./init:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5

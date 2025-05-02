@@ -1,0 +1,25 @@
+spring:
+  application:
+    name: spring-ai
+  datasource:
+    url: jdbc:postgresql://localhost:5432/ragdb
+    username: postgres
+    password: postgres
+
+  ai:
+    ollama:
+      base-url: http://localhost:11434
+      chat:
+        options:
+          model: tinyllama
+          temperature: 0.7
+    vectorstore:
+      pgvector:
+        initialize-schema: true
+
+
+logging:
+  level:
+    sql: debug
+    web: debug
+    root: debug

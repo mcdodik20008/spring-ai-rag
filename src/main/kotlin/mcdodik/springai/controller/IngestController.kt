@@ -1,22 +1,38 @@
 package mcdodik.springai.controller
 
 import mcdodik.springai.service.RagService
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RequestPart
-import org.springframework.web.bind.annotation.RestController
+import mcdodik.springai.utils.file.DelegatingMultipartFileFactory
+import org.springframework.http.HttpHeaders
+import org.springframework.http.HttpStatus
+import org.springframework.http.ResponseEntity
+import org.springframework.web.bind.annotation.*
 import org.springframework.web.multipart.MultipartFile
 
 @RestController
 @RequestMapping("/api/docs")
-class IngestController(private val rag: RagService) {
+class IngestController(
+    private val rag: RagService,
+    private val factory: DelegatingMultipartFileFactory
+) {
+
+    val response =
+        "Ваш файл успешно обработан и сохранён в базу знаний. \nДобавленная информация будет использоваться во время ответа на последующие вопросы."
 
     @PostMapping("/ingest")
-    fun ingest(@RequestBody body: String) =
-        rag.ingest(body)
+    fun ingest(
+        @RequestBody body: String
+    ): ResponseEntity<Any> {
+        val file = factory.create(body)
+        rag.ingest(file)
+        return ResponseEntity.status(HttpStatus.CREATED).body(response)
+    }
 
     @PostMapping("/ingest/pdf", consumes = ["multipart/form-data"])
-    fun ingestPdf(@RequestPart("file") file: MultipartFile) =
-        rag.ingestPdf(file)
+    fun ingestPdf(
+        @RequestPart("file") file: MultipartFile,
+        @RequestHeader(HttpHeaders.CONTENT_TYPE) contentType: String
+    ): ResponseEntity<Any> {
+        rag.ingest(file)
+        return ResponseEntity.status(HttpStatus.CREATED).body(response)
+    }
 }

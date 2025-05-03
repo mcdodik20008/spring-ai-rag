@@ -5,8 +5,19 @@ spring:
     url: jdbc:postgresql://localhost:5432/ragdb
     username: postgres
     password: postgres
+  servlet:
+    multipart:
+      max-file-size: -1
+      max-request-size: -1
+      enabled: true
+  web:
+    resources:
+      add-mappings: false
 
   ai:
+    chat:
+      advisors:
+        - bean: simpleLoggerAdvisor
     ollama:
       embedding:
         model: nomic-embed-text
@@ -21,6 +32,8 @@ spring:
       pgvector:
         initialize-schema: true
 
+openrouter:
+  api-key: ХУЙ СОСИ
 
 logging:
   level:

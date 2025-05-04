@@ -23,14 +23,17 @@ configurations {
 
 repositories {
     mavenCentral()
+    maven { url = uri("https://jitpack.io") }
 }
 
 extra["springAiVersion"] = "1.0.0-M8"
 
 dependencies {
+    // CORE
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter-jdbc")
 
+    // AI
     implementation("org.springframework.ai:spring-ai-starter-model-ollama")
     implementation("org.springframework.ai:spring-ai-starter-vector-store-pgvector")
     implementation("org.springframework.ai:spring-ai-advisors-vector-store")
@@ -40,6 +43,19 @@ dependencies {
     implementation("org.springframework.ai:spring-ai-starter-model-transformers")
     runtimeOnly("org.postgresql:postgresql")
 
+
+    // Apache Tika: единый API для извлечения текста из разных форматов
+    implementation("org.apache.tika:tika-core")//:2.9.0")
+    implementation("org.apache.tika:tika-parsers-standard-package")//:2.9.0")
+
+    // Для DOCX: Apache POI
+    implementation("org.apache.poi:poi-ooxml")
+
+    // MOBI
+    implementation("hu.webhejj.pdb:pdb:1.0.0")
+    implementation("hu.webhejj.pdb:mobi:1.0.0")
+
+    // UTIL
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
 

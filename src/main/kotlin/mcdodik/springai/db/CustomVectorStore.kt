@@ -1,0 +1,9 @@
+package mcdodik.springai.db
+
+import mcdodik.springai.prerag.RagChunkDto
+import org.springframework.ai.document.Document
+
+interface CustomVectorStore {
+    fun write(documents: List<Document>)
+    fun search(query: String): List<RagChunkDto>
+}

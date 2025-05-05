@@ -17,11 +17,12 @@ class PdfDocumentWorker(
     override fun supports(file: MultipartFile): Boolean =
         file.contentType == "application/pdf" || file.originalFilename?.endsWith(".pdf") == true
 
-    override fun process(file: MultipartFile): List<Document> {
-        val cleanedStream = pdfCleaner.cleanPdf(file.inputStream, PdfCleanRequest())
+    override fun process(file: MultipartFile, params: PdfCleanRequest): List<Document> {
+        val cleanedStream = pdfCleaner.cleanPdf(file.inputStream, params)
         val resource = InputStreamResource(cleanedStream)
         val pageReader = CodeAwareTikaReader(resource)
-        val chunks = textSplitter.apply(pageReader.read())
+        val read = pageReader.read()
+        val chunks = textSplitter.apply(read)
         return textSplitter.apply(chunks)
     }
 }

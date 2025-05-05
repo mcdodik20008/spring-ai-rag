@@ -2,6 +2,7 @@ package mcdodik.springai.utils.document
 
 import org.commonmark.node.*
 import mcdodik.springai.extension.visitChildren
+import mcdodik.springai.utils.book.PdfCleanRequest
 import org.commonmark.parser.Parser
 import org.springframework.ai.document.Document
 import org.springframework.stereotype.Component
@@ -15,7 +16,7 @@ class MarkdownDocumentWorker : DocumentWorker {
     override fun supports(file: MultipartFile): Boolean =
         file.contentType == "text/markdown" || file.originalFilename?.endsWith(".md") == true
 
-    override fun process(file: MultipartFile): List<Document> {
+    override fun process(file: MultipartFile, params: PdfCleanRequest): List<Document> {
         val markdown = file.inputStream.bufferedReader().use { it.readText() }
         val documentNode = parser.parse(markdown)
 

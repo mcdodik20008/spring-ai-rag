@@ -23,7 +23,7 @@ class PdfCleaner {
         Loader.loadPDF(input.readAllBytes()).use { document ->
             val stripper = PDFTextStripper()
             stripper.startPage = 1 + params.skipPages
-            stripper.endPage = document.numberOfPages - params.skipPages
+            stripper.endPage = document.numberOfPages - params.throwPagesFromEnd
 
             val pages = mutableListOf<List<String>>()
 

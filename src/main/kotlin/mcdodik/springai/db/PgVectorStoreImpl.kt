@@ -10,6 +10,7 @@ import org.springframework.ai.vectorstore.VectorStore
 import org.springframework.ai.vectorstore.filter.Filter
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.stereotype.Component
+import java.time.LocalDateTime
 
 @Component
 @Qualifier("CustomPgVectorStore")
@@ -36,7 +37,8 @@ class PgVectorStoreImpl(
                 type = it.type,
                 source = it.source,
                 chunkIndex = it.chunkIndex,
-                summary = null
+                createdAt = LocalDateTime.now(),
+                summary = it.summary,
             )
         }
         for (entity in entities) {

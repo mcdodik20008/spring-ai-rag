@@ -2,6 +2,7 @@ package mcdodik.springai.service
 
 import mcdodik.springai.db.CustomVectorStore
 import mcdodik.springai.prerag.ContextMarkdownFormatter
+import mcdodik.springai.utils.book.PdfCleanRequest
 import mcdodik.springai.utils.document.DocumentWorkerFactory
 import org.springframework.ai.chat.client.ChatClient
 import org.springframework.ai.chat.prompt.PromptTemplate
@@ -18,10 +19,6 @@ class RagService(
     private val promptTemplate: PromptTemplate,
 ) {
 
-    fun ask2(question: String): String? {
-        return chat.prompt().user(question).call().content()
-    }
-
     fun ask(question: String): String {
         val chunks = vectorStore.search(question)
         val formattedContext = contextMarkdownFormatter.format(chunks)
@@ -36,8 +33,8 @@ class RagService(
         return chat.prompt().user(renderedPrompt).call().content() ?: "no answer"
     }
 
-    fun ingest(file: MultipartFile) {
-        val docs = documentWorkerFactory.process(file)
+    fun ingest(file: MultipartFile, params: PdfCleanRequest) {
+        val docs = documentWorkerFactory.process(file, params)
         vectorStore.write(docs)
     }
 }

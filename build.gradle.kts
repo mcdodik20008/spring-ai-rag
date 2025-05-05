@@ -46,6 +46,7 @@ dependencies {
 
     runtimeOnly("org.postgresql:postgresql")
 
+    implementation("org.commonmark:commonmark:0.24.0")
 
     // Apache Tika: единый API для извлечения текста из разных форматов
     implementation("org.apache.tika:tika-core")//:2.9.0")

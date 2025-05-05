@@ -42,7 +42,7 @@ mybatis:
 
 openrouter:
   model: google/gemma-3-4b-it:free
-  api-key: ХУЙ СОСИ
+  api-key: ${OPENROUTER_API_KEY}
 
 logging:
   level:

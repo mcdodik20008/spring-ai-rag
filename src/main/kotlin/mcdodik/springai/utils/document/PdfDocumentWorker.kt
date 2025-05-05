@@ -4,7 +4,6 @@ import mcdodik.springai.utils.book.PdfCleanRequest
 import mcdodik.springai.utils.book.PdfCleaner
 import mcdodik.springai.utils.reader.CodeAwareTikaReader
 import org.springframework.ai.document.Document
-import org.springframework.ai.reader.tika.TikaDocumentReader
 import org.springframework.ai.transformer.splitter.TokenTextSplitter
 import org.springframework.core.io.InputStreamResource
 import org.springframework.stereotype.Component

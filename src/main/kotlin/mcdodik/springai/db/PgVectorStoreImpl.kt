@@ -27,7 +27,7 @@ class PgVectorStoreImpl(
         }
 
         val entities = chunks.map {
-            val summary = summarizer.prompt(it.content).call().content().toString()
+            //val summary = summarizer.prompt(it.content).call().content().toString()
 
             RagChunk(
                 id = it.id,
@@ -36,7 +36,7 @@ class PgVectorStoreImpl(
                 type = it.type,
                 source = it.source,
                 chunkIndex = it.chunkIndex,
-                summary = summary
+                summary = null
             )
         }
         for (entity in entities) {

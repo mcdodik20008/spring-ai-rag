@@ -5,7 +5,6 @@ import mcdodik.springai.prerag.ContextMarkdownFormatter
 import mcdodik.springai.utils.document.DocumentWorkerFactory
 import org.springframework.ai.chat.client.ChatClient
 import org.springframework.ai.chat.prompt.PromptTemplate
-import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.stereotype.Service
 import org.springframework.web.multipart.MultipartFile
 

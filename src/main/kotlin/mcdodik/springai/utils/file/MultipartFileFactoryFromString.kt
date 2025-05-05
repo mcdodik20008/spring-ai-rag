@@ -5,7 +5,7 @@ import org.springframework.http.MediaType
 import org.springframework.stereotype.Service
 import org.springframework.web.multipart.MultipartFile
 import java.nio.charset.Charset
-import java.util.UUID
+import java.util.*
 
 @Service
 class MultipartFileFactoryFromString : MultipartFileFactory<String> {

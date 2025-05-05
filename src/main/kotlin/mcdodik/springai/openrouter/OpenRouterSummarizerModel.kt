@@ -3,8 +3,6 @@ package mcdodik.springai.openrouter
 import org.springframework.ai.chat.messages.AbstractMessage
 import org.springframework.ai.chat.messages.AssistantMessage
 import org.springframework.ai.chat.metadata.ChatResponseMetadata
-import org.springframework.ai.chat.metadata.DefaultUsage
-import org.springframework.ai.chat.metadata.Usage
 import org.springframework.ai.chat.model.ChatModel
 import org.springframework.ai.chat.model.ChatResponse
 import org.springframework.ai.chat.model.Generation
@@ -18,9 +16,10 @@ import org.springframework.stereotype.Component
 import org.springframework.web.client.RestTemplate
 
 @Component
-class OpenRouterChatModel(
+class OpenRouterSummarizerModel(
     private val restTemplate: RestTemplate,
-    @Value("\${openrouter.api-key}") private val apiKey: String
+    @Value("\${openrouter.api-key}") private val apiKey: String,
+    @Value("\${openrouter.model}") private val model: String
 ) : ChatModel {
 
     private val endpoint = "https://openrouter.ai/api/v1/chat/completions"
@@ -30,12 +29,12 @@ class OpenRouterChatModel(
             val abstract = msg as AbstractMessage
             mapOf(
                 "role" to abstract.messageType.name.lowercase(), // user, assistant, system
-                "content" to abstract.text
+                "content" to "Сделай краткое резюме следующего текста на русском языке:\n" + abstract.text
             )
         }
 
         val requestBody = mapOf(
-            "model" to "microsoft/phi-4-reasoning-plus:free",
+            "model" to model,
             "messages" to messages
         )
 

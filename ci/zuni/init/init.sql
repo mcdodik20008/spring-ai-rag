@@ -5,15 +5,18 @@ CREATE EXTENSION IF NOT EXISTS vector;
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
 -- 3. Таблица хранения векторов
-CREATE TABLE IF NOT EXISTS public.vector_store (
+CREATE TABLE public.rag_chunks
+(
     id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
-    content TEXT,
-    metadata JSON,
-    embedding VECTOR(768)  -- указываем размерность!
-    );
+    "content"   text NOT NULL,
+    embedding   VECTOR(768) NULL,
+    "type"      varchar(255) NULL,
+    "source"    varchar(255) NULL,
+    chunk_index int4 NULL,
+    created_at  timestamp DEFAULT now() NULL,
+    summary     text NULL
+);
 
--- 4. Индекс для быстрого поиска ближайших векторов
-CREATE INDEX IF NOT EXISTS spring_ai_vector_index
-    ON public.vector_store
+CREATE INDEX spring_ai_rag_chunks_index
+    ON public.rag_chunks
     USING hnsw (embedding vector_cosine_ops);
-

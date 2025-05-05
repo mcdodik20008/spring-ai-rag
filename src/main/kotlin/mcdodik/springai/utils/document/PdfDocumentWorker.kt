@@ -1,7 +1,8 @@
 package mcdodik.springai.utils.document
 
-import mcdodik.springai.utils.book.model.PdfCleanRequest
-import mcdodik.springai.utils.book.parser.PdfCleaner
+import mcdodik.springai.utils.book.PdfCleanRequest
+import mcdodik.springai.utils.book.PdfCleaner
+import mcdodik.springai.utils.reader.CodeAwareTikaReader
 import org.springframework.ai.document.Document
 import org.springframework.ai.reader.tika.TikaDocumentReader
 import org.springframework.ai.transformer.splitter.TokenTextSplitter
@@ -20,7 +21,7 @@ class PdfDocumentWorker(
     override fun process(file: MultipartFile): List<Document> {
         val cleanedStream = pdfCleaner.cleanPdf(file.inputStream, PdfCleanRequest())
         val resource = InputStreamResource(cleanedStream)
-        val pageReader = TikaDocumentReader(resource)
+        val pageReader = CodeAwareTikaReader(resource)
         val chunks = textSplitter.apply(pageReader.read())
         return textSplitter.apply(chunks)
     }

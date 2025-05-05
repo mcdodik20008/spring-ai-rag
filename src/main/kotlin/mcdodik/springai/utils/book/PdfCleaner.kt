@@ -1,21 +1,23 @@
-package mcdodik.springai.utils.book.parser
+package mcdodik.springai.utils.book
 
-import mcdodik.springai.utils.book.model.PdfCleanRequest
+import mcdodik.springai.extension.hasGlyph
 import org.apache.pdfbox.Loader
 import org.apache.pdfbox.pdmodel.PDDocument
 import org.apache.pdfbox.pdmodel.PDPage
+import org.apache.pdfbox.pdmodel.PDPageContentStream
 import org.apache.pdfbox.pdmodel.common.PDRectangle
 import org.apache.pdfbox.pdmodel.font.PDType0Font
-import org.apache.pdfbox.pdmodel.PDPageContentStream
-import mcdodik.springai.extension.hasGlyph
 import org.apache.pdfbox.text.PDFTextStripper
 import org.springframework.stereotype.Component
-import java.io.*
+import java.io.ByteArrayInputStream
+import java.io.ByteArrayOutputStream
+import java.io.File
+import java.io.InputStream
 
 @Component
 class PdfCleaner {
 
-    fun cleanPdf(input: InputStream, params : PdfCleanRequest): InputStream {
+    fun cleanPdf(input: InputStream, params: PdfCleanRequest): InputStream {
         val cleaned = ByteArrayOutputStream()
 
         Loader.loadPDF(input.readAllBytes()).use { document ->
@@ -94,6 +96,3 @@ class PdfCleaner {
         return lineFrequency.filter { it.value >= minCount }.keys
     }
 }
-
-
-

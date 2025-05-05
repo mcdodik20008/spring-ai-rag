@@ -1,4 +1,4 @@
-package mcdodik.springai.utils.book.model
+package mcdodik.springai.utils.book
 
 data class PdfCleanRequest(
     val skipPages: Int = 20,

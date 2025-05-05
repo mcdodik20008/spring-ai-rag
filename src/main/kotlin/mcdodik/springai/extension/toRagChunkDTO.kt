@@ -9,22 +9,38 @@ fun Document.toRagChunkDTO(source: String?, index: Int, embedding: List<Float>):
         embedding = embedding,
         source = source,
         chunkIndex = index,
-        type = isLikelyCodeBlock(this.text!!)
+        type = detectType(this.text!!),
+        summary = null,
     )
 }
 
 
-private fun isLikelyCodeBlock(text: String): String {
-    val keywords = listOf("if", "else", "while", "for", "return", "int", "System.out", "=", ";", "{", "}")
-    val lines = text.lines()
-    val keywordCount = lines.count { line ->
-        keywords.any { kw -> line.contains(kw) }
-    }
-    val semicolonRatio = text.count { it == ';' }.toDouble() / text.length
-    val braceRatio = text.count { it == '{' || it == '}' }.toDouble() / text.length
+fun detectType(content: String): String {
+    val trimmed = content.trim()
 
-    if (keywordCount > 2 || semicolonRatio > 0.01 || braceRatio > 0.01) {
-        return "code"
+    // Простые эвристики
+    if (trimmed.contains(Regex("""[;{}]""")) &&
+        trimmed.contains(Regex("""\b(for|while|int|String|System\.out|public|class)\b"""))
+    ) return "code"
+
+    if (trimmed.lines().all { it.trim().startsWith("- ") || it.trim().matches(Regex("""\d+\.\s+.*""")) }) {
+        return "list"
+    }
+
+    if (trimmed.lines().all { it.trim().startsWith(">") || it.trim().startsWith("\"") }) {
+        return "quote"
+    }
+
+    if (trimmed.lines().count { it.contains("|") } >= 2) {
+        return "table"
+    }
+
+    if (trimmed.length < 60 && trimmed == trimmed.uppercase()) {
+        return "title"
+    }
+
+    if (trimmed.contains("![") || trimmed.contains("<img") || trimmed.contains("image:")) {
+        return "image"
     }
 
     return "text"

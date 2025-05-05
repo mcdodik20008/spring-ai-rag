@@ -16,7 +16,18 @@ class WhisperLocalTranscriptionService : TranscriptionService {
         file.transferTo(tmpInput)
 
         // ffmpeg convert -> whisper -> output.txt
-        ProcessBuilder("ffmpeg", "-i", tmpInput.absolutePath, "-ar", "16000", "-ac", "1", "-f", "wav", "input.wav").start().waitFor()
+        ProcessBuilder(
+            "ffmpeg",
+            "-i",
+            tmpInput.absolutePath,
+            "-ar",
+            "16000",
+            "-ac",
+            "1",
+            "-f",
+            "wav",
+            "input.wav"
+        ).start().waitFor()
         ProcessBuilder("./main", "-m", "models/ggml-base.en.bin", "-f", "input.wav", "-otxt").start().waitFor()
 
         return tmpText.readText()

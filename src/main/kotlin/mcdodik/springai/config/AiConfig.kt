@@ -1,8 +1,7 @@
 package mcdodik.springai.config
 
-import mcdodik.springai.openrouter.OpenRouterChatModel
+import mcdodik.springai.openrouter.OpenRouterSummarizerModel
 import org.springframework.ai.chat.client.ChatClient
-import org.springframework.ai.chat.client.advisor.vectorstore.QuestionAnswerAdvisor
 import org.springframework.ai.chat.prompt.PromptTemplate
 import org.springframework.ai.ollama.OllamaChatModel
 import org.springframework.ai.template.TemplateRenderer
@@ -26,9 +25,10 @@ class AiConfig {
             //.defaultAdvisors(QuestionAnswerAdvisor(vectorStore))
             .build()
 
+
     @Bean
     @Qualifier("openRouterChatClient")
-    fun openRouterChatClient(chatModel: OpenRouterChatModel, vectorStore: VectorStore): ChatClient =
+    fun openRouterChatClient(chatModel: OpenRouterSummarizerModel, vectorStore: VectorStore): ChatClient =
         ChatClient.builder(chatModel)
             //.defaultSystem("You are a helpful assistant. Use the following documents to answer the user question:")
             //.defaultAdvisors(QuestionAnswerAdvisor(vectorStore))
@@ -37,11 +37,11 @@ class AiConfig {
 
     @Bean
     fun tokenTextSplitter(): TokenTextSplitter = TokenTextSplitter(
-        512,     // chunkSize (токенов): увеличиваем до 1024 (около 2–3 страниц)
-        256,      // minChunkSizeChars: увеличиваем минимальный размер (около 1 абзаца)
-        128,      // minChunkLengthToEmbed: избегаем мелких, неинформативных фрагментов
-        1000,     // maxNumChunks: ограничиваем разумным числом чанков
-        true      // keepSeparator: для сохранения структуры текста
+        555,     // chunkSize
+        256,      // minChunkSizeChars
+        128,      // minChunkLengthToEmbed
+        1000,     // maxNumChunks
+        true      // keepSeparator
     )
 
     @Bean

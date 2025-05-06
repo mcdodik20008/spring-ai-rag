@@ -1,5 +1,6 @@
 package mcdodik.springai.rag.db
 
+import mcdodik.springai.config.Loggable
 import org.apache.ibatis.type.BaseTypeHandler
 import org.apache.ibatis.type.JdbcType
 import org.postgresql.util.PGobject
@@ -9,8 +10,6 @@ import java.sql.PreparedStatement
 import java.sql.ResultSet
 
 class FloatListTypeHandler : BaseTypeHandler<List<Float>>() {
-
-    private val logger = LoggerFactory.getLogger(FloatListTypeHandler::class.java)
 
     override fun setNonNullParameter(
         ps: PreparedStatement,
@@ -44,7 +43,7 @@ class FloatListTypeHandler : BaseTypeHandler<List<Float>>() {
     private fun parseVector(value: String?, origin: String): List<Float>? {
         if (value.isNullOrBlank()) return null
         if (!value.contains(",")) {
-            logger.warn("⚠️ Received suspicious value in $origin: '{}'", value)
+            logger.warn("Received suspicious value in $origin: '{}'", value)
             return null
         }
 
@@ -54,8 +53,10 @@ class FloatListTypeHandler : BaseTypeHandler<List<Float>>() {
                 .split(",")
                 .map { it.trim().toFloat() }
         } catch (e: Exception) {
-            logger.warn("❌ Failed to parse pgvector value in $origin: '{}'", value, e)
+            logger.warn("Failed to parse pgvector value in $origin: '{}'", value, e)
             null
         }
     }
+
+    companion object : Loggable
 }

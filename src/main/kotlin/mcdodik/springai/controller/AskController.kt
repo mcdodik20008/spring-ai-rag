@@ -18,7 +18,7 @@ class AskController(
     fun ask(@RequestBody req: AskRequest): AskResponse = AskResponse(rag.ask(req.question))
 
     @GetMapping
-    fun sumarize(@RequestParam quest: String): String {
+    fun summarize(@RequestParam quest: String): String {
         return summarizer.prompt(quest).call().content().toString()
     }
 

@@ -54,8 +54,7 @@ class AiConfig {
         <context>
 
         Вопрос: <question>
-
-        Ответ:
+        
         """.trimIndent()
         )
             .renderer(renderer)

@@ -1,5 +1,6 @@
 package mcdodik.springai.openrouter
 
+import mcdodik.springai.config.Loggable
 import org.springframework.ai.chat.messages.AbstractMessage
 import org.springframework.ai.chat.messages.AssistantMessage
 import org.springframework.ai.chat.metadata.ChatResponseMetadata
@@ -44,6 +45,7 @@ class OpenRouterSummarizerModel(
         }
 
         val httpEntity = HttpEntity(requestBody, headers)
+        logger.debug("Http entity: {}", httpEntity)
 
         val response = restTemplate.exchange(
             endpoint,
@@ -53,6 +55,7 @@ class OpenRouterSummarizerModel(
         )
 
         val raw = response.body ?: error("Empty response")
+        logger.debug("Raw response: {}", raw)
 
         val content = (((raw["choices"] as? List<*>)?.firstOrNull()
                 as? Map<*, *>)?.get("message") as? Map<*, *>)?.get("content") as? String
@@ -72,4 +75,6 @@ class OpenRouterSummarizerModel(
             )
             .build()
     }
+
+    companion object : Loggable
 }

@@ -1,6 +1,6 @@
 package mcdodik.springai.rag.db
 
-import mcdodik.springai.rag.prerag.RagChunkDto
+import mcdodik.springai.rag.formatting.RagChunkDto
 import org.springframework.ai.document.Document
 
 interface CustomVectorStore {

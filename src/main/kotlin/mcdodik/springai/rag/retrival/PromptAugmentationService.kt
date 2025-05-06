@@ -10,7 +10,6 @@ class PromptAugmentationService(
 
     fun getAugmentedPrompt(query: String): String {
         val retrievedDocs = retrieval.retrieve(query)
-
         val augmentedContext = buildContext(retrievedDocs)
 
         return """

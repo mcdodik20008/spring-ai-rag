@@ -1,7 +1,8 @@
 package mcdodik.springai.rag.db
 
+import mcdodik.springai.config.Loggable
 import mcdodik.springai.extension.toRagChunkDTO
-import mcdodik.springai.rag.prerag.RagChunkDto
+import mcdodik.springai.rag.formatting.RagChunkDto
 import org.springframework.ai.chat.client.ChatClient
 import org.springframework.ai.document.Document
 import org.springframework.ai.ollama.OllamaEmbeddingModel
@@ -48,7 +49,10 @@ class PgVectorStoreImpl(
 
     override fun search(query: String): List<RagChunkDto> {
         val embedding = embeddingModel.embed(query).toList()
-        return ragChunkMapper.searchByEmbedding(embedding).map { RagChunkDto(it.content, it.type) }
+        logger.debug("Searching for {}", embedding)
+        val result = ragChunkMapper.searchByEmbedding(embedding)
+        logger.debug("Found chunk with ids^ {}", result.map { x -> x.id })
+        return result.map { RagChunkDto(it.content, it.type) }
     }
 
     override fun add(documents: List<Document?>) {
@@ -67,4 +71,5 @@ class PgVectorStoreImpl(
         return search(request.query).map { x -> Document(x.content) }
     }
 
+    companion object : Loggable
 }

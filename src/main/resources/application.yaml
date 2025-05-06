@@ -2,9 +2,9 @@ spring:
   application:
     name: spring-ai
   datasource:
-    url: jdbc:postgresql://localhost:5432/ragdb
-    username: postgres
-    password: postgres
+    url: jdbc:postgresql://localhost:5432/${POSRGRES_DB_NAME:ragdb}
+    username: ${POSTGRES_USERNAME:postgres}
+    password: ${POSTGRES_PASSWORD:postgres}
   jpa:
     hibernate:
       ddl-auto: update
@@ -13,8 +13,8 @@ spring:
       hibernate.dialect: org.hibernate.dialect.PostgreSQLDialect
   servlet:
     multipart:
-      max-file-size: -1
-      max-request-size: -1
+      max-file-size: ${MAX_FILE_SIZE:-1}
+      max-request-size: ${MAX_REQUEST_SIZE:-1}
       enabled: true
   web:
     resources:
@@ -27,13 +27,13 @@ spring:
         - bean: strictContextAdvisor
     ollama:
       embedding:
-        model: nomic-embed-text
+        model: ${OLLAMA_EMBEDDING_MODEL:nomic-embed-text}
         options:
           num-ctx: 8192
       base-url: http://localhost:11434
       chat:
         options:
-          model: owl/t-lite
+          model: ${OLLAMA_CHAT_MODEL:owl/t-lite}
     vectorstore:
       pgvector:
         initialize-schema: false
@@ -41,7 +41,7 @@ mybatis:
   type-handlers-package: mcdodik.springai.db
 
 openrouter:
-  model: google/gemma-3-4b-it:free
+  model: ${OPENROUTER_MODEL:google/gemma-3-4b-it:free}
   api-key: ${OPENROUTER_API_KEY}
 
 logging:

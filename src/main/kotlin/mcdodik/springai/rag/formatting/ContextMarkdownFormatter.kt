@@ -1,4 +1,4 @@
-package mcdodik.springai.rag.prerag
+package mcdodik.springai.rag.formatting
 
 import org.springframework.stereotype.Component
 

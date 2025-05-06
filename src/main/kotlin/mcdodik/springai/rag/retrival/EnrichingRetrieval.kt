@@ -18,10 +18,6 @@ class EnrichingRetrieval : CustomRetrieval {
     }
 
     private fun fetchAdditionalContext(query: String): List<String> {
-        // кастомная логика обогащения (например, запрос в базу или API)
-        return listOf(
-            "Дополнительный контекст для запроса: $query",
-            "Ещё одна релевантная информация для: $query"
-        )
+        TODO("Делаем вещи брат, но пока не готово")
     }
 }

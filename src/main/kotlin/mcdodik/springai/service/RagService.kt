@@ -1,7 +1,8 @@
 package mcdodik.springai.service
 
+import mcdodik.springai.config.Loggable
 import mcdodik.springai.rag.db.CustomVectorStore
-import mcdodik.springai.rag.prerag.ContextMarkdownFormatter
+import mcdodik.springai.rag.formatting.ContextMarkdownFormatter
 import mcdodik.springai.utils.cleaner.PdfCleanRequest
 import mcdodik.springai.utils.document.DocumentWorkerFactory
 import org.springframework.ai.chat.client.ChatClient
@@ -21,7 +22,10 @@ class RagService(
 
     fun ask(question: String): String {
         val chunks = vectorStore.search(question)
+        logger.debug("Founded chunks: {}", chunks)
+
         val formattedContext = contextMarkdownFormatter.format(chunks)
+        logger.debug("Formatted context: $formattedContext")
 
         val renderedPrompt = promptTemplate.render(
             mapOf(
@@ -29,12 +33,18 @@ class RagService(
                 "question" to question
             )
         )
-        println("rendered prompt: $renderedPrompt")
-        return chat.prompt().user(renderedPrompt).call().content() ?: "no answer"
+        logger.info("Question: $question rendered: $renderedPrompt")
+
+        val answer = chat.prompt().user(renderedPrompt).call().content() ?: "no answer"
+        logger.info("Answer: $answer")
+        return answer
     }
 
     fun ingest(file: MultipartFile, params: PdfCleanRequest) {
         val docs = documentWorkerFactory.process(file, params)
+
         vectorStore.write(docs)
     }
+
+    companion object : Loggable
 }

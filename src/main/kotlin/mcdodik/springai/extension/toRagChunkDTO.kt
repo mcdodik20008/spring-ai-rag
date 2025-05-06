@@ -15,7 +15,7 @@ fun Document.toRagChunkDTO(source: String?, index: Int, embedding: List<Float>):
 }
 
 
-fun detectType(content: String): String {
+private fun detectType(content: String): String {
     val trimmed = content.trim()
 
     // Простые эвристики

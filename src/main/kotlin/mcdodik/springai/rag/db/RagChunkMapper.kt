@@ -1,4 +1,4 @@
-package mcdodik.springai.db
+package mcdodik.springai.rag.db
 
 import org.apache.ibatis.annotations.Mapper
 import org.apache.ibatis.annotations.Param

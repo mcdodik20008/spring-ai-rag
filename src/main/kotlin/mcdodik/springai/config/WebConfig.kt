@@ -1,5 +1,6 @@
 package mcdodik.springai.config
 
+import mcdodik.springai.utils.interceptor.RetryInterceptor
 import org.springframework.boot.web.client.RestTemplateBuilder
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration

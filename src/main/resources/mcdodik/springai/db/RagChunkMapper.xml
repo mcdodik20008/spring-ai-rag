@@ -3,13 +3,14 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="mcdodik.springai.db.RagChunkMapper">
+<mapper namespace="mcdodik.springai.rag.db.RagChunkMapper">
 
-    <resultMap id="RagChunkResultMap" type="mcdodik.springai.db.RagChunk">
+    <resultMap id="RagChunkResultMap" type="mcdodik.springai.rag.db.RagChunk">
         <constructor>
             <arg column="id" javaType="java.util.UUID"/>
             <arg column="content" javaType="java.lang.String"/>
-            <arg column="embedding" javaType="java.util.List" typeHandler="mcdodik.springai.db.FloatListTypeHandler"/>
+            <arg column="embedding" javaType="java.util.List"
+                 typeHandler="mcdodik.springai.rag.db.FloatListTypeHandler"/>
             <arg column="type" javaType="java.lang.String"/>
             <arg column="source" javaType="java.lang.String"/>
             <arg column="chunk_index" javaType="java.lang.Integer"/>
@@ -17,7 +18,6 @@
             <arg column="summary" javaType="java.lang.String"/>
         </constructor>
     </resultMap>
-
 
 
     <select id="searchByEmbedding" resultMap="RagChunkResultMap">
@@ -31,14 +31,14 @@
                created_at,
                summary
         FROM public.rag_chunks
-        ORDER BY embedding <-> CAST(
+        ORDER BY embedding < - > CAST(
                 #{embedding, jdbcType=OTHER, typeHandler=mcdodik.springai.db.FloatListTypeHandler}
             AS vector
                                  ) LIMIT 5
         ]]>
     </select>
 
-    <insert id="insert" parameterType="mcdodik.springai.db.RagChunk">
+    <insert id="insert" parameterType="mcdodik.springai.rag.db.RagChunk">
         INSERT INTO rag_chunks (id, content, embedding, type, source, chunk_index, created_at, summary)
         VALUES (#{id, typeHandler=mcdodik.springai.db.UUIDTypeHandler},
                 #{content},

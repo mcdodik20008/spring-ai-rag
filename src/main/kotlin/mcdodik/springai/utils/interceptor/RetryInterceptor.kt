@@ -1,4 +1,4 @@
-package mcdodik.springai.config
+package mcdodik.springai.utils.interceptor
 
 import org.springframework.http.HttpRequest
 import org.springframework.http.client.ClientHttpRequestExecution

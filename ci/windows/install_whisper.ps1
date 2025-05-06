@@ -10,13 +10,16 @@ $ModelPath = "$WhisperDir\models\$ModelFile"
 
 Write-Host "`n🧠 Whisper.cpp Setup Script for Windows`n==============================" -ForegroundColor Cyan
 
-function Ensure-Tool($name, $checkCmd, $installHint) {
+function Ensure-Tool($name, $checkCmd, $installHint)
+{
     Write-Host "🔍 Checking for $name..."
-    if (-not (Get-Command $checkCmd -ErrorAction SilentlyContinue)) {
+    if (-not (Get-Command $checkCmd -ErrorAction SilentlyContinue))
+    {
         Write-Warning "$name not found. Please install it manually: $installHint"
         exit 1
     }
-    else {
+    else
+    {
         Write-Host "✅ $name is available."
     }
 }
@@ -27,11 +30,13 @@ Ensure-Tool "CMake" "cmake" "https://cmake.org/download/"
 Ensure-Tool "FFmpeg" "ffmpeg" "https://ffmpeg.org/download.html"
 
 # Клонирование репозитория
-if (-not (Test-Path $WhisperDir)) {
+if (-not (Test-Path $WhisperDir))
+{
     Write-Host "📥 Cloning whisper.cpp..."
     git clone https://github.com/ggerganov/whisper.cpp
 }
-else {
+else
+{
     Write-Host "✅ Repository already exists."
 }
 
@@ -47,13 +52,15 @@ cmake --build . --config Release
 Pop-Location
 
 # Скачивание модели
-if (-not (Test-Path $ModelPath)) {
+if (-not (Test-Path $ModelPath))
+{
     Write-Host "⬇️ Downloading model $ModelName..."
     Push-Location "$WhisperDir\models"
     curl.exe -O "https://huggingface.co/ggerganov/whisper.cpp/resolve/main/$ModelFile"
     Pop-Location
 }
-else {
+else
+{
     Write-Host "✅ Model already exists: $ModelFile"
 }
 

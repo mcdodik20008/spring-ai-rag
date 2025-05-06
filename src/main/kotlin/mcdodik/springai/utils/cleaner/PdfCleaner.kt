@@ -1,4 +1,4 @@
-package mcdodik.springai.utils.book
+package mcdodik.springai.utils.cleaner
 
 import mcdodik.springai.extension.hasGlyph
 import org.apache.pdfbox.Loader

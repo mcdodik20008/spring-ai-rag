@@ -1,7 +1,7 @@
 package mcdodik.springai.utils.document
 
-import mcdodik.springai.utils.book.PdfCleanRequest
-import mcdodik.springai.utils.book.PdfCleaner
+import mcdodik.springai.utils.cleaner.PdfCleanRequest
+import mcdodik.springai.utils.cleaner.PdfCleaner
 import mcdodik.springai.utils.reader.CodeAwareTikaReader
 import org.springframework.ai.document.Document
 import org.springframework.ai.transformer.splitter.TokenTextSplitter

@@ -1,8 +1,8 @@
 package mcdodik.springai.service
 
-import mcdodik.springai.db.CustomVectorStore
-import mcdodik.springai.prerag.ContextMarkdownFormatter
-import mcdodik.springai.utils.book.PdfCleanRequest
+import mcdodik.springai.rag.db.CustomVectorStore
+import mcdodik.springai.rag.prerag.ContextMarkdownFormatter
+import mcdodik.springai.utils.cleaner.PdfCleanRequest
 import mcdodik.springai.utils.document.DocumentWorkerFactory
 import org.springframework.ai.chat.client.ChatClient
 import org.springframework.ai.chat.prompt.PromptTemplate

@@ -1,4 +1,4 @@
-package mcdodik.springai.utils.file
+package mcdodik.springai.utils.mulripartcreator
 
 import org.springframework.web.multipart.MultipartFile
 

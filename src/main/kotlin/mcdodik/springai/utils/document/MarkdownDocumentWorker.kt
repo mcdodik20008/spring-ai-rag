@@ -1,8 +1,8 @@
 package mcdodik.springai.utils.document
 
-import org.commonmark.node.*
 import mcdodik.springai.extension.visitChildren
-import mcdodik.springai.utils.book.PdfCleanRequest
+import mcdodik.springai.utils.cleaner.PdfCleanRequest
+import org.commonmark.node.*
 import org.commonmark.parser.Parser
 import org.springframework.ai.document.Document
 import org.springframework.stereotype.Component

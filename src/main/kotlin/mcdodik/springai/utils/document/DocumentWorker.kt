@@ -1,6 +1,6 @@
 package mcdodik.springai.utils.document
 
-import mcdodik.springai.utils.book.PdfCleanRequest
+import mcdodik.springai.utils.cleaner.PdfCleanRequest
 import org.springframework.ai.document.Document
 import org.springframework.web.multipart.MultipartFile
 

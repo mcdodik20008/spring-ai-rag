@@ -1,4 +1,4 @@
-package mcdodik.springai.prerag
+package mcdodik.springai.rag.prerag
 
 data class RagChunkDto(
     val content: String,

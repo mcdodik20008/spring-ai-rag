@@ -38,7 +38,7 @@ spring:
       pgvector:
         initialize-schema: false
 mybatis:
-  type-handlers-package:  mcdodik.springai.db
+  type-handlers-package: mcdodik.springai.db
 
 openrouter:
   model: google/gemma-3-4b-it:free

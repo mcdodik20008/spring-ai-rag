@@ -5,15 +5,19 @@ $ErrorActionPreference = "Stop"
 Write-Host "🧠 Запуск PostgreSQL (pgvector) из zuni/init..." -ForegroundColor Cyan
 
 # Проверка наличия Docker
-if (-not (Get-Command docker -ErrorAction SilentlyContinue)) {
+if (-not (Get-Command docker -ErrorAction SilentlyContinue))
+{
     Write-Host "❌ Docker не найден. Установи Docker Desktop." -ForegroundColor Red
     exit 1
 }
 
 # Проверка, что Docker работает
-try {
+try
+{
     docker info | Out-Null
-} catch {
+}
+catch
+{
     Write-Host "❌ Docker демон не запущен. Запусти Docker Desktop." -ForegroundColor Red
     exit 1
 }

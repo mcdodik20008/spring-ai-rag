@@ -1,9 +1,8 @@
 package mcdodik.springai.controller
 
 import mcdodik.springai.service.RagService
-import mcdodik.springai.utils.book.PdfCleanRequest
-import mcdodik.springai.utils.file.DelegatingMultipartFileFactory
-import org.springframework.http.HttpHeaders
+import mcdodik.springai.utils.cleaner.PdfCleanRequest
+import mcdodik.springai.utils.mulripartcreator.DelegatingMultipartFileFactory
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*

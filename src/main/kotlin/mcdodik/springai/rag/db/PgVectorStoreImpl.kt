@@ -1,7 +1,7 @@
-package mcdodik.springai.db
+package mcdodik.springai.rag.db
 
 import mcdodik.springai.extension.toRagChunkDTO
-import mcdodik.springai.prerag.RagChunkDto
+import mcdodik.springai.rag.prerag.RagChunkDto
 import org.springframework.ai.chat.client.ChatClient
 import org.springframework.ai.document.Document
 import org.springframework.ai.ollama.OllamaEmbeddingModel

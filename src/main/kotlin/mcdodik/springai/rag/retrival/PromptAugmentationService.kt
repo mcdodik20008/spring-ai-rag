@@ -1,4 +1,4 @@
-package mcdodik.springai.retrival
+package mcdodik.springai.rag.retrival
 
 import org.springframework.ai.document.Document
 import org.springframework.stereotype.Service

@@ -1,4 +1,4 @@
-package mcdodik.springai.utils.file
+package mcdodik.springai.utils.mulripartcreator
 
 import mcdodik.springai.model.CustomMultipartFile
 import org.springframework.http.MediaType

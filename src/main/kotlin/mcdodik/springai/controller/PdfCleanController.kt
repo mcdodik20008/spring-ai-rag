@@ -17,8 +17,12 @@ class PdfCleanController(
     @PostMapping("/clean", consumes = [MediaType.MULTIPART_FORM_DATA_VALUE])
     fun cleanPdf(
         @RequestParam("file") file: MultipartFile,
-        @RequestPart("params") params: PdfCleanRequest
+        @RequestParam("skipPages") skipPages: Int,
+        @RequestParam("throwPagesFromEnd") throwPagesFromEnd: Int,
+        @RequestParam("headerFooterLines") headerFooterLines: Int,
+        @RequestParam("repeatThreshold") repeatThreshold: Double
     ): ResponseEntity<ByteArray> {
+        val params = PdfCleanRequest(skipPages, throwPagesFromEnd, headerFooterLines, repeatThreshold)
         val cleanedStream = cleanerFactory.cleanPdf(file.inputStream, params)
         return ResponseEntity.ok()
             .contentType(MediaType.APPLICATION_PDF)

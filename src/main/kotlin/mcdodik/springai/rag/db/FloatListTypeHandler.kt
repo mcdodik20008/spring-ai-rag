@@ -4,7 +4,6 @@ import mcdodik.springai.config.Loggable
 import org.apache.ibatis.type.BaseTypeHandler
 import org.apache.ibatis.type.JdbcType
 import org.postgresql.util.PGobject
-import org.slf4j.LoggerFactory
 import java.sql.CallableStatement
 import java.sql.PreparedStatement
 import java.sql.ResultSet

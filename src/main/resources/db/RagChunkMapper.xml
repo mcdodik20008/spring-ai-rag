@@ -7,15 +7,16 @@
 
     <resultMap id="RagChunkResultMap" type="mcdodik.springai.rag.db.RagChunk">
         <constructor>
-            <arg column="id" javaType="java.util.UUID"/>
-            <arg column="content" javaType="java.lang.String"/>
-            <arg column="embedding" javaType="java.util.List"
+            <arg name="id" column="id" javaType="java.util.UUID"
+                 typeHandler="mcdodik.springai.rag.db.UUIDTypeHandler"/>
+            <arg name="content" column="content" javaType="java.lang.String"/>
+            <arg name="embedding" column="embedding" javaType="java.util.List"
                  typeHandler="mcdodik.springai.rag.db.FloatListTypeHandler"/>
-            <arg column="type" javaType="java.lang.String"/>
-            <arg column="source" javaType="java.lang.String"/>
-            <arg column="chunk_index" javaType="java.lang.Integer"/>
-            <arg column="created_at" javaType="java.time.LocalDateTime"/>
-            <arg column="summary" javaType="java.lang.String"/>
+            <arg name="type" column="type" javaType="java.lang.String"/>
+            <arg name="source" column="source" javaType="java.lang.String"/>
+            <arg name="chunkIndex" column="chunk_index" javaType="java.lang.Integer"/>
+            <arg name="createdAt" column="created_at" javaType="java.time.LocalDateTime"/>
+            <arg name="summary" column="summary" javaType="java.lang.String"/>
         </constructor>
     </resultMap>
 
@@ -31,8 +32,8 @@
                created_at,
                summary
         FROM public.rag_chunks
-        ORDER BY embedding < - > CAST(
-                #{embedding, jdbcType=OTHER, typeHandler=mcdodik.springai.db.FloatListTypeHandler}
+        ORDER BY embedding <-> CAST(
+                #{embedding, jdbcType=OTHER, typeHandler=mcdodik.springai.rag.db.FloatListTypeHandler}
             AS vector
                                  ) LIMIT 5
         ]]>
@@ -40,9 +41,9 @@
 
     <insert id="insert" parameterType="mcdodik.springai.rag.db.RagChunk">
         INSERT INTO rag_chunks (id, content, embedding, type, source, chunk_index, created_at, summary)
-        VALUES (#{id, typeHandler=mcdodik.springai.db.UUIDTypeHandler},
+        VALUES (#{id, typeHandler=mcdodik.springai.rag.db.UUIDTypeHandler},
                 #{content},
-                #{embedding, typeHandler=mcdodik.springai.db.FloatListTypeHandler},
+                #{embedding, typeHandler=mcdodik.springai.rag.db.FloatListTypeHandler},
                 #{type},
                 #{source},
                 #{chunkIndex},

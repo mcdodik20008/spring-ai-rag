@@ -15,7 +15,9 @@ class AskController(
 ) {
 
     @PostMapping
-    fun ask(@RequestBody req: AskRequest): AskResponse = AskResponse(rag.ask(req.question))
+    fun ask(@RequestBody req: AskRequest): AskResponse {
+        return AskResponse(rag.ask(req.question))
+    }
 
     @GetMapping
     fun summarize(@RequestParam quest: String): String {

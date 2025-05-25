@@ -1,10 +1,10 @@
-package mcdodik.springai.service
+package mcdodik.springai.rag.services
 
 import mcdodik.springai.config.Loggable
+import mcdodik.springai.controller.model.PdfCleanRequest
 import mcdodik.springai.rag.db.CustomVectorStore
 import mcdodik.springai.rag.formatting.ContextMarkdownFormatter
-import mcdodik.springai.utils.cleaner.PdfCleanRequest
-import mcdodik.springai.utils.document.DocumentWorkerFactory
+import mcdodik.springai.utils.documentworker.DocumentWorkerFactory
 import org.springframework.ai.chat.client.ChatClient
 import org.springframework.ai.chat.prompt.PromptTemplate
 import org.springframework.stereotype.Service

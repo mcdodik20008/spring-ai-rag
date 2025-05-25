@@ -1,4 +1,4 @@
-package mcdodik.springai.rag.db
+package mcdodik.springai.rag.mybatis
 
 import org.apache.ibatis.type.BaseTypeHandler
 import org.apache.ibatis.type.JdbcType

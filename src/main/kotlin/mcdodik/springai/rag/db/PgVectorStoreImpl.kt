@@ -2,7 +2,8 @@ package mcdodik.springai.rag.db
 
 import mcdodik.springai.config.Loggable
 import mcdodik.springai.extension.toRagChunkDTO
-import mcdodik.springai.rag.formatting.RagChunkDto
+import mcdodik.springai.rag.model.RagChunkDto
+import mcdodik.springai.rag.mybatis.RagChunkMapper
 import org.springframework.ai.chat.client.ChatClient
 import org.springframework.ai.document.Document
 import org.springframework.ai.ollama.OllamaEmbeddingModel
@@ -29,8 +30,6 @@ class PgVectorStoreImpl(
         }
 
         val entities = chunks.map {
-            //val summary = summarizer.prompt(it.content).call().content().toString()
-
             RagChunk(
                 id = it.id,
                 content = it.content,

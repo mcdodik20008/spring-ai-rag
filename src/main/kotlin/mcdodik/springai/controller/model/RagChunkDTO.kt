@@ -1,4 +1,4 @@
-package mcdodik.springai.model
+package mcdodik.springai.controller.model
 
 import java.util.*
 
@@ -11,4 +11,3 @@ data class RagChunkDTO(
     val source: String? = null,
     val chunkIndex: Int = 0
 )
-

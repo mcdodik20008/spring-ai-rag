@@ -37,7 +37,7 @@ class AiConfig {
 
     @Bean
     fun tokenTextSplitter(): TokenTextSplitter = TokenTextSplitter(
-        555,     // chunkSize
+        1000,     // chunkSize
         256,      // minChunkSizeChars
         128,      // minChunkLengthToEmbed
         1000,     // maxNumChunks

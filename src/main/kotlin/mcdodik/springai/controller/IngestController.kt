@@ -1,7 +1,7 @@
 package mcdodik.springai.controller
 
-import mcdodik.springai.service.RagService
-import mcdodik.springai.utils.cleaner.PdfCleanRequest
+import mcdodik.springai.controller.model.PdfCleanRequest
+import mcdodik.springai.rag.services.RagService
 import mcdodik.springai.utils.mulripartcreator.DelegatingMultipartFileFactory
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -21,9 +21,13 @@ class IngestController(
     @PostMapping("/ingest")
     fun ingest(
         @RequestBody body: String,
-        @RequestPart() params: PdfCleanRequest,
+        @RequestParam("skipPages") skipPages: Int,
+        @RequestParam("throwPagesFromEnd") throwPagesFromEnd: Int,
+        @RequestParam("headerFooterLines") headerFooterLines: Int,
+        @RequestParam("repeatThreshold") repeatThreshold: Double
     ): ResponseEntity<Any> {
         val file = factory.create(body)
+        val params = PdfCleanRequest(skipPages, throwPagesFromEnd, headerFooterLines, repeatThreshold)
         rag.ingest(file, params)
         return ResponseEntity.status(HttpStatus.CREATED).body(response)
     }

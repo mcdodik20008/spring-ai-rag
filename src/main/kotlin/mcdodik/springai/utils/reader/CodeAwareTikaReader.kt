@@ -1,6 +1,6 @@
 package mcdodik.springai.utils.reader
 
-import mcdodik.springai.rag.formatting.RagChunkDto
+import mcdodik.springai.rag.model.RagChunkDto
 import org.springframework.ai.document.Document
 import org.springframework.ai.document.DocumentReader
 import org.springframework.ai.reader.tika.TikaDocumentReader

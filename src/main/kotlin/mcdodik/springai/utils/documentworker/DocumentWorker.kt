@@ -1,6 +1,6 @@
-package mcdodik.springai.utils.document
+package mcdodik.springai.utils.documentworker
 
-import mcdodik.springai.utils.cleaner.PdfCleanRequest
+import mcdodik.springai.controller.model.PdfCleanRequest
 import org.springframework.ai.document.Document
 import org.springframework.web.multipart.MultipartFile
 

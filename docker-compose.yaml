@@ -27,7 +27,7 @@ services:
     ports:
       - "11434:11434"
     volumes:
-      - ollama_data:/root/.ollama        # кеш моделей
+      - ollama_data:/root/.ollama
     healthcheck:
       test: [ "CMD", "curl", "-f", "http://localhost:11434/" ]
       interval: 30s

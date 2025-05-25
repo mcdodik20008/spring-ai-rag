@@ -1,5 +1,6 @@
 package mcdodik.springai.rag.formatting
 
+import mcdodik.springai.rag.model.RagChunkDto
 import org.springframework.stereotype.Component
 
 @Component

@@ -1,3 +1,3 @@
-package mcdodik.springai.model
+package mcdodik.springai.controller.model
 
 data class AskRequest(val question: String)

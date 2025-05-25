@@ -1,4 +1,4 @@
-package mcdodik.springai.rag.db
+package mcdodik.springai.rag.mybatis
 
 import mcdodik.springai.config.Loggable
 import org.apache.ibatis.type.BaseTypeHandler

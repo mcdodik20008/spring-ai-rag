@@ -1,5 +1,6 @@
 package mcdodik.springai.utils.cleaner
 
+import mcdodik.springai.controller.model.PdfCleanRequest
 import mcdodik.springai.extension.hasGlyph
 import org.apache.pdfbox.Loader
 import org.apache.pdfbox.pdmodel.PDDocument
@@ -15,9 +16,9 @@ import java.io.File
 import java.io.InputStream
 
 @Component
-class PdfCleaner {
+class PdfCleaner : DocumentCleaner {
 
-    fun cleanPdf(input: InputStream, params: PdfCleanRequest): InputStream {
+    override fun doIt(input: InputStream, params: PdfCleanRequest): InputStream {
         val cleaned = ByteArrayOutputStream()
 
         Loader.loadPDF(input.readAllBytes()).use { document ->

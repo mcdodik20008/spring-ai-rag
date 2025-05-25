@@ -1,4 +1,4 @@
-package mcdodik.springai.rag.formatting
+package mcdodik.springai.rag.model
 
 data class RagChunkDto(
     val content: String,

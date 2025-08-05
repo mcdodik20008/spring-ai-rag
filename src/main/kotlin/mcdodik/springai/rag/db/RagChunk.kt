@@ -1,7 +1,7 @@
 package mcdodik.springai.rag.db
 
 import java.time.LocalDateTime
-import java.util.*
+import java.util.UUID
 
 
 data class RagChunk(

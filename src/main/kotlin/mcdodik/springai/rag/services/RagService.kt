@@ -1,7 +1,7 @@
 package mcdodik.springai.rag.services
 
 import mcdodik.springai.config.Loggable
-import mcdodik.springai.controller.model.PdfCleanRequest
+import mcdodik.springai.controller.model.CleanRequest
 import mcdodik.springai.rag.db.CustomVectorStore
 import mcdodik.springai.rag.formatting.ContextMarkdownFormatter
 import mcdodik.springai.utils.documentworker.DocumentWorkerFactory
@@ -9,6 +9,7 @@ import org.springframework.ai.chat.client.ChatClient
 import org.springframework.ai.chat.prompt.PromptTemplate
 import org.springframework.stereotype.Service
 import org.springframework.web.multipart.MultipartFile
+import reactor.core.publisher.Flux
 
 @Service
 class RagService(
@@ -20,7 +21,7 @@ class RagService(
     private val promptTemplate: PromptTemplate,
 ) {
 
-    fun ask(question: String): String {
+    fun ask(question: String): Flux<String> {
         val chunks = vectorStore.search(question)
         logger.debug("Founded chunks: {}", chunks)
 
@@ -35,14 +36,11 @@ class RagService(
         )
         logger.info("Question: $question rendered: $renderedPrompt")
 
-        val answer = chat.prompt().user(renderedPrompt).call().content() ?: "no answer"
-        logger.info("Answer: $answer")
-        return answer
+        return chat.prompt().user(renderedPrompt).stream().content() //.call().content() ?: "no answer"
     }
 
-    fun ingest(file: MultipartFile, params: PdfCleanRequest) {
+    fun ingest(file: MultipartFile, params: CleanRequest) {
         val docs = documentWorkerFactory.process(file, params)
-
         vectorStore.write(docs)
     }
 

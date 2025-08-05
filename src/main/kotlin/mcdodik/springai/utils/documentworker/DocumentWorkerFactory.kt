@@ -1,6 +1,6 @@
 package mcdodik.springai.utils.documentworker
 
-import mcdodik.springai.controller.model.PdfCleanRequest
+import mcdodik.springai.controller.model.CleanRequest
 import org.springframework.ai.document.Document
 import org.springframework.stereotype.Component
 import org.springframework.web.multipart.MultipartFile
@@ -13,7 +13,7 @@ class DocumentWorkerFactory(
         workers.firstOrNull { it.supports(file) }
             ?: throw IllegalArgumentException("Unsupported file type: ${file.contentType}")
 
-    fun process(file: MultipartFile, params: PdfCleanRequest): List<Document> {
+    fun process(file: MultipartFile, params: CleanRequest): List<Document> {
         val worker = getWorker(file)
         return worker.process(file, params)
     }

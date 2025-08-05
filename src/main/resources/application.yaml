@@ -33,7 +33,7 @@ spring:
       base-url: http://localhost:11434
       chat:
         options:
-          model: ${OLLAMA_CHAT_MODEL:owl/t-lite}
+          model: ${OLLAMA_CHAT_MODEL:owl/t-lite} #phi3:mini} #owl/t-lite}
     vectorstore:
       pgvector:
         initialize-schema: false

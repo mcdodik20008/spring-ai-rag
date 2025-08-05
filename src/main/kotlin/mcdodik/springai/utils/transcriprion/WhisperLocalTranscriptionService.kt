@@ -1,9 +1,9 @@
 package mcdodik.springai.utils.transcriprion
 
-import org.springframework.stereotype.Component
-import org.springframework.web.multipart.MultipartFile
 import java.io.File
 import java.nio.file.Files
+import org.springframework.stereotype.Component
+import org.springframework.web.multipart.MultipartFile
 
 @Component
 class WhisperLocalTranscriptionService : TranscriptionService {

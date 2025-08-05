@@ -1,6 +1,6 @@
 package mcdodik.springai.controller.model
 
-import java.util.*
+import java.util.UUID
 
 data class RagChunkDTO(
     val id: UUID = UUID.randomUUID(),

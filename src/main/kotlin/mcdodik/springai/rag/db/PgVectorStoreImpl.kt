@@ -1,10 +1,10 @@
 package mcdodik.springai.rag.db
 
+import java.time.LocalDateTime
 import mcdodik.springai.config.Loggable
 import mcdodik.springai.extension.toRagChunkDTO
 import mcdodik.springai.rag.model.RagChunkDto
 import mcdodik.springai.rag.mybatis.RagChunkMapper
-import org.springframework.ai.chat.client.ChatClient
 import org.springframework.ai.document.Document
 import org.springframework.ai.ollama.OllamaEmbeddingModel
 import org.springframework.ai.vectorstore.SearchRequest
@@ -12,14 +12,13 @@ import org.springframework.ai.vectorstore.VectorStore
 import org.springframework.ai.vectorstore.filter.Filter
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.stereotype.Component
-import java.time.LocalDateTime
 
 @Component
 @Qualifier("CustomPgVectorStore")
 class PgVectorStoreImpl(
     private val embeddingModel: OllamaEmbeddingModel,
     private val ragChunkMapper: RagChunkMapper,
-    @Qualifier("openRouterChatClient") private val summarizer: ChatClient,
+    //@Qualifier("openRouterChatClient") private val summarizer: ChatClient,
 ) : VectorStore, CustomVectorStore {
 
     override fun write(documents: List<Document>) {

@@ -1,9 +1,9 @@
 package mcdodik.springai.controller.model
 
-import org.springframework.web.multipart.MultipartFile
 import java.io.ByteArrayInputStream
 import java.io.File
 import java.io.InputStream
+import org.springframework.web.multipart.MultipartFile
 
 class CustomMultipartFile(
     private val name: String,

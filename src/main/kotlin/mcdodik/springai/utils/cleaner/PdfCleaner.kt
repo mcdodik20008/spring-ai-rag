@@ -1,5 +1,9 @@
 package mcdodik.springai.utils.cleaner
 
+import java.io.ByteArrayInputStream
+import java.io.ByteArrayOutputStream
+import java.io.File
+import java.io.InputStream
 import mcdodik.springai.controller.model.PdfCleanRequest
 import mcdodik.springai.extension.hasGlyph
 import org.apache.pdfbox.Loader
@@ -10,10 +14,6 @@ import org.apache.pdfbox.pdmodel.common.PDRectangle
 import org.apache.pdfbox.pdmodel.font.PDType0Font
 import org.apache.pdfbox.text.PDFTextStripper
 import org.springframework.stereotype.Component
-import java.io.ByteArrayInputStream
-import java.io.ByteArrayOutputStream
-import java.io.File
-import java.io.InputStream
 
 @Component
 class PdfCleaner : DocumentCleaner {

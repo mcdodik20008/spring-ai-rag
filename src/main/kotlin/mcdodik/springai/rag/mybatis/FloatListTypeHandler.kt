@@ -1,12 +1,12 @@
 package mcdodik.springai.rag.mybatis
 
+import java.sql.CallableStatement
+import java.sql.PreparedStatement
+import java.sql.ResultSet
 import mcdodik.springai.config.Loggable
 import org.apache.ibatis.type.BaseTypeHandler
 import org.apache.ibatis.type.JdbcType
 import org.postgresql.util.PGobject
-import java.sql.CallableStatement
-import java.sql.PreparedStatement
-import java.sql.ResultSet
 
 class FloatListTypeHandler : BaseTypeHandler<List<Float>>() {
 

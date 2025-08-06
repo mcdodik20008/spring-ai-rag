@@ -1,7 +1,8 @@
 package mcdodik.springai.config
 
-import mcdodik.springai.openrouter.OpenRouterSummarizerModel
+import mcdodik.springai.openrouter.OpenRouterChat
 import org.springframework.ai.chat.client.ChatClient
+import org.springframework.ai.chat.client.advisor.vectorstore.QuestionAnswerAdvisor
 import org.springframework.ai.chat.prompt.PromptTemplate
 import org.springframework.ai.ollama.OllamaChatModel
 import org.springframework.ai.template.TemplateRenderer
@@ -9,6 +10,7 @@ import org.springframework.ai.template.ValidationMode
 import org.springframework.ai.template.st.StTemplateRenderer
 import org.springframework.ai.transformer.splitter.TokenTextSplitter
 import org.springframework.ai.vectorstore.VectorStore
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -17,22 +19,24 @@ import org.springframework.context.annotation.Primary
 @Configuration
 class AiConfig {
 
+    @Autowired
+    @Qualifier("customPgVectorStore")
+    var vectorStore: VectorStore? = null
+
     @Bean
     @Primary
-    fun ollamaChatClient(chatModel: OllamaChatModel, vectorStore: VectorStore): ChatClient =
+    fun ollamaChatClient(chatModel: OllamaChatModel): ChatClient =
         ChatClient.builder(chatModel)
             //.defaultSystem("You are a helpful assistant. Use the following documents to answer the user question:")
             //.defaultAdvisors(QuestionAnswerAdvisor(vectorStore))
+            .defaultAdvisors(QuestionAnswerAdvisor.builder(vectorStore!!).build())
             .build()
 
 
     @Bean
     @Qualifier("openRouterChatClient")
-    fun openRouterChatClient(chatModel: OpenRouterSummarizerModel, vectorStore: VectorStore): ChatClient =
-        ChatClient.builder(chatModel)
-            //.defaultSystem("You are a helpful assistant. Use the following documents to answer the user question:")
-            //.defaultAdvisors(QuestionAnswerAdvisor(vectorStore))
-            .build()
+    fun openRouterChatClient(chatModel: OpenRouterChat): ChatClient =
+        ChatClient.builder(chatModel).build()
 
 
     @Bean
@@ -51,7 +55,7 @@ class AiConfig {
         Ты — опытный помощник по программированию.
         Используй только данные из контекста, не выдумывай.
         Контекст:
-        <context>
+        <question_answer_context>
 
         Вопрос: <question>
         

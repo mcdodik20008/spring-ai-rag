@@ -3,13 +3,13 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="mcdodik.springai.rag.db.mybatis.mapper.DocumentInfoMapper">
+<mapper namespace="mcdodik.springai.db.mybatis.mapper.DocumentInfoMapper">
 
     <!-- resultMap для DocumentInfo -->
-    <resultMap id="DocumentInfo" type="mcdodik.springai.rag.db.DocumentInfo">
+    <resultMap id="DocumentInfo" type="mcdodik.springai.db.model.DocumentInfo">
         <constructor>
             <arg name="id" column="id" javaType="java.util.UUID"
-                 typeHandler="mcdodik.springai.rag.db.mybatis.handler.UUIDTypeHandler"/>
+                 typeHandler="mcdodik.springai.db.mybatis.handler.UUIDTypeHandler"/>
             <arg name="fileName" column="file_name" javaType="java.lang.String"/>
             <arg name="extension" column="extension" javaType="java.lang.String"/>
             <arg name="hash" column="file_hash" javaType="java.lang.String"/>
@@ -19,11 +19,48 @@
         </constructor>
     </resultMap>
 
+    <select id="findAll" resultMap="DocumentInfo">
+        SELECT id,
+        file_name,
+        extension,
+        file_hash,
+        chunk_count,
+        created_at,
+        summary
+        FROM document_info
+    </select>
+
+    <!-- Получение одного документа по id -->
+    <select id="findById" parameterType="java.util.UUID" resultMap="DocumentInfo">
+        SELECT id,
+        file_name,
+        extension,
+        file_hash,
+        chunk_count,
+        created_at,
+        summary
+        FROM document_info
+        WHERE id = #{id, javaType=java.util.UUID, typeHandler=mcdodik.springai.db.mybatis.handler.UUIDTypeHandler}
+    </select>
+
+    <!-- Поиск по file_name с ILIKE -->
+    <select id="searchByFilenameLike" resultMap="DocumentInfo" parameterType="java.lang.String">
+        SELECT *
+        FROM document_info
+        WHERE file_name ILIKE '%' || #{keyword} || '%'
+    </select>
+
+    <!-- Удаление по id -->
+    <delete id="delete" parameterType="java.util.UUID">
+        DELETE FROM document_info
+        WHERE id = #{id, javaType=java.util.UUID, typeHandler=mcdodik.springai.db.mybatis.handler.UUIDTypeHandler}
+    </delete>
+
     <!-- Поиск документа по имени и хэшу -->
     <select id="searchByNameAndHash" resultMap="DocumentInfo" parameterType="map">
         <![CDATA[
         SELECT id, file_name, extension, file_hash, chunk_count, created_at, summary
-        FROM public.document_info
+        FROM document_info
         WHERE file_hash = #{hash} AND file_name = #{fileName}
         ]]>
     </select>
@@ -32,14 +69,14 @@
     <select id="getIdByFileNameAndHash" resultType="java.util.UUID" parameterType="map">
         <![CDATA[
         SELECT id
-        FROM public.document_info
+        FROM document_info
         WHERE file_hash = #{hash} AND file_name = #{fileName}
         ]]>
     </select>
 
     <!-- Вставка документа -->
-    <insert id="insert" parameterType="mcdodik.springai.rag.db.DocumentInfo">
-        INSERT INTO public.document_info (
+    <insert id="insert" parameterType="mcdodik.springai.db.model.DocumentInfo">
+        INSERT INTO document_info (
         id,
         file_name,
         extension,
@@ -48,7 +85,7 @@
         created_at,
         summary
         ) VALUES (
-        #{id, javaType=java.util.UUID, typeHandler=mcdodik.springai.rag.db.mybatis.handler.UUIDTypeHandler},
+        #{id, javaType=java.util.UUID, typeHandler=mcdodik.springai.db.mybatis.handler.UUIDTypeHandler},
         #{fileName},
         #{extension},
         #{hash},

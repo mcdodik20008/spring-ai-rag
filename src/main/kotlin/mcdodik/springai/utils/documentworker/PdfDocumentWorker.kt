@@ -1,7 +1,8 @@
 package mcdodik.springai.utils.documentworker
 
-import mcdodik.springai.controller.model.CleanRequestParams
-import mcdodik.springai.controller.model.PdfCleanRequest
+import mcdodik.springai.api.controller.model.CleanRequestParams
+import mcdodik.springai.api.controller.model.PdfCleanRequest
+import mcdodik.springai.extension.fetchInfoFromFile
 import mcdodik.springai.utils.cleaner.DocumentCleaner
 import mcdodik.springai.utils.reader.CodeAwareTikaReaderFactory
 import org.springframework.ai.document.Document
@@ -24,6 +25,7 @@ class PdfDocumentWorker(
         val resource = InputStreamResource(cleanedStream)
         val pageReader = readerFactory.create(resource)
         val read = pageReader.read()
+        read.forEachIndexed { n, doc -> doc.fetchInfoFromFile(n, file) }
         return textSplitter.apply(read)
     }
 }

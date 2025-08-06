@@ -3,7 +3,7 @@ plugins {
     kotlin("plugin.spring") version "1.9.25"
     id("org.springframework.boot") version "3.4.5"
     id("io.spring.dependency-management") version "1.1.7"
-    id("org.graalvm.buildtools.native") version "0.10.6"
+    //id("org.graalvm.buildtools.native") version "0.10.6"
 }
 
 group = "mcdodik"
@@ -30,12 +30,19 @@ repositories {
 extra["springAiVersion"] = "1.0.1"
 
 dependencies {
-    // CORE
+    // ──────────── CORE ────────────
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter-jdbc")
+    runtimeOnly("org.postgresql:postgresql")
+
+    // ──────────── MyBatis ────────────
     implementation("org.mybatis.spring.boot:mybatis-spring-boot-starter:3.0.3")
 
-    // AI
+    // ──────────── Kotlin + Coroutines ────────────
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.1")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor")
+
+    // ──────────── Spring AI ────────────
     implementation("org.springframework.ai:spring-ai-starter-model-ollama")
     implementation("org.springframework.ai:spring-ai-starter-vector-store-pgvector")
     implementation("org.springframework.ai:spring-ai-advisors-vector-store")
@@ -44,23 +51,21 @@ dependencies {
     implementation("org.springframework.ai:spring-ai-pdf-document-reader")
     implementation("org.springframework.ai:spring-ai-starter-model-transformers")
 
-    runtimeOnly("org.postgresql:postgresql")
+    // ──────────── Jackson ────────────
+    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.17.0")
+    implementation("com.fasterxml.jackson.core:jackson-databind:2.17.0")
 
+    // ──────────── Markdown, PDF, Tika ────────────
     implementation("org.commonmark:commonmark:0.24.0")
-
-    // Apache Tika: единый API для извлечения текста из разных форматов
-    implementation("org.apache.tika:tika-core")//:2.9.0")
-    implementation("org.apache.tika:tika-parsers-standard-package")//:2.9.0")
-
-    implementation("org.apache.pdfbox:pdfbox")//:3.0.2")
-    // Для DOCX: Apache POI
+    implementation("org.apache.tika:tika-core")
+    implementation("org.apache.tika:tika-parsers-standard-package")
+    implementation("org.apache.pdfbox:pdfbox")
     implementation("org.apache.poi:poi-ooxml")
 
-    // UTIL
+    // ──────────── Utils ────────────
     implementation("org.jetbrains.kotlin:kotlin-reflect")
-    implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
 
-    //implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core")
+    // ──────────── Dev / Test ────────────
     developmentOnly("org.springframework.boot:spring-boot-devtools")
     annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
     testImplementation("org.springframework.boot:spring-boot-starter-test")

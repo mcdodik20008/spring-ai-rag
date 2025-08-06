@@ -1,4 +1,4 @@
-package mcdodik.springai.controller.model
+package mcdodik.springai.api.controller.model
 
 import java.io.ByteArrayInputStream
 import java.io.File

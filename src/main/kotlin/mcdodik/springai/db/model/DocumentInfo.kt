@@ -1,8 +1,8 @@
-package mcdodik.springai.rag.db
+package mcdodik.springai.db.model
 
 import java.time.LocalDateTime
 import java.util.UUID
-import mcdodik.springai.rag.services.sha256
+import mcdodik.springai.extension.sha256
 import org.springframework.web.multipart.MultipartFile
 
 data class DocumentInfo(

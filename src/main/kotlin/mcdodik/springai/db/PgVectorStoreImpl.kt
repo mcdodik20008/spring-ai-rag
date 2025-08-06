@@ -1,10 +1,9 @@
-package mcdodik.springai.rag.db
+package mcdodik.springai.db
 
-import java.time.LocalDateTime
-import java.util.UUID
 import mcdodik.springai.config.Loggable
-import mcdodik.springai.extension.toRagChunkDTO
-import mcdodik.springai.rag.db.mybatis.mapper.RagChunkMapper
+import mcdodik.springai.db.model.DocumentMetadataKey
+import mcdodik.springai.db.model.RagChunkEntity
+import mcdodik.springai.db.mybatis.mapper.RagChunkMapper
 import org.springframework.ai.document.Document
 import org.springframework.ai.ollama.OllamaEmbeddingModel
 import org.springframework.ai.vectorstore.SearchRequest
@@ -22,7 +21,7 @@ class PgVectorStoreImpl(
 
     override fun write(documents: List<Document>) {
         for (it in documents) {
-            it.metadata["embedding"] = embeddingModel.embed(it.text ?: "empty").toList()
+            it.metadata[DocumentMetadataKey.EMBEDDING.key] = embeddingModel.embed(it.text ?: "empty").toList()
             ragChunkMapper.insert(RagChunkEntity.from(it))
         }
     }
@@ -32,7 +31,20 @@ class PgVectorStoreImpl(
         logger.debug("Searching for {}", embedding)
         val result = ragChunkMapper.searchByEmbedding(embedding)
         logger.debug("Found chunk with ids^ {}", result.map { x -> x.id })
-        return result.map { x -> Document(x.content, mapOf("BLOCK_TYPE" to x.type)) }
+
+        return result.map {
+            Document(
+                it.content, mapOf(
+                    DocumentMetadataKey.EMBEDDING.key to it.embedding,
+                    DocumentMetadataKey.TYPE.key to it.type,
+                    DocumentMetadataKey.SOURCE.key to it.source,
+                    DocumentMetadataKey.CHUNK_INDEX.key to it.chunkIndex,
+                    DocumentMetadataKey.FILE_NAME.key to it.fileName,
+                    DocumentMetadataKey.EXTENSION.key to it.extension,
+                    DocumentMetadataKey.HASH.key to it.hash
+                )
+            )
+        }
     }
 
     override fun add(documents: List<Document?>) {

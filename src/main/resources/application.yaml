@@ -42,8 +42,12 @@ mybatis:
   type-handlers-package: classpath*:mcdodik.springai.rag.db
 
 openrouter:
-  model: ${OPENROUTER_MODEL:google/gemma-3-4b-it:free}
+  enabled: true
+  model: ${OPENROUTER_MODEL:deepseek/deepseek-r1:free} #mistralai/mistral-nemo} #openai/gpt-oss-20b}
   api-key: ${OPENROUTER_API_KEY}
+  temperature: 0.2
+  max-tokens: 8192
+  top-p: 0.95
 
 logging:
   level:

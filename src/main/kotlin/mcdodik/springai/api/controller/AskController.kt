@@ -1,7 +1,7 @@
-package mcdodik.springai.controller
+package mcdodik.springai.api.controller
 
-import mcdodik.springai.controller.model.AskRequest
-import mcdodik.springai.rag.services.RagService
+import mcdodik.springai.api.controller.model.AskRequest
+import mcdodik.springai.rag.service.RagService
 import org.springframework.ai.chat.client.ChatClient
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.web.bind.annotation.GetMapping
@@ -21,12 +21,12 @@ class AskController(
 ) {
 
     @PostMapping
-    fun ask(@RequestBody req: AskRequest): Flux<String> {
+    suspend fun ask(@RequestBody req: AskRequest): Flux<String> {
         return rag.ask(req.question)
     }
 
     @GetMapping
-    fun summarize(@RequestParam quest: String): Flux<String> {
+    suspend fun summarize(@RequestParam quest: String): Flux<String> {
         return summarizer.prompt(quest).stream().content()
     }
 

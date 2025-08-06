@@ -1,6 +1,6 @@
 package mcdodik.springai.utils.documentworker
 
-import mcdodik.springai.controller.model.CleanRequestParams
+import mcdodik.springai.api.controller.model.CleanRequestParams
 import org.springframework.ai.document.Document
 import org.springframework.web.multipart.MultipartFile
 

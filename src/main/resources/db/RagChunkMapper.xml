@@ -3,23 +3,25 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="mcdodik.springai.rag.db.mybatis.mapper.RagChunkMapper">
+<mapper namespace="mcdodik.springai.db.mybatis.mapper.RagChunkMapper">
 
-    <resultMap id="RagChunkResultMap" type="mcdodik.springai.rag.db.RagChunkEntity">
-        <id property="id" column="doc_id" javaType="java.util.UUID"
-            typeHandler="mcdodik.springai.rag.db.mybatis.handler.UUIDTypeHandler"/>
-        <result property="content" column="content"/>
-        <result property="embedding" column="embedding"
-                typeHandler="mcdodik.springai.rag.db.mybatis.handler.FloatListTypeHandler"/>
-        <result property="type" column="type"/>
-        <result property="source" column="source"/>
-        <result property="chunkIndex" column="chunk_index" javaType="java.lang.Integer"/>
-        <result property="fileName" column="file_name"/>
-        <result property="extension" column="extension"/>
-        <result property="hash" column="file_hash"/>
-        <result property="createdAt" column="created_at"/>
+
+    <resultMap id="RagChunkResultMap" type="mcdodik.springai.db.model.RagChunkEntity">
+        <constructor>
+            <arg name="id" column="id" javaType="java.util.UUID"
+                 typeHandler="mcdodik.springai.db.mybatis.handler.UUIDTypeHandler"/>
+            <arg name="content" column="content"/>
+            <arg name="embedding" column="embedding" javaType="java.util.List"
+                 typeHandler="mcdodik.springai.db.mybatis.handler.FloatListTypeHandler"/>
+            <arg name="type" column="type"/>
+            <arg name="source" column="source"/>
+            <arg name="chunkIndex" column="chunk_index" javaType="java.lang.Integer"/>
+            <arg name="fileName" column="file_name"/>
+            <arg name="extension" column="extension"/>
+            <arg name="hash" column="file_hash"/>
+            <arg name="createdAt" column="created_at" javaType="java.time.LocalDateTime"/>
+        </constructor>
     </resultMap>
-
 
     <!-- Поиск по embedding -->
     <select id="searchByEmbedding" resultMap="RagChunkResultMap">
@@ -36,14 +38,14 @@
                created_at
         FROM public.rag_chunks
         ORDER BY embedding <#> CAST(
-                #{embedding, jdbcType=OTHER, typeHandler=mcdodik.springai.rag.db.mybatis.handler.FloatListTypeHandler}
+                #{embedding, jdbcType=OTHER, typeHandler=mcdodik.springai.db.mybatis.handler.FloatListTypeHandler}
             AS vector
-        )
+        ) DESC
         ]]>
     </select>
 
     <!-- Вставка rag-чанк -->
-    <insert id="insert" parameterType="mcdodik.springai.rag.db.mybatis.handler.UUIDTypeHandler">
+    <insert id="insert" parameterType="mcdodik.springai.db.mybatis.handler.UUIDTypeHandler">
         INSERT INTO rag_chunks (
         id,
         content,
@@ -56,9 +58,9 @@
         file_hash,
         created_at
         ) VALUES (
-        #{id, typeHandler=mcdodik.springai.rag.db.mybatis.handler.UUIDTypeHandler},
+        #{id, typeHandler=mcdodik.springai.db.mybatis.handler.UUIDTypeHandler},
         #{content},
-        #{embedding, typeHandler=mcdodik.springai.rag.db.mybatis.handler.FloatListTypeHandler},
+        #{embedding, typeHandler=mcdodik.springai.db.mybatis.handler.FloatListTypeHandler},
         #{type},
         #{source},
         #{chunkIndex},

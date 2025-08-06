@@ -1,9 +1,8 @@
-package mcdodik.springai.controller
+package mcdodik.springai.api.controller
 
-import mcdodik.springai.controller.model.EmptyParams
-import mcdodik.springai.controller.model.PdfCleanRequest
-import mcdodik.springai.rag.services.RagService
-import mcdodik.springai.utils.mulripartcreator.DelegatingMultipartFileFactory
+import mcdodik.springai.api.controller.model.EmptyParams
+import mcdodik.springai.api.controller.model.PdfCleanRequest
+import mcdodik.springai.rag.service.RagService
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity

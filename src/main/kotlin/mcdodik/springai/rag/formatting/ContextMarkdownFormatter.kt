@@ -1,36 +1,36 @@
 package mcdodik.springai.rag.formatting
 
-import mcdodik.springai.rag.model.RagChunkDto
+import org.springframework.ai.document.Document
 import org.springframework.stereotype.Component
 
 @Component
 class ContextMarkdownFormatter {
 
-    fun format(chunks: List<RagChunkDto>): String {
-        return chunks.joinToString("\n\n---\n\n") { chunk ->
-            when (chunk.type.lowercase()) {
+    fun format(chunks: List<Document?>?): String {
+        return chunks?.joinToString("\n\n---\n\n") { chunk ->
+            when (chunk?.metadata?.get("BLOCK_TYPE")) {
                 "code" -> """
-                    ### [CODE SNIPPET]
-                    ```kotlin
-                    ${chunk.content.trim()}
-                    ```
-                """.trimIndent()
+                        ### [CODE SNIPPET]
+                        ```kotlin
+                        ${chunk.text?.trim()}
+                        ```
+                    """.trimIndent()
 
                 "quote" -> """
-                    ### [QUOTE]
-                    > ${chunk.content.trim().replace("\n", "\n> ")}
-                """.trimIndent()
+                        ### [QUOTE]
+                        >  ${chunk.text?.trim()?.replace("\n", "\n> ")}
+                    """.trimIndent()
 
                 "list" -> """
-                    ### [BULLET LIST]
-                    ${chunk.content.lines().joinToString("\n") { "- ${it.trim()}" }}
-                """.trimIndent()
+                        ### [BULLET LIST]
+                        $ ${chunk.text?.lines()?.joinToString("\n") { "- ${it.trim()}" }}
+                    """.trimIndent()
 
                 else -> """
-                    ### [TEXT]
-                    ${chunk.content.trim()}
-                """.trimIndent()
+                        ### [TEXT]
+                         ${chunk?.text?.trim()}
+                    """.trimIndent()
             }
-        }
+        }.toString()
     }
 }

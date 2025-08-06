@@ -5,6 +5,7 @@ import mcdodik.springai.controller.model.PdfCleanRequest
 import mcdodik.springai.rag.services.RagService
 import mcdodik.springai.utils.mulripartcreator.DelegatingMultipartFileFactory
 import org.springframework.http.HttpStatus
+import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestMapping
@@ -15,14 +16,13 @@ import org.springframework.web.multipart.MultipartFile
 @RestController
 @RequestMapping("/api/docs")
 class IngestController(
-    private val rag: RagService,
-    private val factory: DelegatingMultipartFileFactory
+    private val rag: RagService
 ) {
 
     val response =
         "Ваш файл успешно обработан и сохранён в базу знаний. \nДобавленная информация будет использоваться во время ответа на последующие вопросы."
 
-    @PostMapping("/ingest/markdown", consumes = ["multipart/form-data"])
+    @PostMapping("/ingest/markdown", consumes = [MediaType.MULTIPART_FORM_DATA_VALUE])
     fun processMarkdown(
         @RequestParam("file") file: MultipartFile
     ): ResponseEntity<String> {
@@ -30,7 +30,7 @@ class IngestController(
         return ResponseEntity.status(HttpStatus.CREATED).body(response)
     }
 
-    @PostMapping("/ingest/pdf", consumes = ["multipart/form-data"])
+    @PostMapping("/ingest/pdf", consumes = [MediaType.MULTIPART_FORM_DATA_VALUE])
     fun ingestPdf(
         @RequestParam("file") file: MultipartFile,
         @RequestParam("skipPages") skipPages: Int,

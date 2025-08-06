@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="mcdodik.springai.rag.db.mybatis.mapper.DocumentInfoMapper">
+
+    <!-- resultMap для DocumentInfo -->
+    <resultMap id="DocumentInfo" type="mcdodik.springai.rag.db.DocumentInfo">
+        <constructor>
+            <arg name="id" column="id" javaType="java.util.UUID"
+                 typeHandler="mcdodik.springai.rag.db.mybatis.handler.UUIDTypeHandler"/>
+            <arg name="fileName" column="file_name" javaType="java.lang.String"/>
+            <arg name="extension" column="extension" javaType="java.lang.String"/>
+            <arg name="hash" column="file_hash" javaType="java.lang.String"/>
+            <arg name="chunkCount" column="chunk_count" javaType="java.lang.Integer"/>
+            <arg name="createdAt" column="created_at" javaType="java.time.LocalDateTime"/>
+            <arg name="summary" column="summary" javaType="java.lang.String"/>
+        </constructor>
+    </resultMap>
+
+    <!-- Поиск документа по имени и хэшу -->
+    <select id="searchByNameAndHash" resultMap="DocumentInfo" parameterType="map">
+        <![CDATA[
+        SELECT id, file_name, extension, file_hash, chunk_count, created_at, summary
+        FROM public.document_info
+        WHERE file_hash = #{hash} AND file_name = #{fileName}
+        ]]>
+    </select>
+
+    <!-- Только id по имени и хэшу — для rag_chunks.document_id -->
+    <select id="getIdByFileNameAndHash" resultType="java.util.UUID" parameterType="map">
+        <![CDATA[
+        SELECT id
+        FROM public.document_info
+        WHERE file_hash = #{hash} AND file_name = #{fileName}
+        ]]>
+    </select>
+
+    <!-- Вставка документа -->
+    <insert id="insert" parameterType="mcdodik.springai.rag.db.DocumentInfo">
+        INSERT INTO public.document_info (
+        id,
+        file_name,
+        extension,
+        file_hash,
+        chunk_count,
+        created_at,
+        summary
+        ) VALUES (
+        #{id, javaType=java.util.UUID, typeHandler=mcdodik.springai.rag.db.mybatis.handler.UUIDTypeHandler},
+        #{fileName},
+        #{extension},
+        #{hash},
+        #{chunkCount},
+        #{createdAt},
+        #{summary}
+        )
+    </insert>
+
+</mapper>

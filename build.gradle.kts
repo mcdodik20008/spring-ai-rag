@@ -27,7 +27,7 @@ repositories {
     maven { url = uri("https://repo.spring.io/milestone") }
 }
 
-extra["springAiVersion"] = "1.0.0-M8"
+extra["springAiVersion"] = "1.0.1"
 
 dependencies {
     // CORE

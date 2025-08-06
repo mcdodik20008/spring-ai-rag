@@ -1,6 +1,6 @@
 package mcdodik.springai.utils.documentworker
 
-import mcdodik.springai.controller.model.CleanRequest
+import mcdodik.springai.controller.model.CleanRequestParams
 import mcdodik.springai.utils.reader.CodeAwareTikaReaderFactory
 import org.springframework.ai.document.Document
 import org.springframework.ai.transformer.splitter.TokenTextSplitter
@@ -17,10 +17,12 @@ class MarkdownDocumentWorker(
     override fun supports(file: MultipartFile): Boolean =
         file.contentType == "text/markdown" || file.originalFilename?.endsWith(".md") == true
 
-    override fun process(file: MultipartFile, params: CleanRequest): List<Document> {
+    override fun process(file: MultipartFile, params: CleanRequestParams): List<Document> {
         val resource = InputStreamResource(file.inputStream)
         val reader = readerFactory.create(resource)
         val rawText = reader.read()
+
+
         return textSplitter.apply(rawText)
     }
 }

@@ -27,28 +27,16 @@ class CodeAwareTikaReader : DocumentReader {
 
         val logicalBlocks = splitByCodeBlocks(buffer.toString())
 
-        val chunks = logicalBlocks.mapIndexed { i, block ->
-            @Suppress("UNCHECKED_CAST")
+        return logicalBlocks.mapIndexed { i, block ->
             val typedMetadata = (metadata + mapOf(
                 "type" to block.type,
                 "chunk_index" to i
-            )) as Map<String, Object>
+            )) as Map<String, Any?>
 
-            DocumentChunk(
-                content = block.content,
-                metadata = typedMetadata
-            )
-        }
-
-        return mapChunksToDocuments(chunks)
-    }
-
-    private fun mapChunksToDocuments(chunks: List<DocumentChunk>): List<Document> {
-        return chunks.map { chunk ->
             Document(
-                "chunk-${chunk.metadata["chunk_index"]}",
-                chunk.content,
-                chunk.metadata
+                "chunk-$i",
+                block.content,
+                typedMetadata
             )
         }
     }

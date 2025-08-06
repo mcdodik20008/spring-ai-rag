@@ -1,15 +1,15 @@
-package mcdodik.springai.rag.mybatis
+package mcdodik.springai.rag.db.mybatis.mapper
 
-import mcdodik.springai.rag.db.RagChunk
+import mcdodik.springai.rag.db.RagChunkEntity
 import org.apache.ibatis.annotations.Mapper
 import org.apache.ibatis.annotations.Param
 
 @Mapper
 interface RagChunkMapper {
 
-    fun insert(chunk: RagChunk)
+    fun insert(chunk: RagChunkEntity)
 
     fun searchByEmbedding(
         @Param("embedding") embedding: List<Float>
-    ): List<RagChunk>
+    ): List<RagChunkEntity>
 }

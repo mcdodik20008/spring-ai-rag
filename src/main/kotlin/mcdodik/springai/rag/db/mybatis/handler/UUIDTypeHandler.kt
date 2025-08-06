@@ -1,4 +1,4 @@
-package mcdodik.springai.rag.mybatis
+package mcdodik.springai.rag.db.mybatis.handler
 
 import java.sql.CallableStatement
 import java.sql.PreparedStatement

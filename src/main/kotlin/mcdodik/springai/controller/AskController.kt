@@ -3,6 +3,7 @@ package mcdodik.springai.controller
 import mcdodik.springai.controller.model.AskRequest
 import mcdodik.springai.rag.services.RagService
 import org.springframework.ai.chat.client.ChatClient
+import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
@@ -15,7 +16,7 @@ import reactor.core.publisher.Flux
 @RequestMapping("/api/ask")
 class AskController(
     private val rag: RagService,
-//    @Qualifier("openRouterChatClient")
+    @Qualifier("openRouterChatClient")
     private val summarizer: ChatClient,
 ) {
 

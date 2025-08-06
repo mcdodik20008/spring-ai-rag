@@ -1,10 +1,10 @@
 package mcdodik.springai.rag.db
 
 import java.time.LocalDateTime
+import java.util.UUID
 import mcdodik.springai.config.Loggable
 import mcdodik.springai.extension.toRagChunkDTO
-import mcdodik.springai.rag.model.RagChunkDto
-import mcdodik.springai.rag.mybatis.RagChunkMapper
+import mcdodik.springai.rag.db.mybatis.mapper.RagChunkMapper
 import org.springframework.ai.document.Document
 import org.springframework.ai.ollama.OllamaEmbeddingModel
 import org.springframework.ai.vectorstore.SearchRequest
@@ -14,43 +14,25 @@ import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.stereotype.Component
 
 @Component
-@Qualifier("CustomPgVectorStore")
+@Qualifier("customPgVectorStore")
 class PgVectorStoreImpl(
     private val embeddingModel: OllamaEmbeddingModel,
-    private val ragChunkMapper: RagChunkMapper,
-    //@Qualifier("openRouterChatClient") private val summarizer: ChatClient,
-) : VectorStore, CustomVectorStore {
+    private val ragChunkMapper: RagChunkMapper
+) : VectorStore {
 
     override fun write(documents: List<Document>) {
-        val source = documents.firstOrNull()?.metadata?.get("source") as? String
-        val chunks = documents.mapIndexed { index, doc ->
-            val embedding = embeddingModel.embed(doc.text!!).toList()
-            doc.toRagChunkDTO(source, index, embedding)
-        }
-
-        val entities = chunks.map {
-            RagChunk(
-                id = it.id,
-                content = it.content,
-                embedding = it.embedding,
-                type = it.type,
-                source = it.source,
-                chunkIndex = it.chunkIndex,
-                createdAt = LocalDateTime.now(),
-                summary = it.summary,
-            )
-        }
-        for (entity in entities) {
-            ragChunkMapper.insert(entity)
+        for (it in documents) {
+            it.metadata["embedding"] = embeddingModel.embed(it.text ?: "empty").toList()
+            ragChunkMapper.insert(RagChunkEntity.from(it))
         }
     }
 
-    override fun search(query: String): List<RagChunkDto> {
-        val embedding = embeddingModel.embed(query).toList()
+    override fun similaritySearch(request: SearchRequest): List<Document> {
+        val embedding = embeddingModel.embed(request.query).toList()
         logger.debug("Searching for {}", embedding)
         val result = ragChunkMapper.searchByEmbedding(embedding)
         logger.debug("Found chunk with ids^ {}", result.map { x -> x.id })
-        return result.map { RagChunkDto(it.content, it.type) }
+        return result.map { x -> Document(x.content, mapOf("BLOCK_TYPE" to x.type)) }
     }
 
     override fun add(documents: List<Document?>) {
@@ -63,10 +45,6 @@ class PgVectorStoreImpl(
 
     override fun delete(filterExpression: Filter.Expression) {
         print("Спасибо, работаем братья!")
-    }
-
-    override fun similaritySearch(request: SearchRequest): List<Document?>? {
-        return search(request.query).map { x -> Document(x.content) }
     }
 
     companion object : Loggable

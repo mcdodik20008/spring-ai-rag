@@ -9,7 +9,11 @@ interface RagChunkMapper {
 
     fun insert(chunk: RagChunkEntity)
 
-    fun searchByEmbedding(
-        @Param("embedding") embedding: List<Float>
+    fun searchByEmbeddingFiltered(
+        embedding: List<Float>,
+        similarityThreshold: Double,
+        topK: Int,
+        filterClause: String?
     ): List<RagChunkEntity>
+
 }

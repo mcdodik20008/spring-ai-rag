@@ -11,6 +11,7 @@ import org.springframework.ai.vectorstore.VectorStore
 import org.springframework.ai.vectorstore.filter.Filter
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.stereotype.Component
+import mcdodik.springai.extension.toFilterClause
 
 @Component
 @Qualifier("customPgVectorStore")
@@ -29,8 +30,17 @@ class PgVectorStoreImpl(
     override fun similaritySearch(request: SearchRequest): List<Document> {
         val embedding = embeddingModel.embed(request.query).toList()
         logger.debug("Searching for {}", embedding)
-        val result = ragChunkMapper.searchByEmbedding(embedding)
-        logger.debug("Found chunk with ids^ {}", result.map { x -> x.id })
+
+        val filterClause = request.filterExpression.toFilterClause()
+
+        val result = ragChunkMapper.searchByEmbeddingFiltered(
+            embedding = embedding,
+            similarityThreshold = request.similarityThreshold,
+            topK = request.topK,
+            filterClause = filterClause
+        )
+
+        logger.debug("Found chunk with ids: {}", result.map { it.id })
 
         return result.map {
             Document(
@@ -61,3 +71,4 @@ class PgVectorStoreImpl(
 
     companion object : Loggable
 }
+

@@ -24,50 +24,59 @@
     </resultMap>
 
     <!-- Поиск по embedding -->
-    <select id="searchByEmbedding" resultMap="RagChunkResultMap">
+    <select id="searchByEmbeddingFiltered" resultMap="RagChunkResultMap">
         <![CDATA[
-        SELECT id,
-               content,
-               embedding,
-               type,
-               source,
-               chunk_index,
-               file_name,
-               extension,
-               file_hash,
-               created_at
-        FROM public.rag_chunks
-        ORDER BY embedding <#> CAST(
+            SELECT
+                id,
+                content,
+                embedding,
+                type,
+                source,
+                chunk_index,
+                file_name,
+                extension,
+                file_hash,
+                created_at
+            FROM rag_chunks
+            WHERE embedding <#> CAST(
                 #{embedding, jdbcType=OTHER, typeHandler=mcdodik.springai.db.mybatis.handler.FloatListTypeHandler}
-            AS vector
-        ) DESC
+                AS vector
+            ) <= #{similarityThreshold}
+            <if test="filterClause != null and filterClause != ''">
+                AND ${filterClause}
+            </if>
+            ORDER BY embedding <#> CAST(
+                #{embedding, jdbcType=OTHER, typeHandler=mcdodik.springai.db.mybatis.handler.FloatListTypeHandler}
+                AS vector
+            ) ASC
+            LIMIT #{topK}
         ]]>
     </select>
 
     <!-- Вставка rag-чанк -->
     <insert id="insert" parameterType="mcdodik.springai.db.mybatis.handler.UUIDTypeHandler">
         INSERT INTO rag_chunks (
-        id,
-        content,
-        embedding,
-        type,
-        source,
-        chunk_index,
-        file_name,
-        extension,
-        file_hash,
-        created_at
+            id,
+            content,
+            embedding,
+            type,
+            source,
+            chunk_index,
+            file_name,
+            extension,
+            file_hash,
+            created_at
         ) VALUES (
-        #{id, typeHandler=mcdodik.springai.db.mybatis.handler.UUIDTypeHandler},
-        #{content},
-        #{embedding, typeHandler=mcdodik.springai.db.mybatis.handler.FloatListTypeHandler},
-        #{type},
-        #{source},
-        #{chunkIndex},
-        #{fileName},
-        #{extension},
-        #{hash},
-        #{createdAt}
+            #{id, typeHandler=mcdodik.springai.db.mybatis.handler.UUIDTypeHandler},
+            #{content},
+            #{embedding, typeHandler=mcdodik.springai.db.mybatis.handler.FloatListTypeHandler},
+            #{type},
+            #{source},
+            #{chunkIndex},
+            #{fileName},
+            #{extension},
+            #{hash},
+            #{createdAt}
         )
     </insert>
 

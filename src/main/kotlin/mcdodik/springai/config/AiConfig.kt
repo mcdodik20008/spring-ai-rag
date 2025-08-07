@@ -28,7 +28,6 @@ class AiConfig {
     fun ollamaChatClient(chatModel: OllamaChatModel): ChatClient =
         ChatClient.builder(chatModel)
             //.defaultSystem("You are a helpful assistant. Use the following documents to answer the user question:")
-            //.defaultAdvisors(QuestionAnswerAdvisor(vectorStore))
             .defaultAdvisors(QuestionAnswerAdvisor.builder(vectorStore!!).build())
             .build()
 

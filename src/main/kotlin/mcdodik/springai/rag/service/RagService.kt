@@ -26,25 +26,24 @@ class RagService(
 ) {
 
     fun ask(question: String): Flux<String> {
-        return chat.prompt().user(question).stream().content() //.call().content() ?: "no answer"
+        return chat.prompt()
+            .user(question)
+            .stream()
+            .content()
     }
 
     fun ingest(file: MultipartFile, params: CleanRequestParams) {
-        // 1. Делим файл на чанки
         val chunks = documentWorkerFactory.process(file, params)
 
-        // 2. Генерация summary
         val text = file.featAllTextFromObsidianMd()
         val summary = summarizer.prompt()
             .user("Вот текст, который нужно суммировать:\n$text")
             .call()
             .content() ?: "no summary"
 
-        // 3. Сохранение информации о документе
         val documentInfo = DocumentInfo.createFromFileAndCunks(file, chunks.size, summary)
         documentStore.insert(documentInfo)
 
-        // 4. Сохраняем чанки в векторное хранилище
         ragStore.write(chunks)
     }
 

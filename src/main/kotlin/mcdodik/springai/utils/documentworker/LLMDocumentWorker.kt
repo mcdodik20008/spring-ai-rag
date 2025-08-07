@@ -5,9 +5,11 @@ import mcdodik.springai.extension.featAllTextFromObsidianMd
 import mcdodik.springai.extension.fetchInfoFromFile
 import org.springframework.ai.chat.client.ChatClient
 import org.springframework.ai.document.Document
+import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.web.multipart.MultipartFile
 
 class LLMDocumentWorker(
+    @Qualifier("openRouterChatClient")
     private val chunkExtractor: ChatClient,
 ) : DocumentWorker {
 
@@ -31,13 +33,13 @@ class LLMDocumentWorker(
 
     override fun process(file: MultipartFile, params: CleanRequestParams): List<Document> {
         val text = file.featAllTextFromObsidianMd()
-        val summary = chunkExtractor
+        val chunkedText = chunkExtractor
             .prompt(EXTRACT_CHUNKS_PROMPT)
             .user(text)
             .call()
             .content() ?: throw NullPointerException("summary is null")
 
-        val chunksStr = parseChunks(summary)
+        val chunksStr = parseChunks(chunkedText)
         val chunks = chunksStr.map { Document(it) }
         chunks.forEachIndexed { n, chunk -> chunk.fetchInfoFromFile(n, file) }
         return chunks

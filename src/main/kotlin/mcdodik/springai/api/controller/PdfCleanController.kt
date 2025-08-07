@@ -11,12 +11,32 @@ import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.multipart.MultipartFile
 
+/**
+ * REST controller for handling PDF cleaning operations.
+ * Provides an endpoint to clean and process uploaded PDF files using custom parameters.
+ */
 @RestController
 @RequestMapping("/api/pdf")
 class PdfCleanController(
+    /**
+     * Service used to perform cleaning and processing of PDF documents.
+     */
     private val cleaner: DocumentCleaner
 ) {
 
+    /**
+     * Handles POST requests to the "/api/pdf/clean" endpoint.
+     * Accepts a PDF file along with additional parameters for cleaning and processing.
+     * Returns a cleaned PDF file as a downloadable attachment.
+     *
+     * @param file The uploaded PDF file.
+     * @param skipPages Number of pages to skip from the beginning of the document.
+     * @param throwPagesFromEnd Number of pages to exclude from the end of the document.
+     * @param headerFooterLines Number of lines to consider as headers or footers and remove them.
+     * @param repeatThreshold Threshold value to detect and eliminate repeated content.
+     * @return A [ResponseEntity] containing the cleaned PDF file as a byte array,
+     *         with appropriate HTTP headers for download.
+     */
     @PostMapping("/clean", consumes = [MediaType.MULTIPART_FORM_DATA_VALUE])
     fun cleanPdf(
         @RequestParam("file") file: MultipartFile,

@@ -1,6 +1,6 @@
 package mcdodik.springai.api.controller.rag
 
-import mcdodik.springai.api.controller.responses.AskRequest
+import mcdodik.springai.api.dto.AskRequest
 import mcdodik.springai.rag.service.RagService
 import org.springframework.ai.chat.client.ChatClient
 import org.springframework.beans.factory.annotation.Qualifier

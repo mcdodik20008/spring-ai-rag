@@ -1,8 +1,7 @@
 package mcdodik.springai.openrouter
 
 import mcdodik.springai.config.Loggable
-import mcdodik.springai.config.chatmodel.OpenRouterProperties.Models
-import mcdodik.springai.openrouter.model.OpenRouterResponse
+import mcdodik.springai.openrouter.dto.OpenRouterResponse
 import org.springframework.ai.chat.messages.AssistantMessage
 import org.springframework.ai.chat.messages.SystemMessage
 import org.springframework.ai.chat.messages.UserMessage
@@ -16,7 +15,6 @@ import org.springframework.http.HttpEntity
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpMethod
 import org.springframework.http.MediaType
-import org.springframework.stereotype.Component
 import org.springframework.web.client.RestTemplate
 
 class OpenRouterChat(

@@ -1,7 +1,7 @@
 package mcdodik.springai.api.controller.rag
 
-import mcdodik.springai.api.controller.responses.EmptyParams
-import mcdodik.springai.api.controller.responses.PdfCleanRequest
+import mcdodik.springai.api.dto.EmptyParams
+import mcdodik.springai.api.dto.PdfCleanRequest
 import mcdodik.springai.rag.service.RagService
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType

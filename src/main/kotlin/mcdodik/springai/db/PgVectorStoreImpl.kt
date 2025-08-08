@@ -1,10 +1,10 @@
 package mcdodik.springai.db
 
 import mcdodik.springai.config.Loggable
-import mcdodik.springai.db.model.rag.DocumentMetadataKey
-import mcdodik.springai.db.model.rag.RagChunkEntity
+import mcdodik.springai.db.entity.rag.DocumentMetadataKey
+import mcdodik.springai.db.entity.rag.RagChunkEntity
 import mcdodik.springai.db.mybatis.mapper.RagChunkMapper
-import mcdodik.springai.extension.toFilterClause
+import mcdodik.springai.extensions.toFilterClause
 import org.springframework.ai.document.Document
 import org.springframework.ai.ollama.OllamaEmbeddingModel
 import org.springframework.ai.vectorstore.SearchRequest

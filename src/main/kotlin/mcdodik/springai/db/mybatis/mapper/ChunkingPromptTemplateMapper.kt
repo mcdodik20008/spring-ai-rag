@@ -1,6 +1,6 @@
 package mcdodik.springai.db.mybatis.mapper
 
-import mcdodik.springai.db.model.prompt.ChunkingPromptTemplate
+import mcdodik.springai.db.entity.prompt.ChunkingPromptTemplate
 import org.apache.ibatis.annotations.Mapper
 
 @Mapper

@@ -1,10 +1,10 @@
 package mcdodik.springai.config
 
 import mcdodik.springai.db.mybatis.mapper.DocumentInfoMapper
-import mcdodik.springai.rag.impl.DbSummaryService
-import mcdodik.springai.rag.impl.DefaultReranker
-import mcdodik.springai.rag.impl.MarkdownContextBuilder
-import mcdodik.springai.rag.impl.VectorStoreRetriever
+import mcdodik.springai.rag.application.DbSummaryService
+import mcdodik.springai.rag.application.DefaultReranker
+import mcdodik.springai.rag.application.MarkdownContextBuilder
+import mcdodik.springai.rag.application.VectorStoreRetriever
 import org.springframework.ai.ollama.OllamaEmbeddingModel
 import org.springframework.ai.vectorstore.VectorStore
 import org.springframework.beans.factory.annotation.Qualifier

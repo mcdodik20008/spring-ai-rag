@@ -1,6 +1,6 @@
 package mcdodik.springai.db.mybatis.mapper
 
-import mcdodik.springai.db.model.rag.RagChunkEntity
+import mcdodik.springai.db.entity.rag.RagChunkEntity
 import org.apache.ibatis.annotations.Mapper
 
 /**

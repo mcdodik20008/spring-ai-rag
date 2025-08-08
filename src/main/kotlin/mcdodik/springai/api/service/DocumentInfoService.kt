@@ -1,8 +1,8 @@
 package mcdodik.springai.api.service
 
 import java.util.UUID
-import mcdodik.springai.db.model.rag.DocumentInfo
-import mcdodik.springai.db.model.rag.DocumentMetadataKey
+import mcdodik.springai.db.entity.rag.DocumentInfo
+import mcdodik.springai.db.entity.rag.DocumentMetadataKey
 import mcdodik.springai.db.mybatis.mapper.DocumentInfoMapper
 import org.apache.ibatis.javassist.NotFoundException
 import org.springframework.ai.vectorstore.VectorStore

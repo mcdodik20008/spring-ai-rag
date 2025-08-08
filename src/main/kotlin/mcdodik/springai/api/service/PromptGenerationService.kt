@@ -4,13 +4,12 @@ import java.time.LocalDateTime
 import java.util.UUID
 import mcdodik.springai.config.chatmodel.ChatModelPrompts
 import mcdodik.springai.config.chatmodel.ChatModelsConfig.LLMTaskType
-import mcdodik.springai.db.model.prompt.ChunkingPromptTemplate
+import mcdodik.springai.db.entity.prompt.ChunkingPromptTemplate
 import mcdodik.springai.db.mybatis.mapper.ChunkingPromptTemplateMapper
 import org.springframework.ai.chat.client.ChatClient
 import org.springframework.ai.chat.messages.SystemMessage
 import org.springframework.ai.chat.messages.UserMessage
 import org.springframework.ai.chat.prompt.Prompt
-import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.stereotype.Service
 
 @Service

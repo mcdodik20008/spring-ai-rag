@@ -1,7 +1,7 @@
 package mcdodik.springai.db.mybatis.mapper
 
 import java.util.UUID
-import mcdodik.springai.db.model.rag.DocumentInfo
+import mcdodik.springai.db.entity.rag.DocumentInfo
 import org.apache.ibatis.annotations.Mapper
 import org.apache.ibatis.annotations.Param
 

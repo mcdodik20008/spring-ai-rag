@@ -2,7 +2,7 @@ package mcdodik.springai.api.controller.rag
 
 import java.util.UUID
 import mcdodik.springai.api.service.DocumentInfoService
-import mcdodik.springai.db.model.rag.DocumentInfo
+import mcdodik.springai.db.entity.rag.DocumentInfo
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping

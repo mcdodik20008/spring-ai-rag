@@ -6,7 +6,7 @@
 <mapper namespace="mcdodik.springai.db.mybatis.mapper.RagChunkMapper">
 
 
-    <resultMap id="RagChunkResultMap" type="mcdodik.springai.db.model.rag.RagChunkEntity">
+    <resultMap id="RagChunkResultMap" type="mcdodik.springai.db.entity.rag.RagChunkEntity">
         <constructor>
             <arg name="id" column="id" javaType="java.util.UUID"
                  typeHandler="mcdodik.springai.db.mybatis.handler.UUIDTypeHandler"/>

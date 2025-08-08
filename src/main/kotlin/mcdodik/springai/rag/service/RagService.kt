@@ -1,11 +1,11 @@
 package mcdodik.springai.rag.service
 
-import mcdodik.springai.api.controller.responses.CleanRequestParams
+import mcdodik.springai.api.dto.CleanRequestParams
 import mcdodik.springai.config.Loggable
-import mcdodik.springai.db.model.rag.DocumentInfo
+import mcdodik.springai.db.entity.rag.DocumentInfo
 import mcdodik.springai.db.mybatis.mapper.DocumentInfoMapper
-import mcdodik.springai.extension.featAllTextFromObsidianMd
-import mcdodik.springai.utils.documentworker.DocumentWorkerFactory
+import mcdodik.springai.extensions.featAllTextFromObsidianMd
+import mcdodik.springai.infrastructure.document.worker.DocumentWorkerFactory
 import org.springframework.ai.chat.client.ChatClient
 import org.springframework.ai.vectorstore.VectorStore
 import org.springframework.beans.factory.annotation.Qualifier

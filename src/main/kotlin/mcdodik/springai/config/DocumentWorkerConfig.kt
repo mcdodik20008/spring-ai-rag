@@ -1,9 +1,9 @@
 package mcdodik.springai.config
 
-import mcdodik.springai.utils.documentworker.DocumentWorker
-import mcdodik.springai.utils.documentworker.LLMDocumentWorker
-import mcdodik.springai.utils.documentworker.MarkdownDocumentWorker
-import mcdodik.springai.utils.reader.CodeAwareTikaReaderFactory
+import mcdodik.springai.infrastructure.document.worker.DocumentWorker
+import mcdodik.springai.infrastructure.document.worker.LLMDocumentWorker
+import mcdodik.springai.infrastructure.document.worker.MarkdownDocumentWorker
+import mcdodik.springai.infrastructure.document.reader.CodeAwareTikaReaderFactory
 import org.springframework.ai.chat.client.ChatClient
 import org.springframework.ai.transformer.splitter.TokenTextSplitter
 import org.springframework.beans.factory.annotation.Qualifier

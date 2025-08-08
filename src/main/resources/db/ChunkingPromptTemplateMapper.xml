@@ -6,7 +6,7 @@
 
 <mapper namespace="mcdodik.springai.db.mybatis.mapper.ChunkingPromptTemplateMapper">
 
-    <insert id="insert" parameterType="mcdodik.springai.db.model.prompt.ChunkingPromptTemplate">
+    <insert id="insert" parameterType="mcdodik.springai.db.entity.prompt.ChunkingPromptTemplate">
         INSERT INTO chunking_prompt_templates (
         id, domain_name, user_description, generated_prompt, created_at
         ) VALUES (
@@ -18,7 +18,7 @@
         )
     </insert>
 
-    <select id="findAll" resultType="mcdodik.springai.db.model.prompt.ChunkingPromptTemplate">
+    <select id="findAll" resultType="mcdodik.springai.db.entity.prompt.ChunkingPromptTemplate">
         SELECT id, domain_name, user_description, generated_prompt, created_at
         FROM chunking_prompt_templates
         ORDER BY created_at DESC

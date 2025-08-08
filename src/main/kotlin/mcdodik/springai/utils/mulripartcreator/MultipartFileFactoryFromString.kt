@@ -2,7 +2,7 @@ package mcdodik.springai.utils.mulripartcreator
 
 import java.nio.charset.Charset
 import java.util.UUID
-import mcdodik.springai.api.controller.model.CustomMultipartFile
+import mcdodik.springai.api.controller.responses.CustomMultipartFile
 import org.springframework.http.MediaType
 import org.springframework.stereotype.Service
 import org.springframework.web.multipart.MultipartFile

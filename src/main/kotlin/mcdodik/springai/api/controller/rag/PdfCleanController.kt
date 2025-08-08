@@ -1,6 +1,6 @@
-package mcdodik.springai.api.controller
+package mcdodik.springai.api.controller.rag
 
-import mcdodik.springai.api.controller.model.PdfCleanRequest
+import mcdodik.springai.api.controller.responses.PdfCleanRequest
 import mcdodik.springai.utils.cleaner.DocumentCleaner
 import org.springframework.http.HttpHeaders
 import org.springframework.http.MediaType

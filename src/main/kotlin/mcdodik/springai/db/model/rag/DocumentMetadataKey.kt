@@ -1,4 +1,4 @@
-package mcdodik.springai.db.model
+package mcdodik.springai.db.model.rag
 
 enum class DocumentMetadataKey(val key: String) {
     EMBEDDING("embedding"),

@@ -1,7 +1,7 @@
 package mcdodik.springai.extension
 
 import java.security.MessageDigest
-import mcdodik.springai.db.model.DocumentMetadataKey
+import mcdodik.springai.db.model.rag.DocumentMetadataKey
 import org.springframework.ai.document.Document
 import org.springframework.web.multipart.MultipartFile
 

@@ -1,6 +1,6 @@
 package mcdodik.springai.db.mybatis.mapper
 
-import mcdodik.springai.db.model.RagChunkEntity
+import mcdodik.springai.db.model.rag.RagChunkEntity
 import org.apache.ibatis.annotations.Mapper
 
 /**
@@ -29,8 +29,8 @@ interface RagChunkMapper {
      */
     fun searchByEmbeddingFiltered(
         embedding: List<Float>,
-        similarityThreshold: Double,
-        topK: Int,
+        similarityThreshold: Double?,
+        topK: Int?,
         filterClause: String?
     ): List<RagChunkEntity>
 }

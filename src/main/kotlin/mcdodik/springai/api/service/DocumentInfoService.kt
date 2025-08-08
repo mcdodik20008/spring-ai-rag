@@ -1,8 +1,8 @@
 package mcdodik.springai.api.service
 
 import java.util.UUID
-import mcdodik.springai.db.model.DocumentInfo
-import mcdodik.springai.db.model.DocumentMetadataKey
+import mcdodik.springai.db.model.rag.DocumentInfo
+import mcdodik.springai.db.model.rag.DocumentMetadataKey
 import mcdodik.springai.db.mybatis.mapper.DocumentInfoMapper
 import org.apache.ibatis.javassist.NotFoundException
 import org.springframework.ai.vectorstore.VectorStore
@@ -43,7 +43,7 @@ class DocumentInfoService(
             .mapNotNull { it.metadata[DocumentMetadataKey.FILE_NAME.key] as String }
             .distinct()
 
-        return fileNames.take(5).map { documentStore.findByFileName(it) }
+        return fileNames.take(5).map { documentStore.searchByFilenameLike(it) }
     }
 
     /**
@@ -70,7 +70,7 @@ class DocumentInfoService(
      * @return The [DocumentInfo] object corresponding to the given file name.
      */
     fun getByFileName(fileName: String): DocumentInfo {
-        return documentStore.findByFileName(fileName)
+        return documentStore.searchByFilenameLike(fileName)
     }
 
     /**

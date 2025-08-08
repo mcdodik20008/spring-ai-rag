@@ -1,7 +1,7 @@
 package mcdodik.springai.db.mybatis.mapper
 
 import java.util.UUID
-import mcdodik.springai.db.model.DocumentInfo
+import mcdodik.springai.db.model.rag.DocumentInfo
 import org.apache.ibatis.annotations.Mapper
 import org.apache.ibatis.annotations.Param
 
@@ -40,7 +40,7 @@ interface DocumentInfoMapper {
      * @param fileName The name of the file associated with the document.
      * @return The [DocumentInfo] object corresponding to the given file name.
      */
-    fun findByFileName(fileName: String): DocumentInfo
+    fun searchByFilenameLike(fileName: String): DocumentInfo
 
     /**
      * Searches for a document by both file name and hash.

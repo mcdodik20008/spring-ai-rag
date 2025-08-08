@@ -1,8 +1,8 @@
 package mcdodik.springai.rag.service
 
-import mcdodik.springai.api.controller.model.CleanRequestParams
+import mcdodik.springai.api.controller.responses.CleanRequestParams
 import mcdodik.springai.config.Loggable
-import mcdodik.springai.db.model.DocumentInfo
+import mcdodik.springai.db.model.rag.DocumentInfo
 import mcdodik.springai.db.mybatis.mapper.DocumentInfoMapper
 import mcdodik.springai.extension.featAllTextFromObsidianMd
 import mcdodik.springai.utils.documentworker.DocumentWorkerFactory
@@ -15,7 +15,7 @@ import reactor.core.publisher.Flux
 
 @Service
 class RagService(
-    //@Qualifier("openRouterChatClient")
+    @Qualifier("ollamaChatClient")
     private val chat: ChatClient,
     @Qualifier("customPgVectorStore")
     private val ragStore: VectorStore,
@@ -33,8 +33,10 @@ class RagService(
     }
 
     fun ingest(file: MultipartFile, params: CleanRequestParams) {
+        logger.info("splitting file to chunks ${file.originalFilename}")
         val chunks = documentWorkerFactory.process(file, params)
 
+        logger.info("summarizing file ${file.originalFilename}")
         val text = file.featAllTextFromObsidianMd()
         val summary = summarizer.prompt()
             .user("Вот текст, который нужно суммировать:\n$text")

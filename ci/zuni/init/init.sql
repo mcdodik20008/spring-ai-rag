@@ -37,3 +37,11 @@ CREATE INDEX ON rag_chunks USING ivfflat (embedding vector_cosine_ops);
 CREATE INDEX spring_ai_rag_chunks_index
     ON rag_chunks
     USING hnsw (embedding vector_cosine_ops);
+
+CREATE TABLE chunking_prompt_templates (
+    id UUID PRIMARY KEY,
+    domain_name TEXT NOT NULL,
+    user_description TEXT NOT NULL,
+    generated_prompt TEXT NOT NULL,
+    created_at TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT NOW()
+);

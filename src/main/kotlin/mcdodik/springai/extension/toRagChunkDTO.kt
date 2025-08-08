@@ -1,6 +1,6 @@
 package mcdodik.springai.extension
 
-import mcdodik.springai.api.controller.model.RagChunkDTO
+import mcdodik.springai.api.controller.responses.RagChunkDTO
 import org.springframework.ai.document.Document
 
 fun Document.toRagChunkDTO(source: String?, index: Int, embedding: List<Float>): RagChunkDTO {

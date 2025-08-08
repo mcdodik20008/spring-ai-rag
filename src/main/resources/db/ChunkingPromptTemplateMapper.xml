@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="mcdodik.springai.db.mybatis.mapper.ChunkingPromptTemplateMapper">
+
+    <insert id="insert" parameterType="mcdodik.springai.db.model.prompt.ChunkingPromptTemplate">
+        INSERT INTO chunking_prompt_templates (
+        id, domain_name, user_description, generated_prompt, created_at
+        ) VALUES (
+        #{id, javaType=java.util.UUID, typeHandler=mcdodik.springai.db.mybatis.handler.UUIDTypeHandler},
+        #{domainName},
+        #{userDescription},
+        #{generatedPrompt},
+        #{createdAt}
+        )
+    </insert>
+
+    <select id="findAll" resultType="mcdodik.springai.db.model.prompt.ChunkingPromptTemplate">
+        SELECT id, domain_name, user_description, generated_prompt, created_at
+        FROM chunking_prompt_templates
+        ORDER BY created_at DESC
+    </select>
+
+</mapper>

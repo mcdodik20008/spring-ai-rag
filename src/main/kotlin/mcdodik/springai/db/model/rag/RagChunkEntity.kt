@@ -1,4 +1,4 @@
-package mcdodik.springai.db.model
+package mcdodik.springai.db.model.rag
 
 import java.time.LocalDateTime
 import java.util.UUID

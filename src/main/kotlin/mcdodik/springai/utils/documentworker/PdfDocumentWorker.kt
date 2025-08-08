@@ -1,7 +1,7 @@
 package mcdodik.springai.utils.documentworker
 
-import mcdodik.springai.api.controller.model.CleanRequestParams
-import mcdodik.springai.api.controller.model.PdfCleanRequest
+import mcdodik.springai.api.controller.responses.CleanRequestParams
+import mcdodik.springai.api.controller.responses.PdfCleanRequest
 import mcdodik.springai.extension.fetchInfoFromFile
 import mcdodik.springai.utils.cleaner.DocumentCleaner
 import mcdodik.springai.utils.reader.CodeAwareTikaReaderFactory

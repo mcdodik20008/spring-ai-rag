@@ -4,7 +4,7 @@ import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.InputStream
-import mcdodik.springai.api.controller.model.PdfCleanRequest
+import mcdodik.springai.api.controller.responses.PdfCleanRequest
 import mcdodik.springai.extension.hasGlyph
 import org.apache.pdfbox.Loader
 import org.apache.pdfbox.pdmodel.PDDocument

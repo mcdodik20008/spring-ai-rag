@@ -1,4 +1,4 @@
-package mcdodik.springai.api.controller.model
+package mcdodik.springai.api.controller.responses
 
 import java.util.UUID
 

@@ -1,6 +1,6 @@
 package mcdodik.springai.utils.documentworker
 
-import mcdodik.springai.api.controller.model.CleanRequestParams
+import mcdodik.springai.api.controller.responses.CleanRequestParams
 import mcdodik.springai.extension.fetchInfoFromFile
 import mcdodik.springai.utils.reader.CodeAwareTikaReaderFactory
 import org.springframework.ai.document.Document

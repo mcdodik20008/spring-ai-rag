@@ -1,7 +1,7 @@
 package mcdodik.springai.utils.cleaner
 
 import java.io.InputStream
-import mcdodik.springai.api.controller.model.PdfCleanRequest
+import mcdodik.springai.api.controller.responses.PdfCleanRequest
 import org.springframework.stereotype.Component
 
 @Component

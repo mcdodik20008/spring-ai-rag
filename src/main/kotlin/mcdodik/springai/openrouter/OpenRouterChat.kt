@@ -1,6 +1,7 @@
 package mcdodik.springai.openrouter
 
 import mcdodik.springai.config.Loggable
+import mcdodik.springai.config.chatmodel.OpenRouterProperties.Models
 import mcdodik.springai.openrouter.model.OpenRouterResponse
 import org.springframework.ai.chat.messages.AssistantMessage
 import org.springframework.ai.chat.messages.SystemMessage
@@ -11,7 +12,6 @@ import org.springframework.ai.chat.model.ChatModel
 import org.springframework.ai.chat.model.ChatResponse
 import org.springframework.ai.chat.model.Generation
 import org.springframework.ai.chat.prompt.Prompt
-import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.HttpEntity
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpMethod
@@ -19,14 +19,13 @@ import org.springframework.http.MediaType
 import org.springframework.stereotype.Component
 import org.springframework.web.client.RestTemplate
 
-@Component
 class OpenRouterChat(
+    private val model: String,
     private val restTemplate: RestTemplate,
-    @Value("\${openrouter.api-key}") private val apiKey: String,
-    @Value("\${openrouter.model}") private val model: String,
-    @Value("\${openrouter.temperature}") private val temperature: String?,
-    @Value("\${openrouter.top-p}") private val topP: String?,
-    @Value("\${openrouter.max-tokens}") private val maxTokens: String?
+    private val apiKey: String,
+    private val temperature: Double = 0.2,
+    private val topP: Double = 0.9,
+    private val maxTokens: Int = 1000,
 ) : ChatModel {
     private val endpoint = "https://openrouter.ai/api/v1/chat/completions"
 
@@ -43,9 +42,9 @@ class OpenRouterChat(
         val requestBody = mutableMapOf<String, Any>(
             "model" to model,
             "messages" to messages,
-            "temperature" to (temperature?.toDoubleOrNull() ?: 0.2),
-            "top_p" to (topP?.toDoubleOrNull() ?: 0.95),
-            "max_tokens" to (maxTokens?.toIntOrNull() ?: 1000),
+            "temperature" to (temperature),
+            "top_p" to (topP),
+            "max_tokens" to (maxTokens),
             "stream" to false
         )
 

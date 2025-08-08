@@ -6,7 +6,7 @@
 <mapper namespace="mcdodik.springai.db.mybatis.mapper.DocumentInfoMapper">
 
     <!-- resultMap для DocumentInfo -->
-    <resultMap id="DocumentInfo" type="mcdodik.springai.db.model.DocumentInfo">
+    <resultMap id="DocumentInfo" type="mcdodik.springai.db.entity.rag.DocumentInfo">
         <constructor>
             <arg name="id" column="id" javaType="java.util.UUID"
                  typeHandler="mcdodik.springai.db.mybatis.handler.UUIDTypeHandler"/>
@@ -43,6 +43,15 @@
         WHERE id = #{id, javaType=java.util.UUID, typeHandler=mcdodik.springai.db.mybatis.handler.UUIDTypeHandler}
     </select>
 
+    <select id="searchByFilenames" resultMap="DocumentInfo">
+        SELECT * FROM public.document_info
+        WHERE file_name IN
+        <foreach collection="fileNames" item="fn" open="(" separator="," close=")">
+            #{fn}
+        </foreach>
+    </select>
+
+
     <!-- Поиск по file_name с ILIKE -->
     <select id="searchByFilenameLike" resultMap="DocumentInfo" parameterType="java.lang.String">
         SELECT *
@@ -75,7 +84,7 @@
     </select>
 
     <!-- Вставка документа -->
-    <insert id="insert" parameterType="mcdodik.springai.db.model.DocumentInfo">
+    <insert id="insert" parameterType="mcdodik.springai.db.entity.rag.DocumentInfo">
         INSERT INTO document_info (
         id,
         file_name,

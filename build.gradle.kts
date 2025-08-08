@@ -32,6 +32,7 @@ extra["springAiVersion"] = "1.0.1"
 dependencies {
     // ──────────── CORE ────────────
     implementation("org.springframework.boot:spring-boot-starter-web")
+    implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.6.0")
     implementation("org.springframework.boot:spring-boot-starter-jdbc")
     runtimeOnly("org.postgresql:postgresql")
 

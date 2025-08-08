@@ -1,10 +1,14 @@
 package mcdodik.springai.db.mybatis.mapper
 
 import java.util.UUID
-import mcdodik.springai.db.model.DocumentInfo
+import mcdodik.springai.db.entity.rag.DocumentInfo
 import org.apache.ibatis.annotations.Mapper
 import org.apache.ibatis.annotations.Param
 
+/**
+ * Mapper interface for interacting with the DocumentInfo database table using MyBatis.
+ * Provides methods for CRUD operations and advanced searches on document metadata.
+ */
 @Mapper
 interface DocumentInfoMapper {
 
@@ -14,7 +18,9 @@ interface DocumentInfoMapper {
 
     fun insert(documentInfo: DocumentInfo)
 
-    fun findByFileName(fileName: String): DocumentInfo
+    fun searchByFilenames(@Param("fileNames") fileNames: Set<String>): List<DocumentInfo>
+
+    fun searchByFilenameLike(fileName: String): DocumentInfo
 
     fun searchByNameAndHash(
         @Param("fileName") fileName: String,

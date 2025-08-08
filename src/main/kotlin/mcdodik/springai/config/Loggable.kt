@@ -5,5 +5,9 @@ import org.slf4j.LoggerFactory
 
 interface Loggable {
     val logger: Logger
-        get() = LoggerFactory.getLogger(this::class.java.enclosingClass)
+        get() {
+            val clazz = (this as Any)::class.java
+            val target = clazz.enclosingClass ?: clazz
+            return LoggerFactory.getLogger(target)
+        }
 }

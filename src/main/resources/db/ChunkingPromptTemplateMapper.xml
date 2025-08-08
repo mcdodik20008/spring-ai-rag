@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="mcdodik.springai.db.mybatis.mapper.ChunkingPromptTemplateMapper">
+
+    <resultMap id="ChunkingPromptTemplateMap"
+               type="mcdodik.springai.db.entity.prompt.ChunkingPromptTemplate">
+
+        <constructor>
+            <idArg column="id"
+                   javaType="java.util.UUID"
+                   typeHandler="mcdodik.springai.db.mybatis.handler.UUIDTypeHandler"/>
+
+            <arg column="domain_name" javaType="java.lang.String"/>
+            <arg column="user_description" javaType="java.lang.String"/>
+            <arg column="generated_prompt" javaType="java.lang.String"/>
+
+            <arg column="created_at" javaType="java.time.LocalDateTime"/>
+
+            <arg column="topic" javaType="java.lang.String"/>
+            <arg column="topic_embedding"
+                 javaType="java.util.List"
+                 typeHandler="mcdodik.springai.db.mybatis.handler.FloatListTypeHandler"/>
+        </constructor>
+
+    </resultMap>
+
+
+    <insert id="insert"  parameterType="mcdodik.springai.db.entity.prompt.ChunkingPromptTemplate">
+        INSERT INTO chunking_prompt_templates (
+        id, domain_name, user_description, generated_prompt, created_at, topic, topic_embedding
+        ) VALUES (
+        #{id, javaType=java.util.UUID, typeHandler=mcdodik.springai.db.mybatis.handler.UUIDTypeHandler},
+        #{domainName},
+        #{userDescription},
+        #{generatedPrompt},
+        #{createdAt},
+        #{topic},
+        #{topicEmbedding,typeHandler=mcdodik.springai.db.mybatis.handler.FloatListTypeHandler}
+        )
+    </insert>
+
+    <select id="findAll" resultMap="ChunkingPromptTemplateMap">
+        SELECT id, domain_name, user_description, generated_prompt, created_at, topic, topic_embedding
+        FROM chunking_prompt_templates
+        ORDER BY created_at DESC
+    </select>
+
+    <!-- запрос по эмбеддингу: ближайшие k -->
+    <select id="searchByTopicEmbedding" resultMap="ChunkingPromptTemplateMap">
+        <![CDATA[
+        SELECT id, domain_name, user_description, generated_prompt, created_at, topic, topic_embedding
+        FROM chunking_prompt_templates
+        WHERE topic_embedding IS NOT NULL
+        ORDER BY topic_embedding <=> #{queryEmbedding,typeHandler=mcdodik.springai.db.mybatis.handler.FloatListTypeHandler} ASC
+        LIMIT #{k}
+        ]]>
+    </select>
+
+    <!-- текстовый fallback по теме -->
+    <select id="searchByTopicLike" resultMap="ChunkingPromptTemplateMap">
+        SELECT id, domain_name, user_description, generated_prompt, created_at, topic, topic_embedding
+        FROM chunking_prompt_templates
+        WHERE topic ILIKE CONCAT('%', #{topic}, '%')
+        OR similarity(topic, #{topic}) > 0.3
+        ORDER BY similarity(topic, #{topic}) DESC
+        LIMIT #{k}
+    </select>
+
+</mapper>

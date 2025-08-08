@@ -33,7 +33,7 @@ spring:
       base-url: http://localhost:11434
       chat:
         options:
-          model: ${OLLAMA_CHAT_MODEL:owl/t-lite} #phi3:mini} #owl/t-lite}
+          model: ${OLLAMA_CHAT_MODEL:owl/t-lite} #phi3:mini owl/t-lite gemma3:1b-it-qat
     vectorstore:
       pgvector:
         initialize-schema: false
@@ -41,15 +41,28 @@ mybatis:
   mapper-locations: classpath*:db/*.xml
   type-handlers-package: classpath*:mcdodik.springai.rag.db
 
-openrouter:
-  enabled: true
-  model: ${OPENROUTER_MODEL:deepseek/deepseek-r1:free} #mistralai/mistral-nemo} #openai/gpt-oss-20b}
-  api-key: ${OPENROUTER_API_KEY}
-  temperature: 0.2
-  max-tokens: 8192
-  top-p: 0.95
-
 logging:
   level:
-    sql: debug
-    web: debug
+    root: INFO
+    mcdodik: DEBUG
+
+mcdodik:
+  openrouter:
+    enabled: true
+    temperature: 0.2
+    max-tokens: 8192
+    top-p: 0.95
+    api-key: ${OPENROUTER_API_KEY}
+    models:
+      default: deepseek/deepseek-r1:free  #mistralai/mistral-nemo #openai/gpt-oss-20b
+      summary: deepseek/deepseek-r1:free
+      promptGen: deepseek/deepseek-r1:free
+      chunking: deepseek/deepseek-r1:free
+  advisors:
+    vector:
+      topK: 24
+      vectorStoreSimilarityThreshold: 0.35
+      rerankSimilarityThreshold: 0.75
+      finalK: 12
+      maxContextTokens: 20000
+      order: 0

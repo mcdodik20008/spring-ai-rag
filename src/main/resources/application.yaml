@@ -62,7 +62,7 @@ mcdodik:
     vector:
       topK: 24
       vectorStoreSimilarityThreshold: 0.35
-      rerankSimilarityThreshold: 0.78
+      rerankSimilarityThreshold: 0.75
       finalK: 12
-      maxContextTokens: 3500
+      maxContextTokens: 20000
       order: 0

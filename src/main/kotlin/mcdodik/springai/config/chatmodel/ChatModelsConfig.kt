@@ -8,6 +8,10 @@ import mcdodik.springai.config.chatmodel.ChatModelsConfig.LLMTaskType.PROMPT_GEN
 import mcdodik.springai.config.chatmodel.ChatModelsConfig.LLMTaskType.SUMMARY
 import mcdodik.springai.db.mybatis.mapper.DocumentInfoMapper
 import mcdodik.springai.openrouter.OpenRouterChat
+import mcdodik.springai.rag.api.ContextBuilder
+import mcdodik.springai.rag.api.Reranker
+import mcdodik.springai.rag.api.Retriever
+import mcdodik.springai.rag.api.SummaryService
 import org.springframework.ai.chat.client.ChatClient
 import org.springframework.ai.chat.client.advisor.vectorstore.QuestionAnswerAdvisor
 import org.springframework.ai.ollama.OllamaChatModel
@@ -34,9 +38,10 @@ class ChatModelsConfig {
         chatModel: OllamaChatModel,
         properties: VectorAdvisorProperties,
         embeddingModel: OllamaEmbeddingModel,
-        @Qualifier("customPgVectorStore")
-        vectorStore: VectorStore,
-        documentMapper: DocumentInfoMapper
+        retriever: Retriever,
+        reranker: Reranker,
+        contextBuilder: ContextBuilder,
+        summaryService: SummaryService
     ): ChatClient =
         ChatClient.builder(chatModel)
             //.defaultAdvisors(QuestionAnswerAdvisor.builder(vectorStore!!).build())
@@ -44,8 +49,10 @@ class ChatModelsConfig {
                 VectorAdvisor(
                     properties = properties,
                     embeddingModel = embeddingModel,
-                    vectorStore = vectorStore,
-                    documentMapper = documentMapper,
+                    retriever = retriever,
+                    reranker = reranker,
+                    contextBuilder = contextBuilder,
+                    summaryService = summaryService
                 )
             )
             .build()

@@ -1,7 +1,7 @@
 package mcdodik.springai.infrastructure.document.worker
 
 import mcdodik.springai.api.dto.CleanRequestParams
-import mcdodik.springai.config.chatmodel.ChatModelTemplates.EXTRACT_CHUNKS_PROMPT
+import mcdodik.springai.config.chatmodel.ChatModelTemplates.EXTRACT_CHUNKS_PROMPT_PHILOSOPHY
 import mcdodik.springai.extensions.featAllTextFromObsidianMd
 import mcdodik.springai.extensions.fetchInfoFromFile
 import org.springframework.ai.chat.client.ChatClient
@@ -14,15 +14,13 @@ class LLMDocumentWorker(
     private val chunkExtractor: ChatClient,
 ) : DocumentWorker {
 
-
-
     override fun supports(file: MultipartFile): Boolean =
         file.contentType == "text/markdown" || file.originalFilename?.endsWith(".md") == true
 
     override fun process(file: MultipartFile, params: CleanRequestParams): List<Document> {
         val text = file.featAllTextFromObsidianMd()
         val chunkedText = chunkExtractor
-            .prompt(EXTRACT_CHUNKS_PROMPT)
+            .prompt(EXTRACT_CHUNKS_PROMPT_PHILOSOPHY)
             .user(text)
             .call()
             .content() ?: throw NullPointerException("summary is null")

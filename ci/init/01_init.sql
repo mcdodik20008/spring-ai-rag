@@ -1,6 +1,7 @@
 -- 1. Подключаем расширения
 CREATE EXTENSION IF NOT EXISTS vector;
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+CREATE EXTENSION IF NOT EXISTS pg_trgm;
 
 -- 2. Таблица document_info (основная)
 CREATE TABLE document_info (
@@ -38,10 +39,4 @@ CREATE INDEX spring_ai_rag_chunks_index
     ON rag_chunks
     USING hnsw (embedding vector_cosine_ops);
 
-CREATE TABLE chunking_prompt_templates (
-    id UUID PRIMARY KEY,
-    domain_name TEXT NOT NULL,
-    user_description TEXT NOT NULL,
-    generated_prompt TEXT NOT NULL,
-    created_at TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT NOW()
-);
+

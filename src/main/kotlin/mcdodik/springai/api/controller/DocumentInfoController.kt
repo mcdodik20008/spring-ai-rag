@@ -1,4 +1,4 @@
-package mcdodik.springai.api.controller.rag
+package mcdodik.springai.api.controller
 
 import java.util.UUID
 import mcdodik.springai.api.service.DocumentInfoService

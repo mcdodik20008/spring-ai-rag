@@ -55,9 +55,9 @@ mcdodik:
     api-key: ${OPENROUTER_API_KEY}
     models:
       default: deepseek/deepseek-r1:free  #mistralai/mistral-nemo #openai/gpt-oss-20b
-      summary: mistral-7b-instruct
-      promptGen: deepseek-llm
-      chunking: claude-2.1
+      summary: deepseek/deepseek-r1:free
+      promptGen: deepseek/deepseek-r1:free
+      chunking: deepseek/deepseek-r1:free
   advisors:
     vector:
       topK: 24

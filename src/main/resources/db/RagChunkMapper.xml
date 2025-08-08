@@ -38,8 +38,8 @@
                 file_hash,
                 created_at
             FROM rag_chunks
-            WHERE (embedding <#> CAST(#{embedding, jdbcType=OTHER, typeHandler=mcdodik.springai.db.mybatis.handler.FloatListTypeHandler} AS vector)) <= #{similarityThreshold}
-            ORDER BY embedding <#> CAST(#{embedding, jdbcType=OTHER, typeHandler=mcdodik.springai.db.mybatis.handler.FloatListTypeHandler} AS vector) ASC
+            WHERE (embedding <=> CAST(#{embedding, jdbcType=OTHER, typeHandler=mcdodik.springai.db.mybatis.handler.FloatListTypeHandler} AS vector)) <= #{similarityThreshold}
+            ORDER BY embedding <=> CAST(#{embedding, jdbcType=OTHER, typeHandler=mcdodik.springai.db.mybatis.handler.FloatListTypeHandler} AS vector) ASC
             LIMIT #{topK}
         ]]>
     </select>

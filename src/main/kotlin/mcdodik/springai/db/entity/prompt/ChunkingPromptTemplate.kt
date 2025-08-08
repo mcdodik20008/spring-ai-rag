@@ -8,5 +8,8 @@ data class ChunkingPromptTemplate(
     val domainName: String,
     val userDescription: String,
     val generatedPrompt: String,
-    val createdAt: LocalDateTime
+    val createdAt: LocalDateTime,
+
+    val topic: String? = null,
+    val topicEmbedding: List<Float>? = null, // pgvector
 )

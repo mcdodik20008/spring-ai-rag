@@ -1,4 +1,4 @@
-package mcdodik.springai.api.controller.rag
+package mcdodik.springai.api.controller
 
 import mcdodik.springai.api.dto.AskRequest
 import mcdodik.springai.rag.service.RagService
@@ -31,7 +31,7 @@ class AskController(
      * Accepts a JSON body with a question and returns a stream of answer chunks.
      *
      * @param req The request object containing the question.
-     * @return A [reactor.core.publisher.Flux] emitting string chunks of the generated answer.
+     * @return A [Flux] emitting string chunks of the generated answer.
      */
     @PostMapping
     suspend fun ask(@RequestBody req: AskRequest): Flux<String> {

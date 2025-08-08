@@ -1,4 +1,4 @@
-package mcdodik.springai.api.controller.rag
+package mcdodik.springai.api.controller
 
 import mcdodik.springai.api.dto.EmptyParams
 import mcdodik.springai.api.dto.PdfCleanRequest

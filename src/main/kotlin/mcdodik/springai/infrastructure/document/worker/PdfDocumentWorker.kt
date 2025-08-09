@@ -17,8 +17,9 @@ class PdfDocumentWorker(
     private val cleaner: DocumentCleaner,
     private val readerFactory: CodeAwareTikaReaderFactory,
 ) : DocumentWorker {
-    override fun supports(file: MultipartFile): Boolean =
-        file.contentType == "application/pdf" || file.originalFilename?.endsWith(".pdf") == true
+    override fun supports(file: MultipartFile): Boolean {
+        return file.contentType == "application/pdf" || file.originalFilename?.endsWith(".pdf") == true
+    }
 
     override fun process(
         file: MultipartFile,

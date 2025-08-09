@@ -1,3 +1,7 @@
+import kotlinx.kover.features.jvm.AggregationType
+import kotlinx.kover.features.jvm.CoverageUnit
+import kotlinx.kover.gradle.plugin.dsl.GroupingEntityType
+
 plugins {
     kotlin("jvm") version "1.9.23"
     kotlin("plugin.spring") version "1.9.23"
@@ -6,7 +10,8 @@ plugins {
     // Линтеры/форматирование
     id("io.gitlab.arturbosch.detekt") version "1.23.6"
     id("org.jlleitschuh.gradle.ktlint") version "12.1.1"
-    id("com.diffplug.spotless") version "6.25.0"
+    id("com.diffplug.spotless") version "7.2.1"
+    id("org.jetbrains.kotlinx.kover") version "0.9.1"
 }
 
 group = "mcdodik"
@@ -112,5 +117,67 @@ tasks.withType<Test> {
         showExceptions = true
         showCauses = true
         showStackTraces = true
+    }
+}
+
+tasks.register("installGitHook", Copy::class) {
+    from("$rootDir/ci/git/pre-push")
+    into("$rootDir/.git/hooks")
+    fileMode = 0b111101101
+}
+
+tasks.named("build") {
+    dependsOn("installGitHook")
+}
+
+tasks.register("coverage") {
+    dependsOn("koverXmlReport", "koverHtmlReport", "koverVerify")
+}
+
+kover {
+    reports {
+        filters {
+            excludes {
+                classes(
+                    "**.config.*",
+                    "**.configuration.*",
+                    "**.dto.*",
+                    "**.generated.*",
+                )
+            }
+        }
+
+        total {
+            html { onCheck.set(true) }
+            xml { onCheck.set(true) }
+            verify {
+                // 1) По проекту: минимум 80% покрытие строк
+                rule {
+                    CoverageUnit.LINE
+                    AggregationType.COVERED_PERCENTAGE
+                    GroupingEntityType.APPLICATION
+                    minBound(0) // 80)
+                }
+                // 2) По каждому классу: минимум 60% строк
+                rule {
+                    CoverageUnit.LINE
+                    AggregationType.COVERED_PERCENTAGE
+                    GroupingEntityType.CLASS
+                    minBound(0) // 60)
+                }
+            }
+        }
+    }
+
+    // Точная настройка инструментации (если какие-то классы ломаются)
+    currentProject {
+        instrumentation {
+            // отключить инструментирование проблемных классов
+            // excludedClasses.add("com.example.UnInstrumented*")
+            // отключить для всех тестов (если нужно для перф-тестов)
+            // disableForAll = true
+            // или выборочно:
+            // disableForTestTasks.add("nightlyLoadTest")
+        }
     }
 }

@@ -81,9 +81,9 @@ class OpenRouterChat(
                     .model(body.model)
                     .usage(
                         DefaultUsage(
-                            body.usage?.prompt_tokens ?: 0,
-                            body.usage?.completion_tokens ?: 0,
-                            body.usage?.total_tokens ?: 0,
+                            body.usage?.promptTokens ?: 0,
+                            body.usage?.completionTokens ?: 0,
+                            body.usage?.totalTokens ?: 0,
                         ),
                     )
                     .build(),

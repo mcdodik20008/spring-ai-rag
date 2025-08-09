@@ -12,8 +12,9 @@ class MarkdownDocumentWorker(
     private val textSplitter: TokenTextSplitter,
     private val readerFactory: CodeAwareTikaReaderFactory,
 ) : DocumentWorker {
-    override fun supports(file: MultipartFile): Boolean =
-        file.contentType == "text/markdown" || file.originalFilename?.endsWith(".md") == true
+    override fun supports(file: MultipartFile): Boolean {
+        return file.contentType == "text/markdown" || file.originalFilename?.endsWith(".md") == true
+    }
 
     override fun process(
         file: MultipartFile,

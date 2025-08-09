@@ -85,8 +85,9 @@ class HybridReranker(
         return ScoredDoc(rd, final)
     }
 
-    override fun dedup(scored: List<ScoredDoc>): List<ScoredDoc> =
-        scored.distinctBy { Metadata.fileName(it.doc) to Metadata.chunkIndex(it.doc) }
+    override fun dedup(scored: List<ScoredDoc>): List<ScoredDoc> {
+        return scored.distinctBy { Metadata.fileName(it.doc) to Metadata.chunkIndex(it.doc) }
+    }
 
     private fun cosineSimilarity(
         a: FloatArray,

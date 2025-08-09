@@ -13,8 +13,9 @@ class LLMDocumentWorker(
     @Qualifier("openRouterChatClient")
     private val chunkExtractor: ChatClient,
 ) : DocumentWorker {
-    override fun supports(file: MultipartFile): Boolean =
-        file.contentType == "text/markdown" || file.originalFilename?.endsWith(".md") == true
+    override fun supports(file: MultipartFile): Boolean {
+        return file.contentType == "text/markdown" || file.originalFilename?.endsWith(".md") == true
+    }
 
     override fun process(
         file: MultipartFile,

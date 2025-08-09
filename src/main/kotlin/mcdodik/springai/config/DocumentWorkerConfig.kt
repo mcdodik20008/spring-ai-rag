@@ -25,7 +25,7 @@ class DocumentWorkerConfig {
      * @return An instance of [LLMDocumentWorker] configured with the provided chat client.
      */
     @Bean
-    @ConditionalOnProperty(name = ["openrouter.enabled"], havingValue = "true")
+    @ConditionalOnProperty(name = ["mcdodik.openrouter.enabled"], havingValue = "true")
     fun aiMarkdownWorker(
         @Qualifier("openRouterChatClient")
         chunkExtractor: ChatClient
@@ -40,7 +40,7 @@ class DocumentWorkerConfig {
      * @return An instance of [MarkdownDocumentWorker] configured with the provided splitter and reader factory.
      */
     @Bean
-    @ConditionalOnProperty(name = ["openrouter.enabled"], havingValue = "false", matchIfMissing = true)
+    @ConditionalOnProperty(name = ["mcdodik.openrouter.enabled"], havingValue = "false", matchIfMissing = true)
     fun classicMarkdownWorker(
         splitter: TokenTextSplitter,
         readerFactory: CodeAwareTikaReaderFactory

@@ -1,7 +1,7 @@
 package mcdodik.springai.db
 
 import mcdodik.springai.config.Loggable
-import mcdodik.springai.db.entity.rag.DocumentMetadataKey
+import mcdodik.springai.db.entity.rag.MetadataKey
 import mcdodik.springai.db.entity.rag.RagChunkEntity
 import mcdodik.springai.db.mybatis.mapper.RagChunkMapper
 import mcdodik.springai.extensions.toFilterClause
@@ -21,41 +21,17 @@ import org.springframework.stereotype.Component
 @Component
 @Qualifier("customPgVectorStore")
 class PgVectorStoreImpl(
-    /**
-     * Embedding model used to convert document text into embedding vectors.
-     * Utilizes the OLLaMA embedding model for this purpose.
-     */
     private val embeddingModel: OllamaEmbeddingModel,
-
-    /**
-     * Mapper for interacting with the RagChunk database table.
-     * Used to insert and query document chunks stored in the database.
-     */
     private val ragChunkMapper: RagChunkMapper
 ) : VectorStore {
 
-    /**
-     * Stores a list of documents in the vector store.
-     * Each document's text is converted into an embedding vector using the embedding model,
-     * and then saved to the database via the RagChunkMapper.
-     *
-     * @param documents List of documents to be stored.
-     */
     override fun write(documents: List<Document>) {
         for (it in documents) {
-            it.metadata[DocumentMetadataKey.EMBEDDING.key] = embeddingModel.embed(it.text ?: "empty").toList()
+            it.metadata[MetadataKey.EMBEDDING.key] = embeddingModel.embed(it.text ?: "empty").toList()
             ragChunkMapper.insert(RagChunkEntity.from(it))
         }
     }
 
-    /**
-     * Performs a similarity search on the stored documents based on a query.
-     * The query is embedded into a vector, and the most similar documents are retrieved
-     * using a filtered search with optional similarity threshold and top-k parameters.
-     *
-     * @param request SearchRequest object containing the query and search parameters.
-     * @return A list of documents that match the query based on vector similarity.
-     */
     override fun similaritySearch(request: SearchRequest): List<Document> {
         val embedding = embeddingModel.embed(request.query).toList()
         logger.debug("Searching for {}", embedding)
@@ -74,13 +50,14 @@ class PgVectorStoreImpl(
         return result.map {
             Document(
                 it.content, mapOf(
-                    DocumentMetadataKey.EMBEDDING.key to it.embedding,
-                    DocumentMetadataKey.TYPE.key to it.type,
-                    DocumentMetadataKey.SOURCE.key to it.source,
-                    DocumentMetadataKey.CHUNK_INDEX.key to it.chunkIndex,
-                    DocumentMetadataKey.FILE_NAME.key to it.fileName,
-                    DocumentMetadataKey.EXTENSION.key to it.extension,
-                    DocumentMetadataKey.HASH.key to it.hash
+                    MetadataKey.ID.key to it.id,
+                    MetadataKey.EMBEDDING.key to it.embedding,
+                    MetadataKey.TYPE.key to it.type,
+                    MetadataKey.SOURCE.key to it.source,
+                    MetadataKey.CHUNK_INDEX.key to it.chunkIndex,
+                    MetadataKey.FILE_NAME.key to it.fileName,
+                    MetadataKey.EXTENSION.key to it.extension,
+                    MetadataKey.HASH.key to it.hash
                 )
             )
         }

@@ -1,7 +1,11 @@
 package mcdodik.springai.rag.api
 
-import org.springframework.ai.document.Document
+import mcdodik.springai.rag.model.RetrievedDoc
 
 interface Retriever {
-    fun retrieve(query: String, topK: Int, threshold: Double): List<Document>
+    fun retrieve(
+        query: String,
+        topK: Int,
+        threshold: Double? = null
+    ): List<RetrievedDoc>
 }

@@ -1,11 +1,10 @@
 package mcdodik.springai.extensions
 
 fun String?.sanitize(): String =
-    this ?: ""
-        .replace("\u0000", "")
-        .replace("\r\n", "\n")
-        .trim() ?: ""
-
+    this?.replace("\u0000", "")
+        ?.replace("\r\n", "\n")
+        ?.trim()
+        ?: ""
 
 fun String?.extractBetween(start: String, end: String): String {
     if (this == null) return ""

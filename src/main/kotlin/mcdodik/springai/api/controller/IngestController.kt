@@ -24,11 +24,6 @@ class IngestController(
      */
     private val rag: RagService
 ) {
-
-    /**
-     * Standard response message returned after successful file processing.
-     * Indicates that the file was successfully processed and saved to the knowledge base.
-     */
     val response =
         "Ваш файл успешно обработан и сохранён в базу знаний. \nДобавленная информация будет использоваться во время ответа на последующие вопросы."
 

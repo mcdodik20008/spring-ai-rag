@@ -1,16 +1,7 @@
 package mcdodik.springai.extensions
 
 import java.security.MessageDigest
-import mcdodik.springai.db.entity.rag.DocumentMetadataKey
-import org.springframework.ai.document.Document
 import org.springframework.web.multipart.MultipartFile
-
-fun Document.fetchInfoFromFile(n: Int, file: MultipartFile) {
-    this.metadata[DocumentMetadataKey.CHUNK_INDEX.key] = n
-    this.metadata[DocumentMetadataKey.FILE_NAME.key] = file.originalFilename
-    this.metadata[DocumentMetadataKey.EXTENSION.key] = file.contentType
-    this.metadata[DocumentMetadataKey.HASH.key] = file.sha256()
-}
 
 fun MultipartFile.sha256(): String {
     val digest = MessageDigest.getInstance("SHA-256")

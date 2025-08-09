@@ -2,7 +2,7 @@ package mcdodik.springai.api.service
 
 import java.util.UUID
 import mcdodik.springai.db.entity.rag.DocumentInfo
-import mcdodik.springai.db.entity.rag.DocumentMetadataKey
+import mcdodik.springai.db.entity.rag.MetadataKey
 import mcdodik.springai.db.mybatis.mapper.DocumentInfoMapper
 import org.apache.ibatis.javassist.NotFoundException
 import org.springframework.ai.vectorstore.VectorStore
@@ -40,7 +40,7 @@ class DocumentInfoService(
     fun searchDocumentsByVector(query: String, topK: Int = 5): List<DocumentInfo> {
         val similarChunks = vectorStore.similaritySearch(query)
         val fileNames = similarChunks
-            .mapNotNull { it.metadata[DocumentMetadataKey.FILE_NAME.key] as String }
+            .mapNotNull { it.metadata[MetadataKey.FILE_NAME.key] as String }
             .distinct()
 
         return fileNames.take(5).map { documentStore.searchByFilenameLike(it) }

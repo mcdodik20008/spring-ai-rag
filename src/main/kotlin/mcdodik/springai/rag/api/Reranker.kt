@@ -1,9 +1,10 @@
 package mcdodik.springai.rag.api
 
+import mcdodik.springai.rag.model.RetrievedDoc
 import mcdodik.springai.rag.model.ScoredDoc
 import org.springframework.ai.document.Document
 
 interface Reranker {
-    fun rerank(userEmbedding: FloatArray, raw: List<Document>): List<ScoredDoc>
+    fun rerank(userEmbedding: FloatArray, raw: List<RetrievedDoc>): List<ScoredDoc>
     fun dedup(scored: List<ScoredDoc>): List<ScoredDoc>
 }

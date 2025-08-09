@@ -24,17 +24,16 @@ data class RagChunkEntity(
 ) {
     companion object {
         fun from(it: Document): RagChunkEntity {
-            println("БАЗУХА БРАТ! ${it.metadata[DocumentMetadataKey.EMBEDDING.key].toString()}")
             return RagChunkEntity(
                 id = UUID.randomUUID(),
                 content = it.text ?: "empty",
-                embedding = it.metadata[DocumentMetadataKey.EMBEDDING.key] as List<Float>,
-                type = it.metadata[DocumentMetadataKey.TYPE.key]?.toString() ?: "empty",
-                source = it.metadata[DocumentMetadataKey.SOURCE.key]?.toString() ?: "empty",
-                chunkIndex = it.metadata[DocumentMetadataKey.CHUNK_INDEX.key] as Integer,
-                fileName = it.metadata[DocumentMetadataKey.FILE_NAME.key].toString(),
-                extension = it.metadata[DocumentMetadataKey.EXTENSION.key].toString(),
-                hash = it.metadata[DocumentMetadataKey.HASH.key].toString(),
+                embedding = it.metadata[MetadataKey.EMBEDDING.key] as List<Float>,
+                type = it.metadata[MetadataKey.TYPE.key]?.toString() ?: "empty",
+                source = it.metadata[MetadataKey.SOURCE.key]?.toString() ?: "empty",
+                chunkIndex = it.metadata[MetadataKey.CHUNK_INDEX.key] as Integer,
+                fileName = it.metadata[MetadataKey.FILE_NAME.key].toString(),
+                extension = it.metadata[MetadataKey.EXTENSION.key].toString(),
+                hash = it.metadata[MetadataKey.HASH.key].toString(),
                 createdAt = LocalDateTime.now()
             )
         }

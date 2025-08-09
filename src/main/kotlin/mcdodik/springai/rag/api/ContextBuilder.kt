@@ -1,7 +1,7 @@
 package mcdodik.springai.rag.api
 
-import org.springframework.ai.document.Document
+import mcdodik.springai.rag.model.RetrievedDoc
 
 interface ContextBuilder {
-    fun build(docs: List<Document>, maxChars: Int): String
+    fun build(docs: List<RetrievedDoc>, maxChars: Int): String
 }

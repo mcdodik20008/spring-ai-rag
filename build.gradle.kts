@@ -1,9 +1,12 @@
 plugins {
-    kotlin("jvm") version "1.9.25"
-    kotlin("plugin.spring") version "1.9.25"
+    kotlin("jvm") version "1.9.23"
+    kotlin("plugin.spring") version "1.9.23"
     id("org.springframework.boot") version "3.4.5"
     id("io.spring.dependency-management") version "1.1.7"
-    //id("org.graalvm.buildtools.native") version "0.10.6"
+    // Линтеры/форматирование
+    id("io.gitlab.arturbosch.detekt") version "1.23.6"
+    id("org.jlleitschuh.gradle.ktlint") version "12.1.1"
+    id("com.diffplug.spotless") version "6.25.0"
 }
 
 group = "mcdodik"
@@ -86,6 +89,31 @@ kotlin {
     }
 }
 
+detekt {
+    toolVersion = "1.23.6"
+    config.setFrom(files("$rootDir/detekt.yml"))
+    buildUponDefaultConfig = true
+   // ignoreFailures = true
+    autoCorrect = false
+    // исключаем пути целиком
+    source.setFrom(
+        files(
+            "src/main/kotlin",
+            "src/test/kotlin"
+        )
+    )
+}
+
 tasks.withType<Test> {
     useJUnitPlatform()
+    testLogging {
+        events("FAILED", "SKIPPED", "STANDARD_ERROR")
+        exceptionFormat = org.gradle.api.tasks.testing.logging.TestExceptionFormat.FULL
+        showExceptions = true
+        showCauses = true
+        showStackTraces = true
+    }
 }
+
+
+

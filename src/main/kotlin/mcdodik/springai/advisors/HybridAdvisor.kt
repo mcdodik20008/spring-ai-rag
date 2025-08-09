@@ -26,7 +26,9 @@ class HybridAdvisor(
 
     override fun before(req: ChatClientRequest, chain: AdvisorChain): ChatClientRequest {
         val userPrompt = req.prompt.userMessage.text
-        if (userPrompt.isBlank()) return req
+        if (userPrompt.isBlank()) {
+            return req
+        }
 
         val t0 = System.nanoTime()
         val raw = try {
@@ -35,11 +37,13 @@ class HybridAdvisor(
                 topK = properties.topK,
                 threshold = properties.vectorStoreSimilarityThreshold
             )
-        } catch (e: Exception) {
+        } catch (e: RuntimeException) {
             logger.error("Hybrid retrieve failed", e)
             return req
         }
-        if (raw.isEmpty()) return req
+        if (raw.isEmpty()) {
+            return req
+        }
 
         val userEmb = embeddingModel.embed(userPrompt)
         val reranked = reranker.rerank(userEmb, raw)
@@ -50,7 +54,9 @@ class HybridAdvisor(
 
         val deduped = reranker.dedup(reranked)
         val docs = deduped.take(properties.finalK).map { it.doc }
-        if (docs.isEmpty()) return req
+        if (docs.isEmpty()) {
+            return req
+        }
 
         val fileNames = docs.mapNotNull { Metadata.fileName(it) }.toSet()
         val summaries = runCatching { summaryService.summariesByFileName(fileNames) }.getOrElse { emptyMap() }
@@ -69,11 +75,15 @@ class HybridAdvisor(
         logger.info(
             "RAG-Hybrid: raw={}, used={}, files={}, ctxLen={}, sumLen={}, took={} ms",
             raw.size, docs.size, fileNames.size, ragContext.length, docSummary.length,
-            (System.nanoTime() - t0) / 1_000_000
+            (System.nanoTime() - t0) / TO_SECOND
         )
         return mutated
     }
 
     override fun after(resp: ChatClientResponse, chain: AdvisorChain) = resp
     override fun getOrder(): Int = properties.order
+
+    companion object {
+        const val TO_SECOND = 1_000_000
+    }
 }

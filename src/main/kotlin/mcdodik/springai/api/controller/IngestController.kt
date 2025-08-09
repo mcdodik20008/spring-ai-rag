@@ -24,9 +24,10 @@ class IngestController(
      */
     private val rag: RagService
 ) {
-    val response =
-        "Ваш файл успешно обработан и сохранён в базу знаний. \nДобавленная информация будет использоваться во время ответа на последующие вопросы."
-
+    val response = """
+            Ваш файл успешно обработан и сохранён в базу знаний.
+            Добавленная информация будет использоваться во время ответа на последующие вопросы.
+        """.trimIndent()
     /**
      * Handles POST requests to the "/api/docs/ingest/markdown" endpoint.
      * Accepts a Markdown file as a multipart form data request.

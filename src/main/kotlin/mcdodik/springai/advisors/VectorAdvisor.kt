@@ -106,7 +106,7 @@ class VectorAdvisor(
         logger.info(
             "RAG: raw={}, used={}, files={}, ctxLen={}, sumLen={}, took={} ms",
             raw.size, docs.size, fileNames.size, ragContext.length, docSummary.length,
-            (System.nanoTime() - t0) / 1_000_000
+            (System.nanoTime() - t0) / TO_SECOND
         )
         return mutated
     }
@@ -114,4 +114,8 @@ class VectorAdvisor(
     override fun after(resp: ChatClientResponse, chain: AdvisorChain) = resp
 
     override fun getOrder(): Int = properties.order
+
+    companion object {
+        const val TO_SECOND = 1_000_000
+    }
 }

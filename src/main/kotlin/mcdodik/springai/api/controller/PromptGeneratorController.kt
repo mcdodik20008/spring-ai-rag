@@ -17,9 +17,6 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 @RequestMapping("/api/prompt")
 class PromptGeneratorController(
-    /**
-     * Service used to generate prompt templates.
-     */
     private val service: PromptGenerationService
 ) {
 
@@ -45,9 +42,14 @@ class PromptGeneratorController(
                     domainName = it.template.domainName,
                     topic = it.template.topic,
                     score = it.score,
-                    preview = it.template.generatedPrompt.take(200)
+                    preview = it.template.generatedPrompt.take(SYMBOL_TO_VIEW)
                 )
             }
+
         )
+    }
+
+    companion object {
+        const val SYMBOL_TO_VIEW = 200
     }
 }

@@ -1,6 +1,5 @@
 package mcdodik.springai.api.service
 
-import java.util.UUID
 import mcdodik.springai.db.entity.rag.DocumentInfo
 import mcdodik.springai.db.entity.rag.MetadataKey
 import mcdodik.springai.db.mybatis.mapper.DocumentInfoMapper
@@ -8,6 +7,7 @@ import org.apache.ibatis.javassist.NotFoundException
 import org.springframework.ai.vectorstore.VectorStore
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.stereotype.Service
+import java.util.UUID
 
 /**
  * Service class for managing document information.
@@ -43,7 +43,9 @@ class DocumentInfoService(
             .mapNotNull { it.metadata[MetadataKey.FILE_NAME.key] as String }
             .distinct()
 
-        return fileNames.take(5).map { documentStore.searchByFilenameLike(it) }
+        return fileNames
+            .take(if (topK == 0) DEFAULT_TOP_K else topK)
+            .map { documentStore.searchByFilenameLike(it) }
     }
 
     /**
@@ -80,5 +82,9 @@ class DocumentInfoService(
      */
     fun delete(id: UUID) {
         documentStore.delete(id)
+    }
+
+    companion object {
+        const val DEFAULT_TOP_K = 5
     }
 }

@@ -75,10 +75,18 @@ class RagConfig {
 
     @Bean
     fun tokenTextSplitter(): TokenTextSplitter = TokenTextSplitter(
-        1000,     // chunkSize
-        256,      // minChunkSizeChars
-        128,      // minChunkLengthToEmbed
-        1000,     // maxNumChunks
+        CHUNK_SIZE,
+        MIN_CHUNK_SIZE_CHARS,
+        MIN_CHUNK_LENGTH_TO_EMBED,
+        MAX_NUM_CHUNKS,
         true      // keepSeparator
     )
+
+    companion object {
+        const val CHUNK_SIZE = 1000
+        const val MIN_CHUNK_SIZE_CHARS = 256
+        const val MIN_CHUNK_LENGTH_TO_EMBED = 128
+        const val MAX_NUM_CHUNKS = 1000
+    }
 }
+

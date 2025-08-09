@@ -47,25 +47,7 @@ class CodeAwareTikaReader : DocumentReader {
         var insideCode = false
 
         for (line in content.lines()) {
-            val trimmed = line.trim()
-
-            if (trimmed.startsWith("```")) {
-                if (insideCode) {
-                    buffer.appendLine(line)
-                    result += RagChunkDto(buffer.toString().trim(), "code")
-                    buffer.clear()
-                    insideCode = false
-                } else {
-                    if (buffer.isNotBlank()) {
-                        result += RagChunkDto(buffer.toString().trim(), "text")
-                        buffer.clear()
-                    }
-                    buffer.appendLine(line)
-                    insideCode = true
-                }
-            } else {
-                buffer.appendLine(line)
-            }
+            insideCode = isInsideCode(line, insideCode, buffer, result)
         }
 
         if (buffer.isNotBlank()) {
@@ -74,6 +56,35 @@ class CodeAwareTikaReader : DocumentReader {
         }
 
         return result
+    }
+
+    private fun isInsideCode(
+        line: String,
+        insideCode: Boolean,
+        buffer: StringBuilder,
+        result: MutableList<RagChunkDto>
+    ): Boolean {
+        var insideCode1 = insideCode
+        val trimmed = line.trim()
+
+        if (trimmed.startsWith("```")) {
+            if (insideCode1) {
+                buffer.appendLine(line)
+                result += RagChunkDto(buffer.toString().trim(), "code")
+                buffer.clear()
+                insideCode1 = false
+            } else {
+                if (buffer.isNotBlank()) {
+                    result += RagChunkDto(buffer.toString().trim(), "text")
+                    buffer.clear()
+                }
+                buffer.appendLine(line)
+                insideCode1 = true
+            }
+        } else {
+            buffer.appendLine(line)
+        }
+        return insideCode1
     }
 
 }

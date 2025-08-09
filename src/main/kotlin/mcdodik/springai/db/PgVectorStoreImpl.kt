@@ -36,13 +36,10 @@ class PgVectorStoreImpl(
         val embedding = embeddingModel.embed(request.query).toList()
         logger.debug("Searching for {}", embedding)
 
-        val filterClause = request.filterExpression.toFilterClause()
-
         val result = ragChunkMapper.searchByEmbeddingFiltered(
             embedding = embedding,
             similarityThreshold = request.similarityThreshold,
-            topK = request.topK,
-            filterClause = filterClause
+            topK = request.topK
         )
 
         logger.debug("Found chunk with ids: {}", result.map { it.id })

@@ -6,7 +6,7 @@ import org.springframework.web.multipart.MultipartFile
 fun MultipartFile.sha256(): String {
     val digest = MessageDigest.getInstance("SHA-256")
     inputStream.use {
-        val buffer = ByteArray(8192)
+        val buffer = ByteArray(BUFFER_SIZE)
         var bytesRead: Int
         while (it.read(buffer).also { bytesRead = it } != -1) {
             digest.update(buffer, 0, bytesRead)
@@ -21,3 +21,5 @@ fun MultipartFile.featAllTextFromObsidianMd(): String {
     val regex = Regex("^---\\s*\\n(.*?)\\n---\\s*\\n", RegexOption.DOT_MATCHES_ALL)
     return regex.replaceFirst(text, "").trim()
 }
+
+const val BUFFER_SIZE = 8192

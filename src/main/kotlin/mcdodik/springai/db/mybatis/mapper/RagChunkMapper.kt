@@ -31,6 +31,6 @@ interface RagChunkMapper {
         embedding: List<Float>,
         similarityThreshold: Double?,
         topK: Int?,
-        filterClause: String?
+        filterClause: String? = null
     ): List<RagChunkEntity>
 }

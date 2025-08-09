@@ -52,12 +52,17 @@ class HybridRetriever(
     }
 
     /** Weighted: min–max нормализация и взвешивание */
-    private fun fuseWeighted(vec: List<RetrievedDoc>, bm: List<RetrievedDoc>, vw: Double, bw: Double): List<RetrievedDoc> {
+    private fun fuseWeighted(
+        vec: List<RetrievedDoc>,
+        bm: List<RetrievedDoc>,
+        vw: Double,
+        bw: Double
+    ): List<RetrievedDoc> {
         fun normalize01(xs: List<RetrievedDoc>): List<RetrievedDoc> {
             if (xs.isEmpty()) return xs
             val minS = xs.minOf { it.score }
             val maxS = xs.maxOf { it.score }
-            val denom = (maxS - minS).takeIf { it > 1e-12 } ?: 1.0
+            val denom = (maxS - minS).takeIf { it > EPS } ?: 1.0
             return xs.map { it.copy(score = (it.score - minS) / denom) }
         }
 
@@ -79,5 +84,9 @@ class HybridRetriever(
                 type = ScoreType.HYBRID
             )
         }
+    }
+
+    companion object {
+        private const val EPS = 1e-12
     }
 }

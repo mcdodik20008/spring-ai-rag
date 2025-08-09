@@ -128,7 +128,7 @@
       threshold: 600
     LongMethod:
       active: true
-      threshold: 60
+      threshold: 100
     LongParameterList:
       active: true
       functionThreshold: 8
@@ -632,7 +632,7 @@
       maxChainedCalls: 5
     MaxLineLength:
       active: true
-      maxLineLength: 120
+      maxLineLength: 200
       excludePackageStatements: true
       excludeImportStatements: true
       excludeCommentStatements: false

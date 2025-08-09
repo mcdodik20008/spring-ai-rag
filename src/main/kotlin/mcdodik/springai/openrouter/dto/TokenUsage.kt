@@ -8,5 +8,5 @@ data class TokenUsage(
     @JsonProperty("completion_tokens")
     val completionTokens: Int,
     @JsonProperty("total_tokens")
-    val totalTokens: Int
+    val totalTokens: Int,
 )

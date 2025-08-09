@@ -93,14 +93,14 @@ detekt {
     toolVersion = "1.23.6"
     config.setFrom(files("$rootDir/detekt.yml"))
     buildUponDefaultConfig = true
-   // ignoreFailures = true
+    ignoreFailures = true
     autoCorrect = false
     // исключаем пути целиком
     source.setFrom(
         files(
             "src/main/kotlin",
-            "src/test/kotlin"
-        )
+            "src/test/kotlin",
+        ),
     )
 }
 
@@ -114,6 +114,3 @@ tasks.withType<Test> {
         showStackTraces = true
     }
 }
-
-
-

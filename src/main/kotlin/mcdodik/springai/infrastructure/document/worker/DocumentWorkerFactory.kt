@@ -7,13 +7,16 @@ import org.springframework.web.multipart.MultipartFile
 
 @Component
 class DocumentWorkerFactory(
-    private val workers: List<DocumentWorker>
+    private val workers: List<DocumentWorker>,
 ) {
     fun getWorker(file: MultipartFile): DocumentWorker =
         workers.firstOrNull { it.supports(file) }
             ?: throw IllegalArgumentException("Unsupported file type: ${file.contentType}")
 
-    fun process(file: MultipartFile, params: CleanRequestParams): List<Document> {
+    fun process(
+        file: MultipartFile,
+        params: CleanRequestParams,
+    ): List<Document> {
         val worker = getWorker(file)
         return worker.process(file, params)
     }

@@ -4,7 +4,6 @@ import mcdodik.springai.config.Loggable
 import mcdodik.springai.db.entity.rag.MetadataKey
 import mcdodik.springai.db.entity.rag.RagChunkEntity
 import mcdodik.springai.db.mybatis.mapper.RagChunkMapper
-import mcdodik.springai.extensions.toFilterClause
 import org.springframework.ai.document.Document
 import org.springframework.ai.ollama.OllamaEmbeddingModel
 import org.springframework.ai.vectorstore.SearchRequest
@@ -22,9 +21,8 @@ import org.springframework.stereotype.Component
 @Qualifier("customPgVectorStore")
 class PgVectorStoreImpl(
     private val embeddingModel: OllamaEmbeddingModel,
-    private val ragChunkMapper: RagChunkMapper
+    private val ragChunkMapper: RagChunkMapper,
 ) : VectorStore {
-
     override fun write(documents: List<Document>) {
         for (it in documents) {
             it.metadata[MetadataKey.EMBEDDING.key] = embeddingModel.embed(it.text ?: "empty").toList()
@@ -36,17 +34,19 @@ class PgVectorStoreImpl(
         val embedding = embeddingModel.embed(request.query).toList()
         logger.debug("Searching for {}", embedding)
 
-        val result = ragChunkMapper.searchByEmbeddingFiltered(
-            embedding = embedding,
-            similarityThreshold = request.similarityThreshold,
-            topK = request.topK
-        )
+        val result =
+            ragChunkMapper.searchByEmbeddingFiltered(
+                embedding = embedding,
+                similarityThreshold = request.similarityThreshold,
+                topK = request.topK,
+            )
 
         logger.debug("Found chunk with ids: {}", result.map { it.id })
 
         return result.map {
             Document(
-                it.content, mapOf(
+                it.content,
+                mapOf(
                     MetadataKey.ID.key to it.id,
                     MetadataKey.EMBEDDING.key to it.embedding,
                     MetadataKey.TYPE.key to it.type,
@@ -54,8 +54,8 @@ class PgVectorStoreImpl(
                     MetadataKey.CHUNK_INDEX.key to it.chunkIndex,
                     MetadataKey.FILE_NAME.key to it.fileName,
                     MetadataKey.EXTENSION.key to it.extension,
-                    MetadataKey.HASH.key to it.hash
-                )
+                    MetadataKey.HASH.key to it.hash,
+                ),
             )
         }
     }

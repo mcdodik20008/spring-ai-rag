@@ -7,7 +7,6 @@ import org.springframework.ai.reader.tika.TikaDocumentReader
 import org.springframework.core.io.Resource
 
 class CodeAwareTikaReader : DocumentReader {
-
     val delegate: TikaDocumentReader
 
     constructor(resource: Resource) {
@@ -28,15 +27,19 @@ class CodeAwareTikaReader : DocumentReader {
         val logicalBlocks = splitByCodeBlocks(buffer.toString())
 
         return logicalBlocks.mapIndexed { i, block ->
-            val typedMetadata = (metadata + mapOf(
-                "type" to block.type,
-                "chunk_index" to i
-            )) as Map<String, Any?>
+            val typedMetadata =
+                (
+                    metadata +
+                        mapOf(
+                            "type" to block.type,
+                            "chunk_index" to i,
+                        )
+                ) as Map<String, Any?>
 
             Document(
                 "chunk-$i",
                 block.content,
-                typedMetadata
+                typedMetadata,
             )
         }
     }
@@ -62,7 +65,7 @@ class CodeAwareTikaReader : DocumentReader {
         line: String,
         insideCode: Boolean,
         buffer: StringBuilder,
-        result: MutableList<RagChunkDto>
+        result: MutableList<RagChunkDto>,
     ): Boolean {
         var insideCode1 = insideCode
         val trimmed = line.trim()
@@ -86,5 +89,4 @@ class CodeAwareTikaReader : DocumentReader {
         }
         return insideCode1
     }
-
 }

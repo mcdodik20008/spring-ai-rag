@@ -12,7 +12,6 @@ import org.springframework.web.client.RestTemplate
  */
 @Configuration
 class WebConfig {
-
     /**
      * Bean definition for a configured [RestTemplate] instance.
      * The [RestTemplate] is enhanced with an interceptor that enables retry logic on failed requests.
@@ -26,5 +25,4 @@ class WebConfig {
             .additionalInterceptors(RetryInterceptor(maxRetries = 3))
             .build()
     }
-
 }

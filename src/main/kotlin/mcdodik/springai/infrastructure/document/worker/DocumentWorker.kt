@@ -6,5 +6,9 @@ import org.springframework.web.multipart.MultipartFile
 
 interface DocumentWorker {
     fun supports(file: MultipartFile): Boolean
-    fun process(file: MultipartFile, params: CleanRequestParams): List<Document>
+
+    fun process(
+        file: MultipartFile,
+        params: CleanRequestParams,
+    ): List<Document>
 }

@@ -6,5 +6,8 @@ import org.apache.ibatis.annotations.Param
 
 @Mapper
 interface Bm25Mapper {
-    fun search(@Param("q") q: String, @Param("topK") topK: Int): List<Bm25Row>
+    fun search(
+        @Param("q") q: String,
+        @Param("topK") topK: Int,
+    ): List<Bm25Row>
 }

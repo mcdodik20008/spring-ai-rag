@@ -28,39 +28,43 @@ class OpenRouterChat(
     private val endpoint = "https://openrouter.ai/api/v1/chat/completions"
 
     override fun call(prompt: Prompt): ChatResponse {
-        val messages = prompt.instructions.mapNotNull { msg ->
-            when (msg) {
-                is SystemMessage -> mapOf("role" to "system", "content" to msg.text)
-                is UserMessage -> mapOf("role" to "user", "content" to msg.text)
-                is AssistantMessage -> mapOf("role" to "assistant", "content" to msg.text)
-                else -> null
+        val messages =
+            prompt.instructions.mapNotNull { msg ->
+                when (msg) {
+                    is SystemMessage -> mapOf("role" to "system", "content" to msg.text)
+                    is UserMessage -> mapOf("role" to "user", "content" to msg.text)
+                    is AssistantMessage -> mapOf("role" to "assistant", "content" to msg.text)
+                    else -> null
+                }
             }
-        }
 
-        val requestBody = mutableMapOf<String, Any>(
-            "model" to model,
-            "messages" to messages,
-            "temperature" to (temperature),
-            "top_p" to (topP),
-            "max_tokens" to (maxTokens),
-            "stream" to false
-        )
+        val requestBody =
+            mutableMapOf<String, Any>(
+                "model" to model,
+                "messages" to messages,
+                "temperature" to (temperature),
+                "top_p" to (topP),
+                "max_tokens" to (maxTokens),
+                "stream" to false,
+            )
 
-        val headers = HttpHeaders().apply {
-            contentType = MediaType.APPLICATION_JSON
-            setBearerAuth(apiKey)
-        }
+        val headers =
+            HttpHeaders().apply {
+                contentType = MediaType.APPLICATION_JSON
+                setBearerAuth(apiKey)
+            }
         logger.debug("Request body: {}", requestBody)
 
         val httpEntity = HttpEntity(requestBody, headers)
         logger.debug("Http entity: {}", httpEntity)
 
-        val response = restTemplate.exchange(
-            endpoint,
-            HttpMethod.POST,
-            httpEntity,
-            OpenRouterResponse::class.java
-        )
+        val response =
+            restTemplate.exchange(
+                endpoint,
+                HttpMethod.POST,
+                httpEntity,
+                OpenRouterResponse::class.java,
+            )
 
         val body = response.body ?: error("Empty response")
         logger.debug("OpenRouter response: {}", body)
@@ -79,10 +83,10 @@ class OpenRouterChat(
                         DefaultUsage(
                             body.usage?.prompt_tokens ?: 0,
                             body.usage?.completion_tokens ?: 0,
-                            body.usage?.total_tokens ?: 0
-                        )
+                            body.usage?.total_tokens ?: 0,
+                        ),
                     )
-                    .build()
+                    .build(),
             )
             .build()
     }

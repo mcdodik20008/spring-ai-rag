@@ -1,7 +1,7 @@
 package mcdodik.springai.extensions
 
-import java.security.MessageDigest
 import org.springframework.web.multipart.MultipartFile
+import java.security.MessageDigest
 
 fun MultipartFile.sha256(): String {
     val digest = MessageDigest.getInstance("SHA-256")

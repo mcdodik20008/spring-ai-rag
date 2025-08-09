@@ -7,5 +7,5 @@ data class HybridConfig(
     val bmTopK: Int = 20,
     val finalTopK: Int = 20,
     val mode: FuseMode = FuseMode.RRF,
-    val rrfK: Int = 60
+    val rrfK: Int = 60,
 )

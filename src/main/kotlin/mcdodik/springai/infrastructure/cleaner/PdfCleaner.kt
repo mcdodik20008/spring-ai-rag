@@ -1,9 +1,5 @@
 package mcdodik.springai.infrastructure.cleaner
 
-import java.io.ByteArrayInputStream
-import java.io.ByteArrayOutputStream
-import java.io.File
-import java.io.InputStream
 import mcdodik.springai.api.dto.PdfCleanRequest
 import mcdodik.springai.extensions.hasGlyph
 import org.apache.pdfbox.Loader
@@ -14,11 +10,17 @@ import org.apache.pdfbox.pdmodel.common.PDRectangle
 import org.apache.pdfbox.pdmodel.font.PDType0Font
 import org.apache.pdfbox.text.PDFTextStripper
 import org.springframework.stereotype.Component
+import java.io.ByteArrayInputStream
+import java.io.ByteArrayOutputStream
+import java.io.File
+import java.io.InputStream
 
 @Component
 class PdfCleaner : DocumentCleaner {
-
-    override fun doIt(input: InputStream, params: PdfCleanRequest): InputStream {
+    override fun doIt(
+        input: InputStream,
+        params: PdfCleanRequest,
+    ): InputStream {
         val cleaned = ByteArrayOutputStream()
 
         Loader.loadPDF(input.readAllBytes()).use { document ->
@@ -39,9 +41,10 @@ class PdfCleaner : DocumentCleaner {
             val headers = findRepeatingLines(pages, params.headerFooterLines, params.repeatThreshold, fromTop = true)
             val footers = findRepeatingLines(pages, params.headerFooterLines, params.repeatThreshold, fromTop = false)
 
-            val cleanedPages = pages.map { lines ->
-                lines.filterNot { it in headers || it in footers }
-            }
+            val cleanedPages =
+                pages.map { lines ->
+                    lines.filterNot { it in headers || it in footers }
+                }
 
             storePdf(cleanedPages, cleaned)
         }
@@ -51,13 +54,13 @@ class PdfCleaner : DocumentCleaner {
 
     private fun storePdf(
         cleanedPages: List<List<String>>,
-        cleaned: ByteArrayOutputStream
+        cleaned: ByteArrayOutputStream,
     ) {
         PDDocument().use { newDoc ->
-            val fontStream = javaClass.getResourceAsStream("/fonts/DejaVuSans.ttf")
-                ?: error("Шрифт DejaVuSans.ttf не найден в resources/fonts/")
+            val fontStream =
+                javaClass.getResourceAsStream("/fonts/DejaVuSans.ttf")
+                    ?: error("Шрифт DejaVuSans.ttf не найден в resources/fonts/")
             val font = PDType0Font.load(newDoc, fontStream, true) // важно: embed = true
-
 
             cleanedPages.forEach { lines ->
                 val page = PDPage(PDRectangle.LETTER)
@@ -76,7 +79,7 @@ class PdfCleaner : DocumentCleaner {
         newDoc: PDDocument,
         page: PDPage,
         font: PDType0Font,
-        lines: List<String>
+        lines: List<String>,
     ) {
         PDPageContentStream(newDoc, page).use { content ->
             content.beginText()

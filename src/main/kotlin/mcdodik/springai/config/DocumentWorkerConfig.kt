@@ -1,9 +1,9 @@
 package mcdodik.springai.config
 
+import mcdodik.springai.infrastructure.document.reader.CodeAwareTikaReaderFactory
 import mcdodik.springai.infrastructure.document.worker.DocumentWorker
 import mcdodik.springai.infrastructure.document.worker.LLMDocumentWorker
 import mcdodik.springai.infrastructure.document.worker.MarkdownDocumentWorker
-import mcdodik.springai.infrastructure.document.reader.CodeAwareTikaReaderFactory
 import org.springframework.ai.chat.client.ChatClient
 import org.springframework.ai.transformer.splitter.TokenTextSplitter
 import org.springframework.beans.factory.annotation.Qualifier
@@ -16,7 +16,6 @@ import org.springframework.context.annotation.Configuration
  */
 @Configuration
 class DocumentWorkerConfig {
-
     /**
      * Bean definition for the AI-based Markdown document worker.
      * This worker is used when the "openrouter.enabled" property is set to "true".
@@ -28,7 +27,7 @@ class DocumentWorkerConfig {
     @ConditionalOnProperty(name = ["mcdodik.openrouter.enabled"], havingValue = "true")
     fun aiMarkdownWorker(
         @Qualifier("openRouterChatClient")
-        chunkExtractor: ChatClient
+        chunkExtractor: ChatClient,
     ): DocumentWorker = LLMDocumentWorker(chunkExtractor)
 
     /**
@@ -43,7 +42,6 @@ class DocumentWorkerConfig {
     @ConditionalOnProperty(name = ["mcdodik.openrouter.enabled"], havingValue = "false", matchIfMissing = true)
     fun classicMarkdownWorker(
         splitter: TokenTextSplitter,
-        readerFactory: CodeAwareTikaReaderFactory
+        readerFactory: CodeAwareTikaReaderFactory,
     ): DocumentWorker = MarkdownDocumentWorker(splitter, readerFactory)
-
 }

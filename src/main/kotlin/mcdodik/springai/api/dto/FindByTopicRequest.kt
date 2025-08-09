@@ -4,6 +4,5 @@ package mcdodik.springai.api.dto
 data class FindByTopicRequest(
     val topic: String,
     val k: Int = 5,
-    val minSim: Double = 0.35 // 0..1, косинусная схожесть
+    val minSim: Double = 0.35,
 )
-

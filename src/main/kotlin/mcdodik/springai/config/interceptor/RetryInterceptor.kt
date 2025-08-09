@@ -7,13 +7,12 @@ import org.springframework.http.client.ClientHttpResponse
 
 class RetryInterceptor(
     private val maxRetries: Int = 3,
-    private val delay: Long = 500L
+    private val delay: Long = 500L,
 ) : ClientHttpRequestInterceptor {
-
     override fun intercept(
         request: HttpRequest,
         body: ByteArray,
-        execution: ClientHttpRequestExecution
+        execution: ClientHttpRequestExecution,
     ): ClientHttpResponse {
         var attempt = 0
         var lastException: Exception? = null

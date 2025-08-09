@@ -13,17 +13,20 @@ class LLMDocumentWorker(
     @Qualifier("openRouterChatClient")
     private val chunkExtractor: ChatClient,
 ) : DocumentWorker {
-
     override fun supports(file: MultipartFile): Boolean =
         file.contentType == "text/markdown" || file.originalFilename?.endsWith(".md") == true
 
-    override fun process(file: MultipartFile, params: CleanRequestParams): List<Document> {
+    override fun process(
+        file: MultipartFile,
+        params: CleanRequestParams,
+    ): List<Document> {
         val text = file.featAllTextFromObsidianMd()
-        val chunkedText = chunkExtractor
-            .prompt(EXTRACT_CHUNKS_PROMPT_PHILOSOPHY)
-            .user(text)
-            .call()
-            .content() ?: throw NullPointerException("summary is null")
+        val chunkedText =
+            chunkExtractor
+                .prompt(EXTRACT_CHUNKS_PROMPT_PHILOSOPHY)
+                .user(text)
+                .call()
+                .content() ?: throw NullPointerException("summary is null")
 
         val chunksStr = parseChunks(chunkedText)
         val chunks = chunksStr.map { Document(it) }
@@ -31,11 +34,15 @@ class LLMDocumentWorker(
         return chunks
     }
 
-    private fun parseChunks(rawText: String, maxChunks: Int = 20): List<String> {
-        val normalized = rawText
-            .replace("\r\n", "\n")
-            .replace("\r", "\n")
-            .replace("\\n", "\n") // если приходит как строка
+    private fun parseChunks(
+        rawText: String,
+        maxChunks: Int = 20,
+    ): List<String> {
+        val normalized =
+            rawText
+                .replace("\r\n", "\n")
+                .replace("\r", "\n")
+                .replace("\\n", "\n") // если приходит как строка
 
         return normalized
             .split(Regex("""\n\s*\n""")) // <== разделяем по пустой строке (возможно с пробелами/табами)
@@ -43,5 +50,4 @@ class LLMDocumentWorker(
             .filter { it.isNotEmpty() }
             .take(maxChunks)
     }
-
 }

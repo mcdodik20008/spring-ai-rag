@@ -24,7 +24,6 @@ class RagService(
     @Qualifier("openRouterChatClient")
     private val summarizer: ChatClient,
 ) {
-
     fun ask(question: String): Flux<String> {
         return chat.prompt()
             .user(question)
@@ -32,16 +31,20 @@ class RagService(
             .content()
     }
 
-    fun ingest(file: MultipartFile, params: CleanRequestParams) {
+    fun ingest(
+        file: MultipartFile,
+        params: CleanRequestParams,
+    ) {
         logger.info("splitting file to chunks ${file.originalFilename}")
         val chunks = documentWorkerFactory.process(file, params)
 
         logger.info("summarizing file ${file.originalFilename}")
         val text = file.featAllTextFromObsidianMd()
-        val summary = summarizer.prompt()
-            .user("Вот текст, который нужно суммировать:\n$text")
-            .call()
-            .content() ?: "no summary"
+        val summary =
+            summarizer.prompt()
+                .user("Вот текст, который нужно суммировать:\n$text")
+                .call()
+                .content() ?: "no summary"
 
         val documentInfo = DocumentInfo.createFromFileAndCunks(file, chunks.size, summary)
         documentStore.insert(documentInfo)
@@ -51,6 +54,3 @@ class RagService(
 
     companion object : Loggable
 }
-
-
-

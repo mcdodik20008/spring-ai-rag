@@ -1,6 +1,5 @@
 package mcdodik.springai.config.chatmodel
 
-import mcdodik.springai.advisors.HybridAdvisor
 import mcdodik.springai.advisors.VectorAdvisor
 import mcdodik.springai.config.advisors.VectorAdvisorProperties
 import mcdodik.springai.config.chatmodel.ChatModelsConfig.LLMTaskType.CHUNKING
@@ -24,18 +23,18 @@ import org.springframework.web.client.RestTemplate
 
 @Configuration
 class ChatModelsConfig {
-
     @Bean
     @Primary
     @Qualifier("ollamaChatClient")
     fun ollamaChatClient(
         chatModel: OllamaChatModel,
         @Qualifier("hybridAdvisor")
-        advisor: BaseAdvisor
-    ): ChatClient = ChatClient
-        .builder(chatModel)
-        .defaultAdvisors(advisor)
-        .build()
+        advisor: BaseAdvisor,
+    ): ChatClient =
+        ChatClient
+            .builder(chatModel)
+            .defaultAdvisors(advisor)
+            .build()
 
     @Bean
     @Qualifier("vectorAdvisor")
@@ -45,7 +44,7 @@ class ChatModelsConfig {
         retriever: Retriever,
         reranker: Reranker,
         contextBuilder: ContextBuilder,
-        summaryService: SummaryService
+        summaryService: SummaryService,
     ): BaseAdvisor {
         return VectorAdvisor(
             properties = properties,
@@ -53,54 +52,63 @@ class ChatModelsConfig {
             retriever = retriever,
             reranker = reranker,
             contextBuilder = contextBuilder,
-            summaryService = summaryService
+            summaryService = summaryService,
         )
     }
 
     @Bean
     @Qualifier("openRouterChatClient")
-    fun openRouterChatClient(props: OpenRouterProperties, restTemplate: RestTemplate): ChatClient {
-        val model = OpenRouterChat(
-            restTemplate = restTemplate,
-            apiKey = props.apiKey,
-            model = props.models.default,
-            temperature = props.temperature,
-            topP = props.topP,
-            maxTokens = props.maxTokens
-        )
+    fun openRouterChatClient(
+        props: OpenRouterProperties,
+        restTemplate: RestTemplate,
+    ): ChatClient {
+        val model =
+            OpenRouterChat(
+                restTemplate = restTemplate,
+                apiKey = props.apiKey,
+                model = props.models.default,
+                temperature = props.temperature,
+                topP = props.topP,
+                maxTokens = props.maxTokens,
+            )
 
         return ChatClient.builder(model).build()
     }
 
-
     @Bean
     fun dynamicOpenRouterChatClient(
-        props: OpenRouterProperties, restTemplate: RestTemplate
+        props: OpenRouterProperties,
+        restTemplate: RestTemplate,
     ): (LLMTaskType?, String?) -> ChatClient {
         return { taskType, overrideModel ->
 
-            val modelName = overrideModel ?: when (taskType) {
-                SUMMARY -> props.models.summary
-                PROMPT_GEN -> props.models.promptGen
-                CHUNKING -> props.models.chunking
-                DEFAULT -> props.models.default
-                null -> props.models.default
-            } ?: props.models.default
+            val modelName =
+                overrideModel ?: when (taskType) {
+                    SUMMARY -> props.models.summary
+                    PROMPT_GEN -> props.models.promptGen
+                    CHUNKING -> props.models.chunking
+                    DEFAULT -> props.models.default
+                    null -> props.models.default
+                } ?: props.models.default
 
-            val model = OpenRouterChat(
-                restTemplate = restTemplate,
-                apiKey = props.apiKey,
-                model = modelName,
-                temperature = props.temperature,
-                topP = props.topP,
-                maxTokens = props.maxTokens
-            )
+            val model =
+                OpenRouterChat(
+                    restTemplate = restTemplate,
+                    apiKey = props.apiKey,
+                    model = modelName,
+                    temperature = props.temperature,
+                    topP = props.topP,
+                    maxTokens = props.maxTokens,
+                )
 
             ChatClient.builder(model).build()
         }
     }
 
     enum class LLMTaskType {
-        SUMMARY, PROMPT_GEN, CHUNKING, DEFAULT
+        SUMMARY,
+        PROMPT_GEN,
+        CHUNKING,
+        DEFAULT,
     }
 }

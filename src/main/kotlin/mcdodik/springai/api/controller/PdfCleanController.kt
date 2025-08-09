@@ -21,9 +21,8 @@ class PdfCleanController(
     /**
      * Service used to perform cleaning and processing of PDF documents.
      */
-    private val cleaner: DocumentCleaner
+    private val cleaner: DocumentCleaner,
 ) {
-
     /**
      * Handles POST requests to the "/api/pdf/clean" endpoint.
      * Accepts a PDF file along with additional parameters for cleaning and processing.
@@ -43,7 +42,7 @@ class PdfCleanController(
         @RequestParam("skipPages") skipPages: Int,
         @RequestParam("throwPagesFromEnd") throwPagesFromEnd: Int,
         @RequestParam("headerFooterLines") headerFooterLines: Int,
-        @RequestParam("repeatThreshold") repeatThreshold: Double
+        @RequestParam("repeatThreshold") repeatThreshold: Double,
     ): ResponseEntity<ByteArray> {
         val params = PdfCleanRequest(skipPages, throwPagesFromEnd, headerFooterLines, repeatThreshold)
         val cleanedStream = cleaner.doIt(file.inputStream, params)

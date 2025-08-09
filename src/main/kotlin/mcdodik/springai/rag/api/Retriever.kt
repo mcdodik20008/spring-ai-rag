@@ -6,6 +6,6 @@ interface Retriever {
     fun retrieve(
         query: String,
         topK: Int,
-        threshold: Double? = null
+        threshold: Double? = null,
     ): List<RetrievedDoc>
 }

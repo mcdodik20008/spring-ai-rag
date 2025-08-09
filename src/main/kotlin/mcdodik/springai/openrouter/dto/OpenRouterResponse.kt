@@ -4,6 +4,5 @@ data class OpenRouterResponse(
     val id: String,
     val model: String,
     val usage: TokenUsage?,
-    val choices: List<Choice>
+    val choices: List<Choice>,
 )
-

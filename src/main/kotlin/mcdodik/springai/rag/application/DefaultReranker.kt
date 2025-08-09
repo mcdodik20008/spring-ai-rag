@@ -6,10 +6,9 @@ import mcdodik.springai.rag.model.RetrievedDoc
 import mcdodik.springai.rag.model.ScoredDoc
 
 class DefaultReranker : Reranker {
-
     override fun rerank(
         userEmbedding: FloatArray,
-        raw: List<RetrievedDoc>
+        raw: List<RetrievedDoc>,
     ): List<ScoredDoc> =
         raw.mapNotNull { doc ->
             val emb = Metadata.embedding(doc) ?: return@mapNotNull null
@@ -21,10 +20,14 @@ class DefaultReranker : Reranker {
             ScoredDoc(doc, sim)
         }.sortedByDescending { it.score }
 
-    override fun dedup(scored: List<ScoredDoc>): List<ScoredDoc> =
-        scored.distinctBy { Metadata.fileName(it.doc) to Metadata.chunkIndex(it.doc) }
+    override fun dedup(scored: List<ScoredDoc>): List<ScoredDoc> {
+        return scored.distinctBy { Metadata.fileName(it.doc) to Metadata.chunkIndex(it.doc) }
+    }
 
-    private fun cosineSimilarity(a: FloatArray, b: FloatArray): Double {
+    private fun cosineSimilarity(
+        a: FloatArray,
+        b: FloatArray,
+    ): Double {
         var dot = 0.0
         var na = 0.0
         var nb = 0.0

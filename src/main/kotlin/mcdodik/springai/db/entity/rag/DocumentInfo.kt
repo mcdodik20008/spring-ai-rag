@@ -1,9 +1,9 @@
 package mcdodik.springai.db.entity.rag
 
-import java.time.LocalDateTime
-import java.util.UUID
 import mcdodik.springai.extensions.sha256
 import org.springframework.web.multipart.MultipartFile
+import java.time.LocalDateTime
+import java.util.UUID
 
 /**
  * Data class representing information about a document stored in the system.
@@ -18,7 +18,7 @@ data class DocumentInfo(
     val hash: String,
     val chunkCount: Integer,
     val createdAt: LocalDateTime,
-    val summary: String?
+    val summary: String?,
 ) {
     companion object {
         /**
@@ -32,7 +32,7 @@ data class DocumentInfo(
         fun createFromFileAndCunks(
             file: MultipartFile,
             chunkCount: Int,
-            summary: String = "empty"
+            summary: String = "empty",
         ): DocumentInfo {
             return DocumentInfo(
                 fileName = file.originalFilename.toString(),
@@ -40,7 +40,7 @@ data class DocumentInfo(
                 hash = file.sha256(),
                 chunkCount = chunkCount as Integer,
                 createdAt = LocalDateTime.now(),
-                summary = summary
+                summary = summary,
             )
         }
     }

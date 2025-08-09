@@ -9,7 +9,6 @@ import org.apache.ibatis.annotations.Mapper
  */
 @Mapper
 interface RagChunkMapper {
-
     /**
      * Inserts a single document chunk into the database.
      *
@@ -31,6 +30,6 @@ interface RagChunkMapper {
         embedding: List<Float>,
         similarityThreshold: Double?,
         topK: Int?,
-        filterClause: String?
+        filterClause: String? = null,
     ): List<RagChunkEntity>
 }

@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+echo "▶ Запускаю линтеры..."
+./gradlew --quiet ktlintCheck detekt
+
+if [ $? -ne 0 ]; then
+    echo "❌ Линтеры или анализ кода провалились. Фикси перед коммитом."
+    exit 1
+fi
+
+echo "✅ Всё чисто. Можно коммитить."

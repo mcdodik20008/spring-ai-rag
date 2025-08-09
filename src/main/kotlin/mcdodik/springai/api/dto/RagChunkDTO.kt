@@ -9,5 +9,5 @@ data class RagChunkDTO(
     val embedding: List<Float>,
     val type: String = "text",
     val source: String? = null,
-    val chunkIndex: Int = 0
+    val chunkIndex: Int = 0,
 )

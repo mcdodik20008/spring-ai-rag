@@ -1,17 +1,16 @@
 package mcdodik.springai.api.dto
 
+import org.springframework.web.multipart.MultipartFile
 import java.io.ByteArrayInputStream
 import java.io.File
 import java.io.InputStream
-import org.springframework.web.multipart.MultipartFile
 
 class CustomMultipartFile(
     private val name: String,
     private val originalFilename: String,
     private val contentType: String?,
-    private val content: ByteArray
+    private val content: ByteArray,
 ) : MultipartFile {
-
     override fun getName(): String = name
 
     override fun getOriginalFilename(): String = originalFilename

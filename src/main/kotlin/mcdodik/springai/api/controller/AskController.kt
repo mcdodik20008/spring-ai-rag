@@ -25,7 +25,6 @@ class AskController(
     @Qualifier("openRouterChatClient")
     private val summarizer: ChatClient,
 ) {
-
     /**
      * Handles POST requests to the "/api/ask" endpoint.
      * Accepts a JSON body with a question and returns a stream of answer chunks.
@@ -34,7 +33,9 @@ class AskController(
      * @return A [Flux] emitting string chunks of the generated answer.
      */
     @PostMapping
-    suspend fun ask(@RequestBody req: AskRequest): Flux<String> {
+    suspend fun ask(
+        @RequestBody req: AskRequest,
+    ): Flux<String> {
         return rag.ask(req.question)
     }
 
@@ -47,8 +48,9 @@ class AskController(
      * @return A [Flux] emitting string chunks of the generated summary.
      */
     @GetMapping
-    suspend fun summarize(@RequestParam quest: String): Flux<String> {
+    suspend fun summarize(
+        @RequestParam quest: String,
+    ): Flux<String> {
         return summarizer.prompt(quest).stream().content()
     }
-
 }

@@ -12,17 +12,13 @@ object Metadata {
         }
     }
 
-    fun fileName(d: RetrievedDoc): String? =
-        d.metadata[MetadataKey.FILE_NAME.key] as? String
+    fun fileName(d: RetrievedDoc): String? = d.metadata[MetadataKey.FILE_NAME.key] as? String
 
-    fun chunkIndex(d: RetrievedDoc): Int? =
-        (d.metadata[MetadataKey.CHUNK_INDEX.key] as? Number)?.toInt()
+    fun chunkIndex(d: RetrievedDoc): Int? = (d.metadata[MetadataKey.CHUNK_INDEX.key] as? Number)?.toInt()
 
-    fun fileName(d: org.springframework.ai.document.Document): String? =
-        d.metadata[MetadataKey.FILE_NAME.key] as? String
+    fun fileName(d: org.springframework.ai.document.Document): String? = d.metadata[MetadataKey.FILE_NAME.key] as? String
 
-    fun chunkIndex(d: org.springframework.ai.document.Document): Int? =
-        (d.metadata[MetadataKey.CHUNK_INDEX.key] as? Number)?.toInt()
+    fun chunkIndex(d: org.springframework.ai.document.Document): Int? = (d.metadata[MetadataKey.CHUNK_INDEX.key] as? Number)?.toInt()
 
     fun embedding(d: org.springframework.ai.document.Document): FloatArray? {
         val k = MetadataKey.EMBEDDING.key

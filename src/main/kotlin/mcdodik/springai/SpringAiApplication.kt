@@ -9,7 +9,7 @@ import org.springframework.boot.runApplication
 @SpringBootApplication
 @EnableConfigurationProperties(
     OpenRouterProperties::class,
-    VectorAdvisorProperties::class
+    VectorAdvisorProperties::class,
 )
 class SpringAiApplication
 

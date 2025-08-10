@@ -34,6 +34,20 @@ services:
       timeout: 5s
       retries: 3
 
+  zipkin:
+    image: openzipkin/zipkin:latest
+    container_name: zipkin
+    restart: unless-stopped
+    ports:
+        - "9411:9411"
+    environment:
+        STORAGE_TYPE: mem
+    healthcheck:
+        test: [ "CMD", "curl", "-f", "http://localhost:9411/actuator/health" ]
+        interval: 10s
+        timeout: 5s
+        retries: 5
+
 volumes:
   pg_data:
   ollama_data:

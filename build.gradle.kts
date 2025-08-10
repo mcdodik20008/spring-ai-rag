@@ -37,12 +37,26 @@ repositories {
 
 extra["springAiVersion"] = "1.0.1"
 
+configurations.all {
+    exclude(group = "org.springframework", module = "spring-webmvc")
+}
+
 dependencies {
+    implementation(platform(libs.spring.boot.bom))
+    implementation(platform(libs.spring.ai.bom))
+
     // ──────────── CORE ────────────
-    implementation("org.springframework.boot:spring-boot-starter-web")
-    implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.6.0")
-    implementation("org.springframework.boot:spring-boot-starter-jdbc")
-    runtimeOnly("org.postgresql:postgresql")
+    implementation(libs.bundles.core)
+
+    // ──────────── Security ────────────
+    implementation(libs.bundles.security)
+
+    // ──────────── Trace ────────────
+    implementation("io.micrometer:micrometer-tracing-bridge-brave")
+    implementation("io.zipkin.reporter2:zipkin-reporter-brave")
+
+    // ──────────── Swagger ────────────
+    implementation("org.springdoc:springdoc-openapi-starter-webflux-ui:2.8.9")
 
     // ──────────── MyBatis ────────────
     implementation("org.mybatis.spring.boot:mybatis-spring-boot-starter:3.0.3")
@@ -52,40 +66,26 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor")
 
     // ──────────── Spring AI ────────────
-    implementation("org.springframework.ai:spring-ai-starter-model-ollama")
-    implementation("org.springframework.ai:spring-ai-starter-vector-store-pgvector")
-    implementation("org.springframework.ai:spring-ai-advisors-vector-store")
-    implementation("org.springframework.ai:spring-ai-markdown-document-reader")
-    implementation("org.springframework.ai:spring-ai-tika-document-reader")
-    implementation("org.springframework.ai:spring-ai-pdf-document-reader")
-    implementation("org.springframework.ai:spring-ai-starter-model-transformers")
+    implementation(libs.bundles.springai)
+
+    // ──────────── Logging + MDC ────────────
+    implementation("ch.qos.logback:logback-classic") // обычно уже есть
+
+    // ──────────── Rate limiting ────────────
+    implementation("com.bucket4j:bucket4j-core:8.10.1")
 
     // ──────────── Jackson ────────────
-    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.17.0")
-    implementation("com.fasterxml.jackson.core:jackson-databind:2.17.0")
+    implementation(libs.bundles.jackson)
 
     // ──────────── Markdown, PDF, Tika ────────────
-    implementation("org.commonmark:commonmark:0.24.0")
-    implementation("org.apache.tika:tika-core")
-    implementation("org.apache.tika:tika-parsers-standard-package")
-    implementation("org.apache.pdfbox:pdfbox")
-    implementation("org.apache.poi:poi-ooxml")
+    implementation(libs.bundles.docs)
 
     // ──────────── Utils ────────────
     implementation("org.jetbrains.kotlin:kotlin-reflect")
 
     // ──────────── Dev / Test ────────────
-    developmentOnly("org.springframework.boot:spring-boot-devtools")
-    annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
-    testImplementation("org.springframework.boot:spring-boot-starter-test")
-    testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
-    testRuntimeOnly("org.junit.platform:junit-platform-launcher")
-}
-
-dependencyManagement {
-    imports {
-        mavenBom("org.springframework.ai:spring-ai-bom:${property("springAiVersion")}")
-    }
+    implementation(libs.bundles.test)
+    implementation(libs.bundles.testRuntime)
 }
 
 kotlin {

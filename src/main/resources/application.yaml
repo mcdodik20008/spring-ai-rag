@@ -1,6 +1,19 @@
+server:
+    port: 8080
+    http2:
+        enabled: true
+
 spring:
+  profiles:
+    active: stub
   application:
     name: spring-ai
+  main:
+      web-application-type: reactive
+  webflux:
+      base-path: /
+  jackson:
+      default-property-inclusion: non_null
   datasource:
     url: jdbc:postgresql://localhost:5432/${POSRGRES_DB_NAME:ragdb}
     username: ${POSTGRES_USERNAME:postgres}
@@ -20,23 +33,24 @@ spring:
     resources:
       add-mappings: false
 
+# phi3:mini owl/t-lite gemma3:1b-it-qat qwen3:0.6b
+# qwen2.5:0.5b llama3.2:1b-instruct-q4_K_M jslin/bloom:560m
   ai:
-    chat:
-      advisors:
-        - bean: simpleLoggerAdvisor
-        - bean: strictContextAdvisor
+    openai:
+      base-url: http://localhost:11434
+      api-key: dummy # обязателен (любая непустая строка)
+      chat:
+        options:
+          model: jslin/bloom:560m
     ollama:
+      base-url: http://localhost:11434
       embedding:
         model: ${OLLAMA_EMBEDDING_MODEL:nomic-embed-text}
         options:
           num-ctx: 8192
-      base-url: http://localhost:11434
+      # чтобы не плодить лишний ChatModel (и не уехать в /api/chat):
       chat:
-        options:
-          model: ${OLLAMA_CHAT_MODEL:owl/t-lite} #phi3:mini owl/t-lite gemma3:1b-it-qat
-    vectorstore:
-      pgvector:
-        initialize-schema: false
+        enabled: false
 mybatis:
   mapper-locations: classpath*:db/*.xml
   type-handlers-package: classpath*:mcdodik.springai.rag.db
@@ -45,6 +59,36 @@ logging:
   level:
     root: INFO
     mcdodik: DEBUG
+    reactor.netty.http.client: DEBUG
+    org.springframework.ai: DEBUG
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    health:
+      probes:
+        enabled: true
+
+
+app:
+  ratelimit:
+    enabled: true
+    capacity: 20         # burst
+    refill-per-min: 20   # rps ~ 0.33
+  security:
+    enabled: false
+#    jwk-set-uri: "http://localhost:8081/.well-known/jwks.json" # если JWT
+#    required-scope: "rag.api"
+  cors:
+    allowed-origins: ["http://localhost:3000"]
+    allowed-methods: ["GET","POST","PUT","DELETE","OPTIONS"]
+    allowed-headers: ["*"]
+  idempotency:
+    enabled: true
+    ttl-seconds: 3600
 
 mcdodik:
   openrouter:

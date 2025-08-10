@@ -13,21 +13,22 @@ import mcdodik.springai.rag.api.Retriever
 import mcdodik.springai.rag.api.SummaryService
 import org.springframework.ai.chat.client.ChatClient
 import org.springframework.ai.chat.client.advisor.api.BaseAdvisor
-import org.springframework.ai.ollama.OllamaChatModel
 import org.springframework.ai.ollama.OllamaEmbeddingModel
+import org.springframework.ai.openai.OpenAiChatModel
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Primary
-import org.springframework.web.client.RestTemplate
+import org.springframework.web.reactive.function.client.WebClient
 
 @Configuration
 class ChatModelsConfig {
+
     @Bean
     @Primary
     @Qualifier("ollamaChatClient")
     fun ollamaChatClient(
-        chatModel: OllamaChatModel,
+        chatModel: OpenAiChatModel,
         @Qualifier("hybridAdvisor")
         advisor: BaseAdvisor,
     ): ChatClient =
@@ -60,11 +61,11 @@ class ChatModelsConfig {
     @Qualifier("openRouterChatClient")
     fun openRouterChatClient(
         props: OpenRouterProperties,
-        restTemplate: RestTemplate,
+        webClient: WebClient,
     ): ChatClient {
         val model =
             OpenRouterChat(
-                restTemplate = restTemplate,
+                webClient = webClient,
                 apiKey = props.apiKey,
                 model = props.models.default,
                 temperature = props.temperature,
@@ -78,7 +79,7 @@ class ChatModelsConfig {
     @Bean
     fun dynamicOpenRouterChatClient(
         props: OpenRouterProperties,
-        restTemplate: RestTemplate,
+        webClient: WebClient,
     ): (LLMTaskType?, String?) -> ChatClient {
         return { taskType, overrideModel ->
 
@@ -93,7 +94,7 @@ class ChatModelsConfig {
 
             val model =
                 OpenRouterChat(
-                    restTemplate = restTemplate,
+                    webClient = webClient,
                     apiKey = props.apiKey,
                     model = modelName,
                     temperature = props.temperature,

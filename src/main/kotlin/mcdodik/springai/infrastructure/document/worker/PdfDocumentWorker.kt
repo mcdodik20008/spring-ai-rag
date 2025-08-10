@@ -15,12 +15,16 @@ import org.springframework.web.multipart.MultipartFile
 class PdfDocumentWorker(
     private val textSplitter: TokenTextSplitter,
     private val cleaner: DocumentCleaner,
-    private val readerFactory: CodeAwareTikaReaderFactory
+    private val readerFactory: CodeAwareTikaReaderFactory,
 ) : DocumentWorker {
-    override fun supports(file: MultipartFile): Boolean =
-        file.contentType == "application/pdf" || file.originalFilename?.endsWith(".pdf") == true
+    override fun supports(file: MultipartFile): Boolean {
+        return file.contentType == "application/pdf" || file.originalFilename?.endsWith(".pdf") == true
+    }
 
-    override fun process(file: MultipartFile, params: CleanRequestParams): List<Document> {
+    override fun process(
+        file: MultipartFile,
+        params: CleanRequestParams,
+    ): List<Document> {
         val cleanedStream = cleaner.doIt(file.inputStream, params as PdfCleanRequest)
         val resource = InputStreamResource(cleanedStream)
         val pageReader = readerFactory.create(resource)

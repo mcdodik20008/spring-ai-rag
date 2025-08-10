@@ -1,8 +1,8 @@
 package mcdodik.springai.db.entity.rag
 
+import org.springframework.ai.document.Document
 import java.time.LocalDateTime
 import java.util.UUID
-import org.springframework.ai.document.Document
 
 /**
  * Data class representing a document chunk stored in the system.
@@ -20,7 +20,7 @@ data class RagChunkEntity(
     val fileName: String,
     val extension: String,
     val hash: String,
-    val createdAt: LocalDateTime
+    val createdAt: LocalDateTime,
 ) {
     companion object {
         fun from(it: Document): RagChunkEntity {
@@ -34,7 +34,7 @@ data class RagChunkEntity(
                 fileName = it.metadata[MetadataKey.FILE_NAME.key].toString(),
                 extension = it.metadata[MetadataKey.EXTENSION.key].toString(),
                 hash = it.metadata[MetadataKey.HASH.key].toString(),
-                createdAt = LocalDateTime.now()
+                createdAt = LocalDateTime.now(),
             )
         }
     }

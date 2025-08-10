@@ -5,7 +5,10 @@ import mcdodik.springai.rag.model.Metadata
 import mcdodik.springai.rag.model.RetrievedDoc
 
 class MarkdownContextBuilder : ContextBuilder {
-    override fun build(docs: List<RetrievedDoc>, maxChars: Int): String {
+    override fun build(
+        docs: List<RetrievedDoc>,
+        maxChars: Int,
+    ): String {
         val sb = StringBuilder()
         for (d in docs) {
             val file = Metadata.fileName(d) ?: "unknown"

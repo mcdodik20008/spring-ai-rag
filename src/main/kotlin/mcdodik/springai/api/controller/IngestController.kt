@@ -22,10 +22,13 @@ class IngestController(
     /**
      * Service used to process and store document data in the knowledge base.
      */
-    private val rag: RagService
+    private val rag: RagService,
 ) {
     val response =
-        "Ваш файл успешно обработан и сохранён в базу знаний. \nДобавленная информация будет использоваться во время ответа на последующие вопросы."
+        """
+        Ваш файл успешно обработан и сохранён в базу знаний.
+        Добавленная информация будет использоваться во время ответа на последующие вопросы.
+        """.trimIndent()
 
     /**
      * Handles POST requests to the "/api/docs/ingest/markdown" endpoint.
@@ -37,7 +40,7 @@ class IngestController(
      */
     @PostMapping("/ingest/markdown", consumes = [MediaType.MULTIPART_FORM_DATA_VALUE])
     fun processMarkdown(
-        @RequestParam("file") file: MultipartFile
+        @RequestParam("file") file: MultipartFile,
     ): ResponseEntity<String> {
         rag.ingest(file, EmptyParams)
         return ResponseEntity.status(HttpStatus.CREATED).body(response)
@@ -61,7 +64,7 @@ class IngestController(
         @RequestParam("skipPages") skipPages: Int,
         @RequestParam("throwPagesFromEnd") throwPagesFromEnd: Int,
         @RequestParam("headerFooterLines") headerFooterLines: Int,
-        @RequestParam("repeatThreshold") repeatThreshold: Double
+        @RequestParam("repeatThreshold") repeatThreshold: Double,
     ): ResponseEntity<Any> {
         val params = PdfCleanRequest(skipPages, throwPagesFromEnd, headerFooterLines, repeatThreshold)
         rag.ingest(file, params)

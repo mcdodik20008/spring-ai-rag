@@ -17,12 +17,8 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 @RequestMapping("/api/prompt")
 class PromptGeneratorController(
-    /**
-     * Service used to generate prompt templates.
-     */
-    private val service: PromptGenerationService
+    private val service: PromptGenerationService,
 ) {
-
     /**
      * Endpoint to generate a prompt template.
      *
@@ -30,24 +26,33 @@ class PromptGeneratorController(
      * @return A generated [ChunkingPromptTemplate].
      */
     @PostMapping("/generate")
-    fun generatePrompt(@RequestBody request: PromptGenerationRequest): ChunkingPromptTemplate {
+    fun generatePrompt(
+        @RequestBody request: PromptGenerationRequest,
+    ): ChunkingPromptTemplate {
         return service.generatePrompt(request.domainName, request.userDescription)
     }
 
     /** Endpoint to find prompt templates by topic (semantic + fallback). */
     @PostMapping("/find-by-topic")
-    fun findByTopic(@RequestBody req: FindByTopicRequest): FindByTopicResponse {
+    fun findByTopic(
+        @RequestBody req: FindByTopicRequest,
+    ): FindByTopicResponse {
         val results = service.findByTopic(req.topic, req.k, req.minSim)
         return FindByTopicResponse(
-            items = results.map {
-                FindByTopicResponse.Item(
-                    id = it.template.id,
-                    domainName = it.template.domainName,
-                    topic = it.template.topic,
-                    score = it.score,
-                    preview = it.template.generatedPrompt.take(200)
-                )
-            }
+            items =
+                results.map {
+                    FindByTopicResponse.Item(
+                        id = it.template.id,
+                        domainName = it.template.domainName,
+                        topic = it.template.topic,
+                        score = it.score,
+                        preview = it.template.generatedPrompt.take(SYMBOL_TO_VIEW),
+                    )
+                },
         )
+    }
+
+    companion object {
+        const val SYMBOL_TO_VIEW = 200
     }
 }

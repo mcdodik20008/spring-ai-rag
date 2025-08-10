@@ -9,19 +9,23 @@ import mcdodik.springai.rag.model.ScoreType
 class HybridRetriever(
     private val vector: Retriever,
     private val bm25: Retriever,
-    private val cfg: HybridConfig = HybridConfig()
+    private val cfg: HybridConfig = HybridConfig(),
 ) : Retriever {
-
-    override fun retrieve(query: String, topK: Int, threshold: Double?): List<RetrievedDoc> {
+    override fun retrieve(
+        query: String,
+        topK: Int,
+        threshold: Double?,
+    ): List<RetrievedDoc> {
         if (query.isBlank()) return emptyList()
 
         val v = vector.retrieve(query, cfg.vecTopK, threshold)
         val b = bm25.retrieve(query, cfg.bmTopK, null)
 
-        val fused = when (cfg.mode) {
-            FuseMode.RRF -> fuseRrf(v, b, cfg.rrfK)
-            FuseMode.WEIGHTED -> fuseWeighted(v, b, cfg.vecWeight, cfg.bmWeight)
-        }
+        val fused =
+            when (cfg.mode) {
+                FuseMode.RRF -> fuseRrf(v, b, cfg.rrfK)
+                FuseMode.WEIGHTED -> fuseWeighted(v, b, cfg.vecWeight, cfg.bmWeight)
+            }
 
         return fused
             .sortedByDescending { it.score }
@@ -29,7 +33,11 @@ class HybridRetriever(
     }
 
     /** RRF: score = Σ 1/(k + rank) */
-    private fun fuseRrf(vec: List<RetrievedDoc>, bm: List<RetrievedDoc>, k: Int): List<RetrievedDoc> {
+    private fun fuseRrf(
+        vec: List<RetrievedDoc>,
+        bm: List<RetrievedDoc>,
+        k: Int,
+    ): List<RetrievedDoc> {
         fun ranks(list: List<RetrievedDoc>) = list.mapIndexed { i, d -> d.id to (i + 1) }.toMap()
         val vr = ranks(vec)
         val br = ranks(bm)
@@ -46,18 +54,23 @@ class HybridRetriever(
                 content = any.content,
                 metadata = any.metadata + mapOf("rrfVecRank" to vRank, "rrfBmRank" to bRank),
                 score = vPart + bPart,
-                type = ScoreType.HYBRID
+                type = ScoreType.HYBRID,
             )
         }
     }
 
     /** Weighted: min–max нормализация и взвешивание */
-    private fun fuseWeighted(vec: List<RetrievedDoc>, bm: List<RetrievedDoc>, vw: Double, bw: Double): List<RetrievedDoc> {
+    private fun fuseWeighted(
+        vec: List<RetrievedDoc>,
+        bm: List<RetrievedDoc>,
+        vw: Double,
+        bw: Double,
+    ): List<RetrievedDoc> {
         fun normalize01(xs: List<RetrievedDoc>): List<RetrievedDoc> {
             if (xs.isEmpty()) return xs
             val minS = xs.minOf { it.score }
             val maxS = xs.maxOf { it.score }
-            val denom = (maxS - minS).takeIf { it > 1e-12 } ?: 1.0
+            val denom = (maxS - minS).takeIf { it > EPS } ?: 1.0
             return xs.map { it.copy(score = (it.score - minS) / denom) }
         }
 
@@ -76,8 +89,12 @@ class HybridRetriever(
                 content = any.content,
                 metadata = any.metadata + mapOf("vectorNorm" to v, "bm25Norm" to m),
                 score = s,
-                type = ScoreType.HYBRID
+                type = ScoreType.HYBRID,
             )
         }
+    }
+
+    companion object {
+        private const val EPS = 1e-12
     }
 }

@@ -6,7 +6,10 @@ fun String?.sanitize(): String =
         ?.trim()
         ?: ""
 
-fun String?.extractBetween(start: String, end: String): String {
+fun String?.extractBetween(
+    start: String,
+    end: String,
+): String {
     if (this == null) return ""
     val i = this.indexOf(start)
     val j = this.indexOf(end)

@@ -8,5 +8,5 @@ enum class MetadataKey(val key: String) {
     CHUNK_INDEX("chunk_index"),
     FILE_NAME("file_name"),
     EXTENSION("extension"),
-    HASH("hash");
+    HASH("hash"),
 }

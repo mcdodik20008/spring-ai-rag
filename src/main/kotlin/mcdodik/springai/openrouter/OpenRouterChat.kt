@@ -11,15 +11,13 @@ import org.springframework.ai.chat.model.ChatModel
 import org.springframework.ai.chat.model.ChatResponse
 import org.springframework.ai.chat.model.Generation
 import org.springframework.ai.chat.prompt.Prompt
-import org.springframework.http.HttpEntity
-import org.springframework.http.HttpHeaders
-import org.springframework.http.HttpMethod
 import org.springframework.http.MediaType
-import org.springframework.web.client.RestTemplate
+import org.springframework.web.reactive.function.client.WebClient
+import org.springframework.web.reactive.function.client.WebClientResponseException
 
 class OpenRouterChat(
     private val model: String,
-    private val restTemplate: RestTemplate,
+    private val webClient: WebClient,
     private val apiKey: String,
     private val temperature: Double = 0.2,
     private val topP: Double = 0.9,
@@ -28,6 +26,7 @@ class OpenRouterChat(
     private val endpoint = "https://openrouter.ai/api/v1/chat/completions"
 
     override fun call(prompt: Prompt): ChatResponse {
+        // 1) соберём сообщения
         val messages =
             prompt.instructions.mapNotNull { msg ->
                 when (msg) {
@@ -38,56 +37,59 @@ class OpenRouterChat(
                 }
             }
 
+        // 2) тело запроса
         val requestBody =
-            mutableMapOf<String, Any>(
+            mapOf(
                 "model" to model,
                 "messages" to messages,
-                "temperature" to (temperature),
-                "top_p" to (topP),
-                "max_tokens" to (maxTokens),
+                "temperature" to temperature,
+                "top_p" to topP,
+                "max_tokens" to maxTokens,
                 "stream" to false,
             )
 
-        val headers =
-            HttpHeaders().apply {
-                contentType = MediaType.APPLICATION_JSON
-                setBearerAuth(apiKey)
+        // 3) вызов
+        val resp: OpenRouterResponse =
+            try {
+                webClient.post()
+                    .uri(endpoint)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .headers {
+                        it.setBearerAuth(apiKey) // Authorization: Bearer ...
+                        it.accept = listOf(MediaType.APPLICATION_JSON)
+                    }
+                    .bodyValue(requestBody)
+                    .retrieve()
+                    .bodyToMono(OpenRouterResponse::class.java)
+                    .block() ?: error("Empty response")
+            } catch (e: WebClientResponseException) {
+                logger.error("OpenRouter error {}: {}", e.statusCode, e.responseBodyAsString)
+                throw e
             }
-        logger.debug("Request body: {}", requestBody)
 
-        val httpEntity = HttpEntity(requestBody, headers)
-        logger.debug("Http entity: {}", httpEntity)
+        // 4) разбор
+        val content =
+            resp.choices.firstOrNull()?.message?.content
+                ?: error("Missing content in OpenRouter response")
 
-        val response =
-            restTemplate.exchange(
-                endpoint,
-                HttpMethod.POST,
-                httpEntity,
-                OpenRouterResponse::class.java,
-            )
+        val generation = Generation(AssistantMessage(content))
 
-        val body = response.body ?: error("Empty response")
-        logger.debug("OpenRouter response: {}", body)
-
-        val content = body.choices.firstOrNull()?.message?.content ?: error("Missing content")
-        val assistantMessage = AssistantMessage(content)
-        val generation = Generation(assistantMessage)
+        val metadata =
+            ChatResponseMetadata.builder()
+                .id(resp.id)
+                .model(resp.model)
+                .usage(
+                    DefaultUsage(
+                        resp.usage?.promptTokens ?: 0,
+                        resp.usage?.completionTokens ?: 0,
+                        resp.usage?.totalTokens ?: 0,
+                    ),
+                )
+                .build()
 
         return ChatResponse.builder()
             .generations(listOf(generation))
-            .metadata(
-                ChatResponseMetadata.builder()
-                    .id(body.id)
-                    .model(body.model)
-                    .usage(
-                        DefaultUsage(
-                            body.usage?.promptTokens ?: 0,
-                            body.usage?.completionTokens ?: 0,
-                            body.usage?.totalTokens ?: 0,
-                        ),
-                    )
-                    .build(),
-            )
+            .metadata(metadata)
             .build()
     }
 

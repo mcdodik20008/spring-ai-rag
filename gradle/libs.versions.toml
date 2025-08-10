@@ -1,0 +1,102 @@
+[versions]
+boot = "3.4.5"
+springAi = "1.0.1"
+springdoc = "2.8.9"
+mybatis = "3.0.3"
+coroutines = "1.8.1"
+bucket4j = "8.10.1"
+commonmark = "0.24.0"
+tika = "2.9.2"
+pdfbox = "3.0.3"
+poi = "5.2.5"
+
+[libraries]
+# ── CORE
+boot-webflux = { module = "org.springframework.boot:spring-boot-starter-webflux" }
+boot-validation = { module = "org.springframework.boot:spring-boot-starter-validation" }
+boot-actuator = { module = "org.springframework.boot:spring-boot-starter-actuator" }
+boot-jdbc = { module = "org.springframework.boot:spring-boot-starter-jdbc" }
+postgresql = { module = "org.postgresql:postgresql" }
+
+# ── Security
+boot-security = { module = "org.springframework.boot:spring-boot-starter-security" }
+security-oauth2-rs = { module = "org.springframework.security:spring-security-oauth2-resource-server" }
+
+# ── Trace
+tracing-bridge-brave = { module = "io.micrometer:micrometer-tracing-bridge-brave" }
+zipkin-reporter-brave = { module = "io.zipkin.reporter2:zipkin-reporter-brave" }
+
+# ── Swagger
+springdoc-webflux-ui = { module = "org.springdoc:springdoc-openapi-starter-webflux-ui", version.ref = "springdoc" }
+
+# ── MyBatis
+mybatis-starter = { module = "org.mybatis.spring.boot:mybatis-spring-boot-starter", version.ref = "mybatis" }
+
+# ── Kotlin + Coroutines
+coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "coroutines" }
+coroutines-reactor = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-reactor" }
+
+# ── Spring AI (версии даст Spring AI BOM)
+spring-ai-openai = { module = "org.springframework.ai:spring-ai-starter-model-openai" }
+spring-ai-ollama = { module = "org.springframework.ai:spring-ai-starter-model-ollama" }
+spring-ai-pgvector = { module = "org.springframework.ai:spring-ai-starter-vector-store-pgvector" }
+spring-ai-advisors = { module = "org.springframework.ai:spring-ai-advisors-vector-store" }
+spring-ai-md-reader = { module = "org.springframework.ai:spring-ai-markdown-document-reader" }
+spring-ai-tika-reader = { module = "org.springframework.ai:spring-ai-tika-document-reader" }
+spring-ai-pdf-reader = { module = "org.springframework.ai:spring-ai-pdf-document-reader" }
+spring-ai-transformers = { module = "org.springframework.ai:spring-ai-starter-model-transformers" }
+
+# ── Logging
+logback-classic = { module = "ch.qos.logback:logback-classic" }
+
+# ── Rate limiting
+bucket4j-core = { module = "com.bucket4j:bucket4j-core", version.ref = "bucket4j" }
+
+# ── Jackson (версии даст Boot BOM)
+jackson-module-kotlin = { module = "com.fasterxml.jackson.module:jackson-module-kotlin" }
+jackson-databind = { module = "com.fasterxml.jackson.core:jackson-databind" }
+jackson-annotations = { module = "com.fasterxml.jackson.core:jackson-annotations" }
+jackson-builder = { module = "com.fasterxml.jackson.datatype:jackson-datatype-jsr310" }
+
+# ── Markdown, PDF, Tika (часто не в BOM — фиксируем)
+commonmark = { module = "org.commonmark:commonmark", version.ref = "commonmark" }
+tika-core = { module = "org.apache.tika:tika-core", version.ref = "tika" }
+tika-parsers = { module = "org.apache.tika:tika-parsers-standard-package", version.ref = "tika" }
+pdfbox = { module = "org.apache.pdfbox:pdfbox", version.ref = "pdfbox" }
+poi-ooxml = { module = "org.apache.poi:poi-ooxml", version.ref = "poi" }
+
+# ── Utils
+kotlin-reflect = { module = "org.jetbrains.kotlin:kotlin-reflect" }
+
+# ── Dev / Test (версии даст Boot BOM)
+boot-devtools = { module = "org.springframework.boot:spring-boot-devtools" }
+boot-config-processor = { module = "org.springframework.boot:spring-boot-configuration-processor" }
+boot-starter-test = { module = "org.springframework.boot:spring-boot-starter-test" }
+kotlin-test-junit5 = { module = "org.jetbrains.kotlin:kotlin-test-junit5" }
+junit-platform-launcher = { module = "org.junit.platform:junit-platform-launcher" }
+
+# ── BOMs как platforms (альтернатива dependencyManagement{})
+spring-boot-bom = { module = "org.springframework.boot:spring-boot-dependencies", version.ref = "boot" }
+spring-ai-bom = { module = "org.springframework.ai:spring-ai-bom", version.ref = "springAi" }
+
+[bundles]
+core = ["boot-webflux", "boot-validation", "boot-actuator", "boot-jdbc", "postgresql"]
+security = ["boot-security", "security-oauth2-rs"]
+tracing = ["tracing-bridge-brave", "zipkin-reporter-brave"]
+swagger = ["springdoc-webflux-ui"]
+mybatis = ["mybatis-starter"]
+coroutines = ["coroutines-core", "coroutines-reactor"]
+springai = ["spring-ai-openai", "spring-ai-ollama", "spring-ai-pgvector", "spring-ai-advisors", "spring-ai-md-reader", "spring-ai-tika-reader", "spring-ai-pdf-reader", "spring-ai-transformers"]
+logging = ["logback-classic"]
+ratelimit = ["bucket4j-core"]
+jackson = ["jackson-module-kotlin", "jackson-databind", "jackson-annotations", "jackson-builder"]
+docs = ["commonmark", "tika-core", "tika-parsers", "pdfbox", "poi-ooxml"]
+utils = ["kotlin-reflect"]
+dev = ["boot-devtools"]
+test = ["boot-starter-test", "kotlin-test-junit5"]
+testRuntime = ["junit-platform-launcher"]
+
+[plugins]
+spring-boot = { id = "org.springframework.boot", version.ref = "boot" }
+dependency-management = { id = "io.spring.dependency-management", version = "1.1.7" }
+kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version = "2.0.20" }

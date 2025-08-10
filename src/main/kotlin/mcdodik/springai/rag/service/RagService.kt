@@ -25,10 +25,22 @@ class RagService(
     private val summarizer: ChatClient,
 ) {
     fun ask(question: String): Flux<String> {
-        return chat.prompt()
+        return chat
+            .prompt("Ответь на русском")
             .user(question)
-            .stream()
-            .content()
+            .stream() // StreamResponseSpec
+            .content() // Flux<String>
+            .onErrorResume { _ ->
+                // если стрим упал (тот самый NPE внутри Spring AI) — вернём разовый ответ
+                reactor.core.publisher.Mono.just(
+                    chat
+                        .prompt("Ответь на русском")
+                        .user(question)
+                        .call()
+                        .content()
+                        .orEmpty(),
+                )
+            }
     }
 
     fun ingest(

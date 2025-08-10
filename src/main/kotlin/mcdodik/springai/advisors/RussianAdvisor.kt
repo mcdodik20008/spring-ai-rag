@@ -8,14 +8,14 @@ import org.springframework.ai.chat.client.advisor.api.BaseAdvisor
 class RussianAdvisor : BaseAdvisor {
     override fun before(
         chatClientRequest: ChatClientRequest,
-        advisorChain: AdvisorChain
+        advisorChain: AdvisorChain,
     ): ChatClientRequest {
         TODO("Not yet implemented")
     }
 
     override fun after(
         chatClientResponse: ChatClientResponse,
-        advisorChain: AdvisorChain
+        advisorChain: AdvisorChain,
     ): ChatClientResponse {
         TODO("Not yet implemented")
     }

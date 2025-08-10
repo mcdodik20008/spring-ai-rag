@@ -28,8 +28,8 @@ class RagService(
         return chat
             .prompt("Ответь на русском")
             .user(question)
-            .stream()                  // StreamResponseSpec
-            .content()                 // Flux<String>
+            .stream() // StreamResponseSpec
+            .content() // Flux<String>
             .onErrorResume { _ ->
                 // если стрим упал (тот самый NPE внутри Spring AI) — вернём разовый ответ
                 reactor.core.publisher.Mono.just(
@@ -38,11 +38,9 @@ class RagService(
                         .user(question)
                         .call()
                         .content()
-                        .orEmpty()
+                        .orEmpty(),
                 )
             }
-
-
     }
 
     fun ingest(

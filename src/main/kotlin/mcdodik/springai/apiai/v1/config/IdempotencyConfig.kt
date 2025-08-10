@@ -1,5 +1,6 @@
 package mcdodik.springai.apiai.v1.config
 
+import mcdodik.springai.api.models.Entry
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -16,8 +17,6 @@ class IdempotencyConfig(
     @Value("\${app.idempotency.ttl-seconds:3600}") private val ttlSec: Long,
 ) {
     private val store = ConcurrentHashMap<String, Entry>()
-
-
 
     @Bean
     fun idempotencyFilter(): WebFilter =

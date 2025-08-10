@@ -23,7 +23,6 @@ import org.springframework.web.reactive.function.client.WebClient
 
 @Configuration
 class ChatModelsConfig {
-
     @Bean
     @Primary
     @Qualifier("ollamaChatClient")

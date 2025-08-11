@@ -1,4 +1,4 @@
-package mcdodik.springai.apiai.v1.dto
+package mcdodik.springai.apiai.v1.dto.ingestion
 
 data class IngestionResponseDto(
     val jobId: String,

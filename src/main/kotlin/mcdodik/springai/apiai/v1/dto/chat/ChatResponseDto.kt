@@ -1,4 +1,7 @@
-package mcdodik.springai.apiai.v1.dto
+package mcdodik.springai.apiai.v1.dto.chat
+
+import mcdodik.springai.apiai.v1.dto.UsageDto
+import mcdodik.springai.apiai.v1.dto.reterieval.RetrievalDiagnosticsDto
 
 data class ChatResponseDto(
     val runId: String,

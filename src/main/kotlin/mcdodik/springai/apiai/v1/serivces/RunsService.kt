@@ -1,7 +1,7 @@
 package mcdodik.springai.apiai.v1.serivces
 
-import mcdodik.springai.apiai.v1.dto.ChatResponseDto
 import mcdodik.springai.apiai.v1.dto.PageDto
+import mcdodik.springai.apiai.v1.dto.chat.ChatResponseDto
 import reactor.core.publisher.Mono
 
 interface RunsService {

@@ -34,14 +34,14 @@ spring:
       add-mappings: false
 
 # phi3:mini owl/t-lite gemma3:1b-it-qat qwen3:0.6b
-# qwen2.5:0.5b llama3.2:1b-instruct-q4_K_M jslin/bloom:560m
+# qwen2.5:0.5b llama3.2:1b-instruct-q4_K_M
   ai:
     openai:
       base-url: http://localhost:11434
       api-key: dummy # обязателен (любая непустая строка)
       chat:
         options:
-          model: jslin/bloom:560m
+          model: qwen2.5:0.5b
     ollama:
       base-url: http://localhost:11434
       embedding:
@@ -57,10 +57,10 @@ mybatis:
 
 logging:
   level:
-    root: INFO
+#    root: INFO
     mcdodik: DEBUG
-    reactor.netty.http.client: DEBUG
-    org.springframework.ai: DEBUG
+#    reactor.netty.http.client: DEBUG
+#    org.springframework.ai: DEBUG
 
 management:
   endpoints:

@@ -5,20 +5,22 @@ import org.springframework.ai.chat.client.ChatClientResponse
 import org.springframework.ai.chat.client.advisor.api.AdvisorChain
 import org.springframework.ai.chat.client.advisor.api.BaseAdvisor
 
-class RussianAdvisor : BaseAdvisor {
+class NoThinkAdvisor : BaseAdvisor {
     override fun before(
         chatClientRequest: ChatClientRequest,
         advisorChain: AdvisorChain,
     ): ChatClientRequest {
-        TODO("Ответь на русском")
+        TODO("Not yet implemented")
     }
 
     override fun after(
         chatClientResponse: ChatClientResponse,
         advisorChain: AdvisorChain,
     ): ChatClientResponse {
-        return chatClientResponse
+        TODO("Not yet implemented")
     }
 
-    override fun getOrder(): Int = 1000
+    override fun getOrder(): Int {
+        return 40
+    }
 }

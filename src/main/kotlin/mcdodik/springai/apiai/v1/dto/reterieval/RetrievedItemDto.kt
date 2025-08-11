@@ -1,5 +1,4 @@
-
-package mcdodik.springai.apiai.v1.dto
+package mcdodik.springai.apiai.v1.dto.reterieval
 
 import jakarta.validation.constraints.DecimalMax
 import jakarta.validation.constraints.DecimalMin

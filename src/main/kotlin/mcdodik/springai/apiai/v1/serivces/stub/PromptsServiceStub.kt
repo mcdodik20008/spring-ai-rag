@@ -1,8 +1,8 @@
 package mcdodik.springai.apiai.v1.serivces.stub
 
 import mcdodik.springai.apiai.v1.dto.PageDto
-import mcdodik.springai.apiai.v1.dto.PromptDto
-import mcdodik.springai.apiai.v1.dto.PromptType
+import mcdodik.springai.apiai.v1.dto.prompt.PromptDto
+import mcdodik.springai.apiai.v1.dto.prompt.PromptType
 import mcdodik.springai.apiai.v1.serivces.PromptsService
 import org.springframework.context.annotation.Primary
 import org.springframework.context.annotation.Profile

@@ -2,7 +2,7 @@ package mcdodik.springai.apiai.v1.controller
 
 import jakarta.validation.Valid
 import mcdodik.springai.apiai.v1.dto.PageDto
-import mcdodik.springai.apiai.v1.dto.PromptDto
+import mcdodik.springai.apiai.v1.dto.prompt.PromptDto
 import mcdodik.springai.apiai.v1.serivces.PromptsService
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping

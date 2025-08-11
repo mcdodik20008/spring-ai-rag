@@ -34,7 +34,8 @@ mybatis-starter = { module = "org.mybatis.spring.boot:mybatis-spring-boot-starte
 
 # ── Kotlin + Coroutines
 coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "coroutines" }
-coroutines-reactor = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-reactor" }
+coroutines-reactor = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-reactor", version.ref = "coroutines" }
+coroutines-reactive = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-reactive", version.ref = "coroutines" }
 
 # ── Spring AI (версии даст Spring AI BOM)
 spring-ai-openai = { module = "org.springframework.ai:spring-ai-starter-model-openai" }
@@ -85,7 +86,7 @@ security = ["boot-security", "security-oauth2-rs"]
 tracing = ["tracing-bridge-brave", "zipkin-reporter-brave"]
 swagger = ["springdoc-webflux-ui"]
 mybatis = ["mybatis-starter"]
-coroutines = ["coroutines-core", "coroutines-reactor"]
+coroutines = ["coroutines-core", "coroutines-reactor", "coroutines-reactive"]
 springai = ["spring-ai-openai", "spring-ai-ollama", "spring-ai-pgvector", "spring-ai-advisors", "spring-ai-md-reader", "spring-ai-tika-reader", "spring-ai-pdf-reader", "spring-ai-transformers"]
 logging = ["logback-classic"]
 ratelimit = ["bucket4j-core"]

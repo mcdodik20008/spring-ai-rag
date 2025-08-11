@@ -1,9 +1,9 @@
 package mcdodik.springai.apiai.v1.serivces.stub
 
-import mcdodik.springai.apiai.v1.dto.ChunkDto
 import mcdodik.springai.apiai.v1.dto.ChunksUpsertRequestDto
 import mcdodik.springai.apiai.v1.dto.DocumentDto
 import mcdodik.springai.apiai.v1.dto.PageDto
+import mcdodik.springai.apiai.v1.dto.chat.ChunkDto
 import mcdodik.springai.apiai.v1.serivces.DocumentsService
 import org.springframework.context.annotation.Primary
 import org.springframework.context.annotation.Profile

@@ -12,6 +12,12 @@ import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.stereotype.Service
 import org.springframework.web.multipart.MultipartFile
 import reactor.core.publisher.Flux
+import reactor.core.publisher.Mono
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.reactive.asFlow
+import kotlinx.coroutines.withContext
 
 @Service
 class RagService(
@@ -28,18 +34,44 @@ class RagService(
         return chat
             .prompt("Ответь на русском")
             .user(question)
-            .stream() // StreamResponseSpec
-            .content() // Flux<String>
-            .onErrorResume { _ ->
-                // если стрим упал (тот самый NPE внутри Spring AI) — вернём разовый ответ
-                reactor.core.publisher.Mono.just(
+            .stream()
+            .content()
+            .onErrorResume { e ->
+                logger.error("RagService.ask: stream error", e)
+                // ✅ вычисляем только при подписке и на пуле для блокирующих
+                Mono.fromCallable {
                     chat
                         .prompt("Ответь на русском")
                         .user(question)
-                        .call()
+                        .call() // синхронный
                         .content()
-                        .orEmpty(),
-                )
+                        .orEmpty()
+                }
+                    .subscribeOn(reactor.core.scheduler.Schedulers.boundedElastic())
+            }
+            .doOnSubscribe { logger.debug("RagService.ask: subscribe question='{}'", question.take(80)) }
+            .doOnNext { chunk -> logger.trace("RagService.ask: chunk[{}]", chunk.length) }
+            .doOnError { t -> logger.error("RagService.ask: stream error", t) }
+            .doOnComplete { logger.debug("RagService.ask: completed") }
+    }
+
+    fun askFlow(question: String): Flow<String> {
+        val flux =
+            chat
+                .prompt("Ответь на русском")
+                .user(question)
+                .stream()
+                .content() // Flux<String>
+
+        return flux.asFlow()
+            .catch { e ->
+                logger.warn("RagService.askFlow stream error, fallback to call(): {}", e.message)
+                // синхронный fallback на IO-пуле
+                val oneShot =
+                    withContext(Dispatchers.IO) {
+                        chat.prompt("Ответь на русском").user(question).call().content().orEmpty()
+                    }
+                emit(oneShot)
             }
     }
 

@@ -1,9 +1,10 @@
-package mcdodik.springai.apiai.v1.dto
+package mcdodik.springai.apiai.v1.dto.reterieval
 
 import jakarta.validation.constraints.DecimalMax
 import jakarta.validation.constraints.DecimalMin
 import jakarta.validation.constraints.Max
 import jakarta.validation.constraints.Positive
+import mcdodik.springai.apiai.v1.dto.RerankerDto
 
 data class RetrievalDto(
     val enabled: Boolean = true,

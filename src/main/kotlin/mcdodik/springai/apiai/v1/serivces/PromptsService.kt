@@ -1,7 +1,7 @@
 package mcdodik.springai.apiai.v1.serivces
 
 import mcdodik.springai.apiai.v1.dto.PageDto
-import mcdodik.springai.apiai.v1.dto.PromptDto
+import mcdodik.springai.apiai.v1.dto.prompt.PromptDto
 import reactor.core.publisher.Mono
 
 interface PromptsService {

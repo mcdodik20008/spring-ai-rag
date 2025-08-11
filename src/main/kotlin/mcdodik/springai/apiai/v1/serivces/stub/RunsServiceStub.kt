@@ -1,9 +1,9 @@
 package mcdodik.springai.apiai.v1.serivces.stub
 
-import mcdodik.springai.apiai.v1.dto.ChatOutputDto
-import mcdodik.springai.apiai.v1.dto.ChatResponseDto
 import mcdodik.springai.apiai.v1.dto.PageDto
 import mcdodik.springai.apiai.v1.dto.UsageDto
+import mcdodik.springai.apiai.v1.dto.chat.ChatOutputDto
+import mcdodik.springai.apiai.v1.dto.chat.ChatResponseDto
 import mcdodik.springai.apiai.v1.serivces.RunsService
 import org.springframework.context.annotation.Primary
 import org.springframework.context.annotation.Profile

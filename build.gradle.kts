@@ -62,8 +62,7 @@ dependencies {
     implementation("org.mybatis.spring.boot:mybatis-spring-boot-starter:3.0.3")
 
     // ──────────── Kotlin + Coroutines ────────────
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.1")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor")
+    implementation(libs.bundles.coroutines)
 
     // ──────────── Spring AI ────────────
     implementation(libs.bundles.springai)
@@ -120,15 +119,15 @@ tasks.withType<Test> {
     }
 }
 
-tasks.register("installGitHook", Copy::class) {
-    from("$rootDir/ci/git/pre-push")
-    into("$rootDir/.git/hooks")
-    fileMode = 0b111101101
-}
+// tasks.register("installGitHook", Copy::class) {
+//    from("$rootDir/ci/git/pre-push")
+//    into("$rootDir/.git/hooks")
+//    fileMode = 0b111101101
+// }
 
-tasks.named("build") {
-    dependsOn("installGitHook")
-}
+// tasks.named("build") {
+//    dependsOn("installGitHook")
+// }
 
 tasks.register("coverage") {
     dependsOn("koverXmlReport", "koverHtmlReport", "koverVerify")

@@ -1,13 +1,12 @@
 package mcdodik.springai.apiai.v1.serivces
 
-import mcdodik.springai.apiai.v1.dto.ChatRequestDto
-import mcdodik.springai.apiai.v1.dto.ChatResponseDto
+import mcdodik.springai.apiai.v1.dto.chat.ChatRequestDto
+import mcdodik.springai.apiai.v1.dto.chat.ChatResponseDto
 import org.springframework.http.codec.ServerSentEvent
-import reactor.core.publisher.Flux
-import reactor.core.publisher.Mono
+import kotlinx.coroutines.flow.Flow
 
 interface ChatService {
-    fun complete(req: ChatRequestDto): Mono<ChatResponseDto>
+    suspend fun complete(req: ChatRequestDto): ChatResponseDto
 
-    fun stream(req: ChatRequestDto): Flux<ServerSentEvent<Any>>
+    fun stream(req: ChatRequestDto): Flow<ServerSentEvent<Any>>
 }

@@ -1,8 +1,8 @@
 package mcdodik.springai.apiai.v1.serivces.stub
 
 import mcdodik.springai.apiai.v1.dto.DocumentDto
-import mcdodik.springai.apiai.v1.dto.IngestionRequestDto
-import mcdodik.springai.apiai.v1.dto.IngestionResponseDto
+import mcdodik.springai.apiai.v1.dto.ingestion.IngestionRequestDto
+import mcdodik.springai.apiai.v1.dto.ingestion.IngestionResponseDto
 import mcdodik.springai.apiai.v1.serivces.IngestionService
 import org.springframework.context.annotation.Primary
 import org.springframework.context.annotation.Profile

@@ -1,6 +1,7 @@
-package mcdodik.springai.apiai.v1.dto
+package mcdodik.springai.apiai.v1.dto.ingestion
 
 import jakarta.validation.constraints.Min
+import mcdodik.springai.apiai.v1.dto.OcrDto
 
 data class IngestionConfigDto(
     val chunkingPromptId: String? = null,

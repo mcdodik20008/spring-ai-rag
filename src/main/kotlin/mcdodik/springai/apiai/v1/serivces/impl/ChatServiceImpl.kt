@@ -12,8 +12,10 @@ import org.springframework.http.codec.ServerSentEvent
 import org.springframework.stereotype.Service
 import java.time.Duration
 import java.time.Instant
-import java.util.UUID
+import java.util.*
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.channelFlow
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 
@@ -22,13 +24,19 @@ import kotlinx.coroutines.launch
 @Qualifier("chatService")
 class ChatServiceImpl(
     private val ragService: RagService,
-) : ChatService, Loggable {
+) : ChatService,
+    Loggable {
     override suspend fun complete(req: ChatRequestDto): ChatResponseDto {
         val runId = UUID.randomUUID().toString()
         val sessionId = req.sessionId ?: UUID.randomUUID().toString()
         val start = Instant.now()
 
-        val userMessage = req.messages.lastOrNull()?.content?.trim().orEmpty()
+        val userMessage =
+            req.messages
+                .lastOrNull()
+                ?.content
+                ?.trim()
+                .orEmpty()
         if (userMessage.isBlank()) {
             logger.warn("complete: blank message | runId={}", runId)
             return ChatResponseDto(runId, sessionId, ChatOutputDto(content = ""), null, null, 0)
@@ -43,12 +51,17 @@ class ChatServiceImpl(
         return ChatResponseDto(runId, sessionId, ChatOutputDto(content = buf.toString()), null, null, latency)
     }
 
-    override fun stream(req: ChatRequestDto): kotlinx.coroutines.flow.Flow<ServerSentEvent<Any>> =
-        kotlinx.coroutines.flow.channelFlow {
+    override fun stream(req: ChatRequestDto): Flow<ServerSentEvent<Any>> =
+        channelFlow {
             val runId = UUID.randomUUID().toString()
             val sessionId = req.sessionId ?: UUID.randomUUID().toString()
             val start = Instant.now()
-            val userMessage = req.messages.lastOrNull()?.content?.trim().orEmpty()
+            val userMessage =
+                req.messages
+                    .lastOrNull()
+                    ?.content
+                    ?.trim()
+                    .orEmpty()
 
             send(sse("start", runId, mapOf("runId" to runId, "sessionId" to sessionId)))
 
@@ -90,7 +103,12 @@ class ChatServiceImpl(
         event: String,
         id: String,
         data: Any?,
-    ) = ServerSentEvent.builder<Any>().event(event).id(id).data(data ?: emptyMap<String, Any>()).build()
+    ) = ServerSentEvent
+        .builder<Any>()
+        .event(event)
+        .id(id)
+        .data(data ?: emptyMap<String, Any>())
+        .build()
 
     private fun done(
         runId: String,

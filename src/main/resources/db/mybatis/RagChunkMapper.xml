@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper
-        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
-        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="mcdodik.springai.db.mybatis.mapper.RagChunkMapper">
 
@@ -15,7 +15,7 @@
                  typeHandler="mcdodik.springai.db.mybatis.handler.FloatListTypeHandler"/>
             <arg name="type" column="type"/>
             <arg name="source" column="source"/>
-            <arg name="chunkIndex" column="chunk_index" javaType="java.lang.Integer"/>
+            <arg name="chunkIndex" column="chunk_index"/>
             <arg name="fileName" column="file_name"/>
             <arg name="extension" column="extension"/>
             <arg name="hash" column="file_hash"/>
@@ -47,27 +47,27 @@
     <!-- Вставка rag-чанк -->
     <insert id="insert" parameterType="mcdodik.springai.db.mybatis.handler.UUIDTypeHandler">
         INSERT INTO rag_chunks (
-            id,
-            content,
-            embedding,
-            type,
-            source,
-            chunk_index,
-            file_name,
-            extension,
-            file_hash,
-            created_at
+        id,
+        content,
+        embedding,
+        type,
+        source,
+        chunk_index,
+        file_name,
+        extension,
+        file_hash,
+        created_at
         ) VALUES (
-            #{id, typeHandler=mcdodik.springai.db.mybatis.handler.UUIDTypeHandler},
-            #{content},
-            #{embedding, typeHandler=mcdodik.springai.db.mybatis.handler.FloatListTypeHandler},
-            #{type},
-            #{source},
-            #{chunkIndex},
-            #{fileName},
-            #{extension},
-            #{hash},
-            #{createdAt}
+        #{id, typeHandler=mcdodik.springai.db.mybatis.handler.UUIDTypeHandler},
+        #{content},
+        #{embedding, typeHandler=mcdodik.springai.db.mybatis.handler.FloatListTypeHandler},
+        #{type},
+        #{source},
+        #{chunkIndex},
+        #{fileName},
+        #{extension},
+        #{hash},
+        #{createdAt}
         )
     </insert>
 

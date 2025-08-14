@@ -52,14 +52,13 @@ dependencies {
     implementation(libs.bundles.security)
 
     // ──────────── Trace ────────────
-    implementation("io.micrometer:micrometer-tracing-bridge-brave")
-    implementation("io.zipkin.reporter2:zipkin-reporter-brave")
+    implementation(libs.bundles.tracing)
 
     // ──────────── Swagger ────────────
-    implementation("org.springdoc:springdoc-openapi-starter-webflux-ui:2.8.9")
+    implementation(libs.bundles.swagger)
 
     // ──────────── MyBatis ────────────
-    implementation("org.mybatis.spring.boot:mybatis-spring-boot-starter:3.0.3")
+    implementation(libs.bundles.mybatis)
 
     // ──────────── Kotlin + Coroutines ────────────
     implementation(libs.bundles.coroutines)
@@ -67,11 +66,14 @@ dependencies {
     // ──────────── Spring AI ────────────
     implementation(libs.bundles.springai)
 
+    // ──────────── Fly Way ────────────
+    implementation(libs.bundles.flyway)
+
     // ──────────── Logging + MDC ────────────
-    implementation("ch.qos.logback:logback-classic") // обычно уже есть
+    implementation(libs.bundles.logging)
 
     // ──────────── Rate limiting ────────────
-    implementation("com.bucket4j:bucket4j-core:8.10.1")
+    implementation(libs.bundles.ratelimit)
 
     // ──────────── Jackson ────────────
     implementation(libs.bundles.jackson)
@@ -80,11 +82,15 @@ dependencies {
     implementation(libs.bundles.docs)
 
     // ──────────── Utils ────────────
-    implementation("org.jetbrains.kotlin:kotlin-reflect")
+    implementation(libs.bundles.utils)
+
+    //
+    implementation(libs.bundles.dev)
 
     // ──────────── Dev / Test ────────────
     implementation(libs.bundles.test)
     implementation(libs.bundles.testRuntime)
+    implementation(libs.bundles.testContainers)
 }
 
 kotlin {
@@ -118,16 +124,6 @@ tasks.withType<Test> {
         showStackTraces = true
     }
 }
-
-// tasks.register("installGitHook", Copy::class) {
-//    from("$rootDir/ci/git/pre-push")
-//    into("$rootDir/.git/hooks")
-//    fileMode = 0b111101101
-// }
-
-// tasks.named("build") {
-//    dependsOn("installGitHook")
-// }
 
 tasks.register("coverage") {
     dependsOn("koverXmlReport", "koverHtmlReport", "koverVerify")

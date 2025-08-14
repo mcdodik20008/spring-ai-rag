@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper
-        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
-        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="mcdodik.springai.db.mybatis.mapper.DocumentInfoMapper">
 
@@ -13,7 +13,7 @@
             <arg name="fileName" column="file_name" javaType="java.lang.String"/>
             <arg name="extension" column="extension" javaType="java.lang.String"/>
             <arg name="hash" column="file_hash" javaType="java.lang.String"/>
-            <arg name="chunkCount" column="chunk_count" javaType="java.lang.Integer"/>
+            <arg name="chunkCount" column="chunk_count"/>
             <arg name="createdAt" column="created_at" javaType="java.time.LocalDateTime"/>
             <arg name="summary" column="summary" javaType="java.lang.String"/>
         </constructor>
@@ -40,7 +40,7 @@
         created_at,
         summary
         FROM document_info
-        WHERE id = #{id, javaType=java.util.UUID, typeHandler=mcdodik.springai.db.mybatis.handler.UUIDTypeHandler}
+        WHERE id = #{id}
     </select>
 
     <select id="searchByFilenames" resultMap="DocumentInfo">
@@ -56,7 +56,7 @@
     <select id="searchByFilenameLike" resultMap="DocumentInfo" parameterType="java.lang.String">
         SELECT *
         FROM document_info
-        WHERE file_name ILIKE '%' || #{keyword} || '%'
+        WHERE file_name ILIKE '%' || #{fileName} || '%'
     </select>
 
     <!-- Удаление по id -->
@@ -74,15 +74,6 @@
         ]]>
     </select>
 
-    <!-- Только id по имени и хэшу — для rag_chunks.document_id -->
-    <select id="getIdByFileNameAndHash" resultType="java.util.UUID" parameterType="map">
-        <![CDATA[
-        SELECT id
-        FROM document_info
-        WHERE file_hash = #{hash} AND file_name = #{fileName}
-        ]]>
-    </select>
-
     <!-- Вставка документа -->
     <insert id="insert" parameterType="mcdodik.springai.db.entity.rag.DocumentInfo">
         INSERT INTO document_info (
@@ -94,13 +85,13 @@
         created_at,
         summary
         ) VALUES (
-        #{id, javaType=java.util.UUID, typeHandler=mcdodik.springai.db.mybatis.handler.UUIDTypeHandler},
-        #{fileName},
-        #{extension},
-        #{hash},
-        #{chunkCount},
-        #{createdAt},
-        #{summary}
+        #{documentInfo.id, javaType=java.util.UUID, typeHandler=mcdodik.springai.db.mybatis.handler.UUIDTypeHandler},
+        #{documentInfo.fileName},
+        #{documentInfo.extension},
+        #{documentInfo.hash},
+        #{documentInfo.chunkCount},
+        #{documentInfo.createdAt},
+        #{documentInfo.summary}
         )
     </insert>
 

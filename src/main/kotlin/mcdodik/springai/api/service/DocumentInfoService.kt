@@ -7,7 +7,7 @@ import org.apache.ibatis.javassist.NotFoundException
 import org.springframework.ai.vectorstore.VectorStore
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.stereotype.Service
-import java.util.UUID
+import java.util.*
 
 /**
  * Service class for managing document information.
@@ -48,6 +48,7 @@ class DocumentInfoService(
         return fileNames
             .take(if (topK == 0) DEFAULT_TOP_K else topK)
             .map { documentStore.searchByFilenameLike(it) }
+            .flatten()
     }
 
     /**
@@ -72,9 +73,7 @@ class DocumentInfoService(
      * @param fileName The name of the file associated with the document.
      * @return The [DocumentInfo] object corresponding to the given file name.
      */
-    fun getByFileName(fileName: String): DocumentInfo {
-        return documentStore.searchByFilenameLike(fileName)
-    }
+    fun getByFileName(fileName: String): List<DocumentInfo> = documentStore.searchByFilenameLike(fileName)
 
     /**
      * Deletes a document by its unique identifier.

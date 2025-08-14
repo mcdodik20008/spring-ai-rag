@@ -26,37 +26,7 @@ class DuplicateAggregationService(
             if (batch.isEmpty()) break
 
             for (ch in batch) {
-                val tfidf = ch.tfidf
-                val norm = ch.tfidfNorm
-                if (tfidf.isEmpty() || norm == 0.0) continue
-
-                val topTerms =
-                    tfidf.entries
-                        .asSequence()
-                        .sortedByDescending { it.value }
-                        .take(props.topTermsPerDoc)
-                        .map { it.key }
-                        .toList()
-                if (topTerms.isEmpty()) continue
-
-                // XML-маппер принимает List<String>, внутри строит CTE terms(t)
-                val candidates = mapper.findCandidatesByAnyTerms(ch.id, topTerms, props.candidateLimit)
-
-                var best: Pair<UUID, Double>? = null
-                for (cand in candidates) {
-                    val sim = cosineSparse(tfidf, norm, cand.tfidf, cand.tfidfNorm)
-                    if (sim >= props.similarityThreshold) {
-                        if (best == null || sim > best.second) best = cand.id to sim
-                    }
-                }
-
-                if (best != null) {
-                    val (dup, sim) = best
-                    // Правило: всегда держим меньший UUID как "канон", это избегает циклов
-                    val keepId = minOf(ch.id, dup)
-                    val dupId = maxOf(ch.id, dup)
-                    mapper.upsertDuplicate(dupId = dupId, keepId = keepId, simScore = sim)
-                }
+                processChunk(ch)
             }
 
             offset += batch.size
@@ -64,6 +34,40 @@ class DuplicateAggregationService(
             log.info("Dedup pass: processed page={}, total={}", batch.size, processed)
         }
         log.info("Dedup finished, total={}", processed)
+    }
+
+    private fun processChunk(ch: ChunkForDedup) {
+        val tfidf = ch.tfidf
+        val norm = ch.tfidfNorm
+        if (tfidf.isEmpty() || norm == 0.0) return
+
+        val topTerms =
+            tfidf.entries
+                .asSequence()
+                .sortedByDescending { it.value }
+                .take(props.topTermsPerDoc)
+                .map { it.key }
+                .toList()
+        if (topTerms.isEmpty()) return
+
+        // XML-маппер принимает List<String>, внутри строит CTE terms(t)
+        val candidates = mapper.findCandidatesByAnyTerms(ch.id, topTerms, props.candidateLimit)
+
+        var best: Pair<UUID, Double>? = null
+        for (cand in candidates) {
+            val sim = cosineSparse(tfidf, norm, cand.tfidf, cand.tfidfNorm)
+            if (sim >= props.similarityThreshold) {
+                if (best == null || sim > best.second) best = cand.id to sim
+            }
+        }
+
+        if (best != null) {
+            val (dup, sim) = best
+            // Правило: всегда держим меньший UUID как "канон", это избегает циклов
+            val keepId = minOf(ch.id, dup)
+            val dupId = maxOf(ch.id, dup)
+            mapper.upsertDuplicate(dupId = dupId, keepId = keepId, simScore = sim)
+        }
     }
 
     private fun cosineSparse(

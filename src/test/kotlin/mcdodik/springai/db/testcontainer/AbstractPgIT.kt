@@ -11,7 +11,7 @@ import org.testcontainers.junit.jupiter.Testcontainers
 @Testcontainers
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-abstract class AbstractPgIT {
+abstract class AbstractPgIT protected constructor() {
     companion object {
         @Container
         @JvmStatic

@@ -120,8 +120,4 @@ class ChatServiceImpl(
         val dto = ChatResponseDto(runId, sessionId, ChatOutputDto(content = content), null, null, latency)
         return sse("done", runId, dto)
     }
-
-    companion object {
-        private val HEARTBEAT_INTERVAL: Duration = Duration.ofSeconds(15)
-    }
 }

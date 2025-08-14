@@ -10,7 +10,6 @@ import org.postgresql.util.PGobject
 import java.sql.CallableStatement
 import java.sql.PreparedStatement
 import java.sql.ResultSet
-import java.sql.Types
 
 @MappedTypes(Map::class) // Map<String, Double>
 @MappedJdbcTypes(JdbcType.OTHER) // для jsonb
@@ -21,7 +20,7 @@ class JsonbMapDoubleHandler : BaseTypeHandler<Map<String, Double>?>() {
         ps: PreparedStatement,
         i: Int,
         parameter: Map<String, Double>?,
-        jdbcType: JdbcType?, // <-- nullable, критично
+        jdbcType: JdbcType?,
     ) {
         val json = mapper.writeValueAsString(parameter ?: emptyMap<String, Double>())
         val pg =
@@ -30,14 +29,6 @@ class JsonbMapDoubleHandler : BaseTypeHandler<Map<String, Double>?>() {
                 value = json
             }
         ps.setObject(i, pg)
-    }
-
-    fun setNullParameter(
-        ps: PreparedStatement,
-        i: Int,
-        jdbcType: JdbcType?,
-    ) {
-        ps.setNull(i, Types.OTHER)
     }
 
     override fun getNullableResult(

@@ -9,6 +9,7 @@ commonmark = "0.24.0"
 tika = "2.9.2"
 pdfbox = "3.0.3"
 poi = "5.2.5"
+testcontainers = "1.20.3"
 
 [libraries]
 # ── CORE
@@ -47,6 +48,10 @@ spring-ai-tika-reader = { module = "org.springframework.ai:spring-ai-tika-docume
 spring-ai-pdf-reader = { module = "org.springframework.ai:spring-ai-pdf-document-reader" }
 spring-ai-transformers = { module = "org.springframework.ai:spring-ai-starter-model-transformers" }
 
+# ── Fly way
+fly-way-core = { module = "org.flywaydb:flyway-core" }
+fly-way-postgres = { module = "org.flywaydb:flyway-database-postgresql" }
+
 # ── Logging
 logback-classic = { module = "ch.qos.logback:logback-classic" }
 
@@ -59,7 +64,7 @@ jackson-databind = { module = "com.fasterxml.jackson.core:jackson-databind" }
 jackson-annotations = { module = "com.fasterxml.jackson.core:jackson-annotations" }
 jackson-builder = { module = "com.fasterxml.jackson.datatype:jackson-datatype-jsr310" }
 
-# ── Markdown, PDF, Tika (часто не в BOM — фиксируем)
+# ── Markdown, PDF, Tika
 commonmark = { module = "org.commonmark:commonmark", version.ref = "commonmark" }
 tika-core = { module = "org.apache.tika:tika-core", version.ref = "tika" }
 tika-parsers = { module = "org.apache.tika:tika-parsers-standard-package", version.ref = "tika" }
@@ -69,14 +74,18 @@ poi-ooxml = { module = "org.apache.poi:poi-ooxml", version.ref = "poi" }
 # ── Utils
 kotlin-reflect = { module = "org.jetbrains.kotlin:kotlin-reflect" }
 
-# ── Dev / Test (версии даст Boot BOM)
+# ── Dev / Test
 boot-devtools = { module = "org.springframework.boot:spring-boot-devtools" }
 boot-config-processor = { module = "org.springframework.boot:spring-boot-configuration-processor" }
 boot-starter-test = { module = "org.springframework.boot:spring-boot-starter-test" }
 kotlin-test-junit5 = { module = "org.jetbrains.kotlin:kotlin-test-junit5" }
+mybatis-test = { module = "org.mybatis.spring.boot:mybatis-spring-boot-starter-test", version.ref = "mybatis" }
+test-containers = { module = "org.testcontainers:testcontainers", version.ref = "testcontainers" }
+test-containers-postgres = { module = "org.testcontainers:postgresql", version.ref = "testcontainers" }
+test-containers-jupiter = { module = "org.testcontainers:junit-jupiter", version.ref = "testcontainers" }
 junit-platform-launcher = { module = "org.junit.platform:junit-platform-launcher" }
 
-# ── BOMs как platforms (альтернатива dependencyManagement{})
+# ── BOMs
 spring-boot-bom = { module = "org.springframework.boot:spring-boot-dependencies", version.ref = "boot" }
 spring-ai-bom = { module = "org.springframework.ai:spring-ai-bom", version.ref = "springAi" }
 
@@ -93,9 +102,11 @@ ratelimit = ["bucket4j-core"]
 jackson = ["jackson-module-kotlin", "jackson-databind", "jackson-annotations", "jackson-builder"]
 docs = ["commonmark", "tika-core", "tika-parsers", "pdfbox", "poi-ooxml"]
 utils = ["kotlin-reflect"]
-dev = ["boot-devtools"]
-test = ["boot-starter-test", "kotlin-test-junit5"]
+dev = ["boot-devtools", "boot-config-processor"]
+test = ["boot-starter-test", "kotlin-test-junit5", "mybatis-test"]
 testRuntime = ["junit-platform-launcher"]
+testContainers = ["test-containers-jupiter", "test-containers-postgres", "test-containers"]
+flyway = ["fly-way-core", "fly-way-postgres"]
 
 [plugins]
 spring-boot = { id = "org.springframework.boot", version.ref = "boot" }

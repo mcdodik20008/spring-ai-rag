@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
-import java.util.UUID
+import java.util.*
 
 /**
  * REST controller for managing document information entities.
@@ -51,7 +51,7 @@ class DocumentInfoController(
     @GetMapping("/by-file-name")
     fun getById(
         @RequestParam fileName: String,
-    ): DocumentInfo = service.getByFileName(fileName)
+    ): List<DocumentInfo> = service.getByFileName(fileName)
 
     /**
      * Deletes a document information record by its unique identifier.

@@ -12,7 +12,8 @@ class HybridRetriever(
     private val vector: Retriever,
     private val bm25: Retriever,
     private val cfg: HybridConfig = HybridConfig(),
-) : Retriever, Loggable {
+) : Retriever,
+    Loggable {
     override fun retrieve(
         query: String,
         topK: Int,
@@ -26,7 +27,15 @@ class HybridRetriever(
         logger.debug(
             "HybridRetriever.retrieve: start | mode={}, topK={}, finalTopK={}, " +
                 "vecTopK={}, bmTopK={}, vecWeight={}, bmWeight={}, rrfK={}, threshold={}",
-            cfg.mode, topK, cfg.finalTopK, cfg.vecTopK, cfg.bmTopK, cfg.vecWeight, cfg.bmWeight, cfg.rrfK, threshold,
+            cfg.mode,
+            topK,
+            cfg.finalTopK,
+            cfg.vecTopK,
+            cfg.bmTopK,
+            cfg.vecWeight,
+            cfg.bmWeight,
+            cfg.rrfK,
+            threshold,
         )
 
         var vTimeNs = 0L
@@ -77,6 +86,7 @@ class HybridRetriever(
                     logger.debug("HybridRetriever.retrieve: fuse mode = RRF (k={})", cfg.rrfK)
                     fuseRrf(v, b, cfg.rrfK)
                 }
+
                 FuseMode.WEIGHTED -> {
                     logger.debug(
                         "HybridRetriever.retrieve: fuse mode = WEIGHTED (vecWeight={}, bmWeight={})",
@@ -146,7 +156,8 @@ class HybridRetriever(
             }
 
         if (logger.isTraceEnabled) {
-            fused.sortedByDescending { it.score }
+            fused
+                .sortedByDescending { it.score }
                 .take(10)
                 .forEachIndexed { i, d ->
                     val vv = d.metadata["rrfVecRank"]
@@ -216,7 +227,8 @@ class HybridRetriever(
             }
 
         if (logger.isTraceEnabled) {
-            fused.sortedByDescending { it.score }
+            fused
+                .sortedByDescending { it.score }
                 .take(10)
                 .forEachIndexed { i, d ->
                     val v = d.metadata["vectorNorm"]
@@ -257,7 +269,7 @@ class HybridRetriever(
         }
     }
 
-    private fun Long.ms(): String = String.format("%.2f", this / 1_000_000.0)
+    private fun Long.ms(): String = "%.2f".format(this / 1_000_000.0)
 
     companion object {
         private const val EPS = 1e-12

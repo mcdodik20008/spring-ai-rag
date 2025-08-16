@@ -4,109 +4,129 @@ server:
         enabled: true
 
 spring:
-  profiles:
-    active: stub
-  application:
-    name: spring-ai
-  main:
-      web-application-type: reactive
-  webflux:
-      base-path: /
-  jackson:
-      default-property-inclusion: non_null
-  datasource:
-    url: jdbc:postgresql://localhost:5432/${POSRGRES_DB_NAME:ragdb}
-    username: ${POSTGRES_USERNAME:postgres}
-    password: ${POSTGRES_PASSWORD:postgres}
-  jpa:
-    hibernate:
-      ddl-auto: update
-    show-sql: true
-    properties:
-      hibernate.dialect: org.hibernate.dialect.PostgreSQLDialect
-  servlet:
-    multipart:
-      max-file-size: ${MAX_FILE_SIZE:-1}
-      max-request-size: ${MAX_REQUEST_SIZE:-1}
-      enabled: true
-  web:
-    resources:
-      add-mappings: false
+    application:
+        name: spring-ai
+    profiles:
+        active: stub
+    main:
+        web-application-type: reactive
+    webflux:
+        base-path: /
+    servlet:
+        multipart:
+            max-file-size: ${MAX_FILE_SIZE:-1}
+            max-request-size: ${MAX_REQUEST_SIZE:-1}
+            enabled: true
+    codec:
+        max-in-memory-size: 64MB
 
-# phi3:mini owl/t-lite gemma3:1b-it-qat qwen3:0.6b
-# qwen2.5:0.5b llama3.2:1b-instruct-q4_K_M
-  ai:
-    openai:
-      base-url: http://localhost:11434
-      api-key: dummy # обязателен (любая непустая строка)
-      chat:
-        options:
-          model: qwen2.5:0.5b
-    ollama:
-      base-url: http://localhost:11434
-      embedding:
-        model: ${OLLAMA_EMBEDDING_MODEL:nomic-embed-text}
-        options:
-          num-ctx: 8192
-      # чтобы не плодить лишний ChatModel (и не уехать в /api/chat):
-      chat:
-        enabled: false
+    jackson:
+        default-property-inclusion: non_null
+
+    datasource:
+        url: jdbc:postgresql://localhost:5432/${POSRGRES_DB_NAME:ragdb}
+        username: ${POSTGRES_USERNAME:postgres}
+        password: ${POSTGRES_PASSWORD:postgres}
+    jpa:
+        open-in-view: false
+        hibernate:
+            ddl-auto: none
+        show-sql: false
+    flyway:
+        enabled: true
+        baseline-on-migrate: false
+        clean-disabled: true
+        locations: classpath:db/migration
+    sql:
+        init:
+            mode: never
+
+    web:
+        resources:
+            add-mappings: false
+
+    # phi3:mini owl/t-lite gemma3:1b-it-qat qwen3:0.6b
+    # qwen2.5:0.5b llama3.2:1b-instruct-q4_K_M
+    ai:
+        openai:
+            base-url: http://localhost:11434
+            api-key: dummy # обязателен (любая непустая строка)
+            chat:
+                options:
+                    model: qwen2.5:0.5b
+        ollama:
+            base-url: http://localhost:11434
+            embedding:
+                model: ${OLLAMA_EMBEDDING_MODEL:nomic-embed-text}
+                options:
+                    num-ctx: 8192
+            # чтобы не плодить лишний ChatModel (и не уехать в /api/chat):
+            chat:
+                enabled: false
 mybatis:
-  mapper-locations: classpath*:db/*.xml
-  type-handlers-package: classpath*:mcdodik.springai.rag.db
+    mapper-locations: classpath*:db/mybatis/*.xml
+    type-handlers-package: classpath*:mcdodik.springai.db.mybatis.handler
 
 logging:
-  level:
-#    root: INFO
-    mcdodik: DEBUG
+    level:
+        #    root: INFO
+        mcdodik: DEBUG
+        org.flywaydb: debug
 #    reactor.netty.http.client: DEBUG
 #    org.springframework.ai: DEBUG
 
 management:
-  endpoints:
-    web:
-      exposure:
-        include: "*"
-  endpoint:
-    health:
-      probes:
-        enabled: true
+    endpoints:
+        web:
+            exposure:
+                include: "*"
+    endpoint:
+        health:
+            probes:
+                enabled: true
 
 
 app:
-  ratelimit:
-    enabled: true
-    capacity: 20         # burst
-    refill-per-min: 20   # rps ~ 0.33
-  security:
-    enabled: false
-#    jwk-set-uri: "http://localhost:8081/.well-known/jwks.json" # если JWT
-#    required-scope: "rag.api"
-  cors:
-    allowed-origins: ["http://localhost:3000"]
-    allowed-methods: ["GET","POST","PUT","DELETE","OPTIONS"]
-    allowed-headers: ["*"]
-  idempotency:
-    enabled: true
-    ttl-seconds: 3600
+    ratelimit:
+        enabled: true
+        capacity: 20         # burst
+        refill-per-min: 20   # rps ~ 0.33
+    security:
+        enabled: false
+    #    jwk-set-uri: "http://localhost:8081/.well-known/jwks.json" # если JWT
+    #    required-scope: "rag.api"
+    cors:
+        allowed-origins: [ "http://localhost:3000" ]
+        allowed-methods: [ "GET","POST","PUT","DELETE","OPTIONS" ]
+        allowed-headers: [ "*" ]
+    idempotency:
+        enabled: true
+        ttl-seconds: 3600
 
 mcdodik:
-  openrouter:
-    enabled: true
-    temperature: 0.2
-    max-tokens: 8192
-    top-p: 0.95
-    api-key: ${OPENROUTER_API_KEY}
-    models:
-      default: deepseek/deepseek-r1:free  #mistralai/mistral-nemo #openai/gpt-oss-20b
-      summary: deepseek/deepseek-r1:free
-      promptGen: deepseek/deepseek-r1:free
-      chunking: deepseek/deepseek-r1:free
-  advisors:
-    vector:
-      topK: 24
-      vectorStoreSimilarityThreshold: 0.35
-      rerankSimilarityThreshold: 0.75
-      finalK: 12
-      maxContextTokens: 20000
-      order: 0
+    openrouter:
+        enabled: true
+        temperature: 0.2
+        max-tokens: 8192
+        top-p: 0.95
+        api-key: ${OPENROUTER_API_KEY}
+        models:
+            default: deepseek/deepseek-r1:free  #mistralai/mistral-nemo #openai/gpt-oss-20b
+            summary: deepseek/deepseek-r1:free
+            promptGen: deepseek/deepseek-r1:free
+            chunking: deepseek/deepseek-r1:free
+    advisors:
+        vector:
+            topK: 24
+            vectorStoreSimilarityThreshold: 0.35
+            rerankSimilarityThreshold: 0.75
+            finalK: 12
+            maxContextTokens: 20000
+            order: 0
+    chunks:
+        dedup:
+            recompute-batchSize: 2000
+            page-size: 2000
+            top-terms-per-doc: 15
+            candidate-limit: 500
+            similarity-threshold: 0.9

@@ -6,7 +6,7 @@ import mcdodik.springai.scheduling.model.ChunkForDedup
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
-import java.util.*
+import java.util.UUID
 
 @Service
 class DuplicateAggregationService(

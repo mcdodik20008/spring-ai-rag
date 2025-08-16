@@ -5,7 +5,7 @@ import mcdodik.springai.scheduling.model.ChunkForTfidf
 import mcdodik.springai.scheduling.model.ChunkTfidfUpdate
 import org.apache.ibatis.annotations.Mapper
 import org.apache.ibatis.annotations.Param
-import java.util.*
+import java.util.UUID
 
 @Mapper
 interface TfidfMapper {

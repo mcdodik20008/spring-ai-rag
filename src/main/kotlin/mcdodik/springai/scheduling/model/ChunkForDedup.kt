@@ -1,6 +1,6 @@
 package mcdodik.springai.scheduling.model
 
-import java.util.*
+import java.util.UUID
 
 data class ChunkForDedup(
     val id: UUID,

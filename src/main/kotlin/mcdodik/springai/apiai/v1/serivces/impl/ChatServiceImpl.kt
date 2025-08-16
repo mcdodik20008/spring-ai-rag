@@ -12,7 +12,7 @@ import org.springframework.http.codec.ServerSentEvent
 import org.springframework.stereotype.Service
 import java.time.Duration
 import java.time.Instant
-import java.util.*
+import java.util.UUID
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.channelFlow

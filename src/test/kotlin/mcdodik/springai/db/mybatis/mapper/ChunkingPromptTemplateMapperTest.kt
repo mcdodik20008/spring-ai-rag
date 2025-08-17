@@ -1,7 +1,7 @@
 package mcdodik.springai.db.mybatis.mapper
 
+import mcdodik.springai.config.testcontainer.AbstractPgIT
 import mcdodik.springai.db.entity.prompt.ChunkingPromptTemplate
-import mcdodik.springai.db.testcontainer.AbstractPgIT
 import org.junit.jupiter.api.BeforeEach
 import org.mybatis.spring.boot.test.autoconfigure.MybatisTest
 import org.springframework.beans.factory.annotation.Autowired

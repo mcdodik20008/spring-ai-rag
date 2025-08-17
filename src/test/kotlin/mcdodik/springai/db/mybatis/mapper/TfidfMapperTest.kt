@@ -1,8 +1,8 @@
 package mcdodik.springai.db.mybatis.mapper
 
+import mcdodik.springai.config.testcontainer.AbstractPgIT
 import mcdodik.springai.db.entity.rag.DocumentInfo
 import mcdodik.springai.db.entity.rag.RagChunkEntity
-import mcdodik.springai.db.testcontainer.AbstractPgIT
 import mcdodik.springai.scheduling.mapper.TfidfMapper
 import mcdodik.springai.scheduling.model.ChunkTfidfUpdate
 import org.junit.jupiter.api.BeforeEach

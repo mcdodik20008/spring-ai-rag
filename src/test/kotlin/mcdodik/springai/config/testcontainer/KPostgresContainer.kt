@@ -1,4 +1,4 @@
-package mcdodik.springai.db.testcontainer
+package mcdodik.springai.config.testcontainer
 
 import org.testcontainers.containers.PostgreSQLContainer
 import org.testcontainers.containers.wait.strategy.Wait

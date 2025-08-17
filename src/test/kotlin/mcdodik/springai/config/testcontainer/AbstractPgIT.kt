@@ -1,4 +1,4 @@
-package mcdodik.springai.db.testcontainer
+package mcdodik.springai.config.testcontainer
 
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.TestInstance

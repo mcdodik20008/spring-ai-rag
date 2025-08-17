@@ -2,7 +2,7 @@ package mcdodik.springai.db.entity.rag
 
 import org.springframework.ai.document.Document
 import java.time.LocalDateTime
-import java.util.*
+import java.util.UUID
 
 /**
  * Data class representing a document chunk stored in the system.

@@ -7,7 +7,7 @@ import org.apache.ibatis.javassist.NotFoundException
 import org.springframework.ai.vectorstore.VectorStore
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.stereotype.Service
-import java.util.*
+import java.util.UUID
 
 /**
  * Service class for managing document information.

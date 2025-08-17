@@ -1,7 +1,7 @@
 package mcdodik.springai.scheduling.model
 
 import java.time.Instant
-import java.util.*
+import java.util.UUID
 
 data class ChunkForTfidf(
     val id: UUID,

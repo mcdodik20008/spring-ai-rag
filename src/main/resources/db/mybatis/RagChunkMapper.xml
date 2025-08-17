@@ -39,9 +39,16 @@
                 created_at
             FROM rag_chunks
             WHERE (embedding <=> CAST(#{embedding, jdbcType=OTHER, typeHandler=mcdodik.springai.db.mybatis.handler.FloatListTypeHandler} AS vector)) <= #{similarityThreshold}
+        ]]>
+        <if test="filterClause != null and filterClause.trim().length() > 0">
+            <![CDATA[ AND ${filterClause} ]]>
+        </if>
+        <![CDATA[
+
             ORDER BY embedding <=> CAST(#{embedding, jdbcType=OTHER, typeHandler=mcdodik.springai.db.mybatis.handler.FloatListTypeHandler} AS vector) ASC
             LIMIT #{topK}
         ]]>
+
     </select>
 
     <!-- Вставка rag-чанк -->

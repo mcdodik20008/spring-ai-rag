@@ -5,86 +5,98 @@
 
 <mapper namespace="mcdodik.springai.scheduling.mapper.TfidfMapper">
 
-    <!-- ===== ResultMaps ===== -->
-
-    <!-- Узкая модель под дедуп -->
-    <resultMap id="ChunkForDedupMap" type="mcdodik.springai.scheduling.model.ChunkForDedup">
-        <id property="id" column="id"
-            javaType="java.util.UUID"
-            typeHandler="mcdodik.springai.db.mybatis.handler.UUIDTypeHandler"/>
-        <result property="tfidf" column="tfidf" typeHandler="mcdodik.springai.db.mybatis.handler.JsonbMapDoubleHandler"/>
-        <result property="tfidfNorm" column="tfidf_norm" jdbcType="DOUBLE"/>
+    <resultMap id="ChunkForDedupCtorMap" type="mcdodik.springai.scheduling.model.ChunkForDedup">
+        <constructor>
+            <arg column="id"
+                 javaType="java.util.UUID"
+                 typeHandler="mcdodik.springai.db.mybatis.handler.UUIDTypeHandler"/>
+            <arg column="tfidf"
+                 javaType="java.util.Map"
+                 typeHandler="mcdodik.springai.db.mybatis.handler.JsonbMapDoubleHandler"/>
+            <arg column="tfidf_norm"
+                 javaType="double" jdbcType="DOUBLE"/>
+        </constructor>
     </resultMap>
 
-    <!-- Узкая модель под TF-IDF расчёт -->
     <resultMap id="ChunkForTfidfMap" type="mcdodik.springai.scheduling.model.ChunkForTfidf">
         <id property="id" column="id"
             javaType="java.util.UUID"
             typeHandler="mcdodik.springai.db.mybatis.handler.UUIDTypeHandler"/>
         <result property="text" column="content" jdbcType="LONGVARCHAR"/>
-        <result property="updatedAt" column="updated_at" javaType="java.time.Instant"/>
+        <result property="updatedAt" column="updated_at" javaType="java.time.Instant" jdbcType="TIMESTAMP"/>
     </resultMap>
 
     <!-- ===== Selects/Updates ===== -->
 
-    <!-- 00:00 — батчи на пересчёт TF-IDF -->
     <select id="selectChunksNeedingTfidf" resultMap="ChunkForTfidfMap">
         SELECT id, content, updated_at
         FROM rag_chunks
         WHERE (tfidf IS NULL OR tfidf_updated_at IS NULL OR updated_at > tfidf_updated_at)
-        ORDER BY updated_at
+        ORDER BY updated_at NULLS FIRST
         LIMIT #{limit} OFFSET #{offset}
     </select>
 
     <update id="updateTfidf">
         UPDATE rag_chunks
-        SET
-        tfidf = #{u.tfidf, jdbcType=OTHER,
-              typeHandler=mcdodik.springai.db.mybatis.handler.JsonbMapDoubleHandler},
-        updated_at = NOW()
+        SET tfidf = #{u.tfidf, jdbcType=OTHER,
+                   typeHandler=mcdodik.springai.db.mybatis.handler.JsonbMapDoubleHandler},
+        tfidf_norm = COALESCE(#{u.tfidfNorm, jdbcType=DOUBLE}, tfidf_norm),
+        tfidf_updated_at = NOW()
         WHERE id = #{u.id}
-        AND tfidf IS DISTINCT FROM #{u.tfidf, jdbcType=OTHER,
-              typeHandler=mcdodik.springai.db.mybatis.handler.JsonbMapDoubleHandler}
+        AND (
+        tfidf IS DISTINCT FROM #{u.tfidf, jdbcType=OTHER,
+                   typeHandler=mcdodik.springai.db.mybatis.handler.JsonbMapDoubleHandler}
+        OR (#{u.tfidfNorm, jdbcType=DOUBLE} IS NOT NULL
+        AND tfidf_norm IS DISTINCT FROM #{u.tfidfNorm, jdbcType=DOUBLE})
+        )
     </update>
 
-    <!-- 03:00 — чтение только TF-IDF для дедупликации -->
-    <select id="selectAllWithTfidf" resultMap="ChunkForDedupMap">
+    <select id="selectAllWithTfidf" resultMap="ChunkForDedupCtorMap">
         SELECT rc.id, rc.tfidf, rc.tfidf_norm
         FROM rag_chunks rc
         LEFT JOIN rag_chunk_duplicates d ON d.dup_id = rc.id
-        WHERE rc.tfidf IS NOT NULL AND rc.tfidf_norm IS NOT NULL
+        WHERE rc.tfidf IS NOT NULL
+        AND rc.tfidf_norm IS NOT NULL
         AND d.dup_id IS NULL
         ORDER BY rc.id
         LIMIT #{limit} OFFSET #{offset}
     </select>
 
-    <!-- кандидаты по пересечению ключей (top terms) -->
-    <!-- безопасная сборка массива терминов через CTE -->
-    <select id="findCandidatesByAnyTerms" resultMap="ChunkForDedupMap">
-        <![CDATA[
-        WITH terms(t) AS (
-        VALUES
-        <foreach collection="terms" item="t" separator=",">
-            (#{t})
-        </foreach>
-        )
-        SELECT id, tfidf, tfidf_norm
-        FROM rag_chunks
-        WHERE id <> #{id}
-        AND tfidf ?| array(SELECT t FROM terms)
-        LIMIT #{limit}
-    ]]>
+    <select id="findCandidatesByAnyTerms" resultMap="ChunkForDedupCtorMap">
+        <choose>
+            <when test="terms != null and terms.size() > 0">
+                <![CDATA[
+                SELECT id, tfidf, tfidf_norm
+                FROM rag_chunks
+                WHERE id <> #{id, javaType=java.util.UUID,
+                    typeHandler=mcdodik.springai.db.mybatis.handler.UUIDTypeHandler}
+                 ]]>
+                AND jsonb_exists_any(
+                tfidf,
+                ARRAY[
+                <foreach collection="terms" item="t" separator=",">
+                    CAST(#{t} AS text)
+                </foreach>
+                ]::text[]
+                )
+                AND tfidf_norm IS NOT NULL
+                LIMIT #{limit} OFFSET 0
+            </when>
+            <otherwise>
+                SELECT id, tfidf, tfidf_norm FROM rag_chunks WHERE 1=0
+            </otherwise>
+        </choose>
     </select>
 
-    <!-- UPSERT дубликата -->
+
+    <!-- UPSERT дубликата — без updated_at, т.к. его нет в таблице -->
     <update id="upsertDuplicate">
         INSERT INTO rag_chunk_duplicates (dup_id, keep_id, sim_score)
         VALUES (#{dupId}, #{keepId}, #{sim})
         ON CONFLICT (dup_id)
         DO UPDATE SET
         keep_id = EXCLUDED.keep_id,
-        sim_score = EXCLUDED.sim_score,
-        created_at = NOW();
+        sim_score = EXCLUDED.sim_score
     </update>
 
 </mapper>

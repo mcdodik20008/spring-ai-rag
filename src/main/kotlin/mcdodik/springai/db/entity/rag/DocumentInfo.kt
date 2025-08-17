@@ -3,7 +3,7 @@ package mcdodik.springai.db.entity.rag
 import mcdodik.springai.extensions.sha256
 import org.springframework.web.multipart.MultipartFile
 import java.time.LocalDateTime
-import java.util.*
+import java.util.UUID
 
 /**
  * Data class representing information about a document stored in the system.

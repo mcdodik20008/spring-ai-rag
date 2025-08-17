@@ -15,13 +15,13 @@ import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 @MybatisTest
-class Bm25MapperIT
+class Bm25MapperTest
     @Autowired
     constructor(
         private val mapper: Bm25Mapper,
         private val ragChunkMapper: RagChunkMapper,
         private val documentInfoMapper: DocumentInfoMapper,
-        private val jdbc: JdbcTemplate, // оставил только для DDL/tsv-бэкофилла
+        private val jdbc: JdbcTemplate,
     ) : AbstractPgIT() {
         private var embDim: Int = -1
         private val defaultDim = 768

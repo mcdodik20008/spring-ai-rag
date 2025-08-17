@@ -38,7 +38,7 @@ class DuplicateAggregationService(
 
     private fun processChunk(ch: ChunkForDedup) {
         val tfidf = ch.tfidf
-        val norm = ch.tfidfNorm
+        val norm = ch.tfidfNorm ?: 0.0
         if (tfidf.isEmpty() || norm == 0.0) return
 
         val topTerms =
@@ -55,7 +55,7 @@ class DuplicateAggregationService(
 
         var best: Pair<UUID, Double>? = null
         for (cand in candidates) {
-            val sim = cosineSparse(tfidf, norm, cand.tfidf, cand.tfidfNorm)
+            val sim = cosineSparse(tfidf, norm, cand.tfidf, cand.tfidfNorm ?: 0.0)
             if (sim >= props.similarityThreshold) {
                 if (best == null || sim > best.second) best = cand.id to sim
             }

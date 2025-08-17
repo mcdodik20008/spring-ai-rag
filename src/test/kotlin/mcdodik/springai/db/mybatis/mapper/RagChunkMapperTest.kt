@@ -95,7 +95,7 @@ class RagChunkMapperTest
             val res =
                 mapper.searchByEmbeddingFiltered(
                     embedding = q,
-                    similarityThreshold = 0.0, // порог оставит только a
+                    similarityThreshold = 0.0,
                     topK = 10,
                     filterClause = null,
                 )

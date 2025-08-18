@@ -1,5 +1,7 @@
-package mcdodik.springai.config
+package mcdodik.springai
 
+import mcdodik.springai.config.plananalyzer.ExplainProxyDsPostProcessorConfig
+import mcdodik.springai.config.plananalyzer.PlanAnalyzerTestConfig
 import mcdodik.springai.config.testcontainer.AbstractPgIT
 import org.junit.jupiter.api.Test
 import org.mybatis.spring.boot.test.autoconfigure.MybatisTest
@@ -10,7 +12,10 @@ import org.springframework.jdbc.core.JdbcTemplate
 
 @MybatisTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-@Import(ExplainProxyDsPostProcessorConfig::class)
+@Import(
+    ExplainProxyDsPostProcessorConfig::class,
+    PlanAnalyzerTestConfig::class,
+)
 class ExplainProxyTest
     @Autowired
     constructor(

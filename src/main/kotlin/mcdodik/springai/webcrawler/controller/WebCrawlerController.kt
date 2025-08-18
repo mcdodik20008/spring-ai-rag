@@ -17,7 +17,7 @@ class WebCrawlerController(
         return webCrawlerService.crawlAllSources()
     }
 
-    @PostMapping("/crawl", produces = [MediaType.TEXT_EVENT_STREAM_VALUE])
+    @GetMapping("/crawl-to-rag", produces = [MediaType.TEXT_EVENT_STREAM_VALUE])
     fun crawlAndIngestAllSources(): Flux<String> {
         return webCrawlerService.crawlAndIngestAllSources()
     }
@@ -27,7 +27,7 @@ class WebCrawlerController(
         return webCrawlerService.crawlSource(sourceName)
     }
 
-    @PostMapping("/crawl/{sourceName}", produces = [MediaType.TEXT_EVENT_STREAM_VALUE])
+    @GetMapping("/crawl-to-rag/{sourceName}", produces = [MediaType.TEXT_EVENT_STREAM_VALUE])
     fun crawlAndIngestSource(@PathVariable sourceName: String): Flux<String> {
         return webCrawlerService.crawlAndIngestSource(sourceName)
     }

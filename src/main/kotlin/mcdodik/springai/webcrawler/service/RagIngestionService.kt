@@ -9,7 +9,6 @@ import org.springframework.stereotype.Service
 import org.springframework.web.multipart.MultipartFile
 import reactor.core.publisher.Mono
 import java.time.format.DateTimeFormatter
-import java.util.*
 
 @Service
 class RagIngestionService(
@@ -17,15 +16,15 @@ class RagIngestionService(
 ) {
     companion object {
         private val logger: Logger = LoggerFactory.getLogger(RagIngestionService::class.java)
-        private const val DEFAULT_KB_ID = "default"
+        private const val DEFAULT_KB_ID = "data_from_crawler"
     }
 
     fun ingestCrawledData(data: CrawledData): Mono<String> {
         logger.info("Ingesting crawled data: ${data.title} from ${data.source}")
-        
+
         // Преобразуем CrawledData в MultipartFile
         val multipartFile = createMultipartFile(data)
-        
+
         // Используем существующий IngestionService для загрузки
         return ingestionService.upload(
             kbId = DEFAULT_KB_ID,
@@ -49,7 +48,7 @@ class RagIngestionService(
         contentBuilder.append("URL: ${data.url}\n")
         contentBuilder.append("Crawled at: ${data.timestamp.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)}\n\n")
         contentBuilder.append(data.content)
-        
+
         // Добавляем метаданные
         if (data.metadata.isNotEmpty()) {
             contentBuilder.append("\n\n## Metadata\n")
@@ -57,10 +56,10 @@ class RagIngestionService(
                 contentBuilder.append("- $key: $value\n")
             }
         }
-        
+
         val content = contentBuilder.toString()
         val filename = "${data.source}_${data.id}.md"
-        
+
         return CustomMultipartFile(
             name = "webcrawl",
             originalFilename = filename,

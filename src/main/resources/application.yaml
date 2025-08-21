@@ -103,6 +103,10 @@ app:
         enabled: true
         ttl-seconds: 3600
 
+telegram:
+    token: ${TELEGRAM_BOT_TOKEN}
+    channels: ${TELEGRAM_CHANNELS}
+
 mcdodik:
     openrouter:
         enabled: true

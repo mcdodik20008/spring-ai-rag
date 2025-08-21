@@ -16,7 +16,7 @@ class TelegramSource : WebSource {
         // TODO: Реализовать подключение к Telegram API
         /*
          * Для реализации этой функции нужно:
-         *
+         * DONE
          * 1. Добавить зависимости в build.gradle.kts:
          *    implementation("org.telegram:telegrambots:6.1.0")
          *    или
@@ -27,7 +27,7 @@ class TelegramSource : WebSource {
          *    telegram.channels=channel1,channel2,channel3
          *
          * 3. Инжектить конфигурацию:
-         *    @Value("\${telegram.bot.token}")
+         *    @Value("\${telegram.token}")
          *    private lateinit var botToken: String
          *
          * 4. Реализовать логику:

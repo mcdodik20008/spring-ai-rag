@@ -84,6 +84,9 @@ dependencies {
     // ──────────── Utils ────────────
     implementation(libs.bundles.utils)
 
+    // ──────────── Crawlers ────────────
+    implementation(libs.bundles.crawlers)
+
     //
     implementation(libs.bundles.dev)
 

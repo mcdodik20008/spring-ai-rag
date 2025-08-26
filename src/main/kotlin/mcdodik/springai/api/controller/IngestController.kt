@@ -9,20 +9,28 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.responses.ApiResponses
 import io.swagger.v3.oas.annotations.tags.Tag
 import jakarta.validation.Valid
+import mcdodik.springai.api.dto.CustomMultipartFile
 import mcdodik.springai.api.dto.EmptyParams
 import mcdodik.springai.api.dto.PdfCleanRequest
+import mcdodik.springai.infrastructure.multipart.DelegatingMultipartFileFactory
 import mcdodik.springai.infrastructure.youtube.model.YoutubeIngestRequest
 import mcdodik.springai.infrastructure.youtube.service.api.YoutubeSubtitleService
 import mcdodik.springai.rag.service.RagService
+import org.springframework.core.io.buffer.DataBufferUtils
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
+import org.springframework.http.codec.multipart.FilePart
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
+import org.springframework.web.bind.annotation.RequestPart
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.multipart.MultipartFile
+import reactor.core.publisher.Mono
+import reactor.core.scheduler.Schedulers
+import java.nio.charset.Charset
 
 
 @Tag(
@@ -60,16 +68,35 @@ class IngestController(
             ApiResponse(responseCode = "500", description = "Ошибка обработки")
         ]
     )
-    @PostMapping("/markdown", consumes = [MediaType.MULTIPART_FORM_DATA_VALUE])
+    @PostMapping(
+        "/markdown",
+        consumes = [MediaType.MULTIPART_FORM_DATA_VALUE],
+        produces = [MediaType.TEXT_PLAIN_VALUE]
+    )
     fun processMarkdown(
-        @Parameter(
-            description = "Markdown-файл (.md) для загрузки",
-            required = true
-        )
-        @RequestParam("file") file: MultipartFile,
-    ): ResponseEntity<String> {
-        rag.ingest(file, EmptyParams)
-        return ResponseEntity.status(HttpStatus.CREATED).body(response)
+        @RequestPart("file") file: FilePart,
+    ): Mono<ResponseEntity<String>> {
+        return DataBufferUtils.join(file.content())
+            .map { dataBuffer ->
+                val bytes = ByteArray(dataBuffer.readableByteCount())
+                dataBuffer.read(bytes)
+                DataBufferUtils.release(dataBuffer)
+                CustomMultipartFile(
+                    name = "file",
+                    originalFilename = file.filename(),
+                    contentType = guessContentType(file.filename()),
+                    content = bytes,
+                )
+            }
+            .flatMap { mf ->
+                // переносим «тяжёлую» работу на boundedElastic
+                Mono.fromCallable {
+                    rag.ingest(mf, EmptyParams)
+                    ResponseEntity.status(HttpStatus.CREATED)
+                        .contentType(MediaType.TEXT_PLAIN)
+                        .body(response)
+                }.subscribeOn(Schedulers.boundedElastic())
+            }
     }
 
     @Operation(
@@ -143,4 +170,11 @@ class IngestController(
         rag.ingest(file, params)
         return ResponseEntity.status(HttpStatus.CREATED).body(response)
     }
+
+    private fun guessContentType(filename: String): String? =
+        when {
+            filename.endsWith(".md", true) -> "text/markdown"
+            filename.endsWith(".txt", true) -> "text/plain"
+            else -> null
+        }
 }

@@ -9,11 +9,11 @@ data class Transcript(
 ) {
     suspend fun fetch(preserveFormatting: Boolean = false): List<TranscriptEntry> {
         // тут будет загрузка текста по baseUrl
-        TODO("fetch implementation")
+        TODO("fetch implementation: $preserveFormatting")
     }
 
     suspend fun translate(lang: String): Transcript {
         // YouTube умеет автоперевод (через &tlang=), можно завернуть сюда
-        TODO("translate implementation")
+        TODO("translate implementation $lang")
     }
 }

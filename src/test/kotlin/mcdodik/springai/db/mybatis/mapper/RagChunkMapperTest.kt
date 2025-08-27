@@ -1,7 +1,5 @@
 package mcdodik.springai.db.mybatis.mapper
 
-import mcdodik.springai.config.plananalyzer.ExplainProxyDsPostProcessorConfig
-import mcdodik.springai.config.plananalyzer.PlanAnalyzerTestConfig
 import mcdodik.springai.config.testcontainer.AbstractPgIT
 import mcdodik.springai.db.entity.rag.DocumentInfo
 import mcdodik.springai.db.entity.rag.RagChunkEntity
@@ -10,16 +8,11 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.mybatis.spring.boot.test.autoconfigure.MybatisTest
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.context.annotation.Import
 import org.springframework.jdbc.core.JdbcTemplate
 import java.time.LocalDateTime
 import java.util.UUID
 
 @MybatisTest
-@Import(
-    ExplainProxyDsPostProcessorConfig::class,
-    PlanAnalyzerTestConfig::class,
-)
 class RagChunkMapperTest
     @Autowired
     constructor(

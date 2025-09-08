@@ -142,8 +142,8 @@ class YouTubeTranscriptApiImpl(
                     if (start != null && text.isNotBlank()) {
                         result.add(
                             TranscriptEntry(
-                                start = start!!,
-                                duration = (end!! - start!!),
+                                start = start,
+                                duration = (end!! - start),
                                 text = text.toString().trim()
                             )
                         )

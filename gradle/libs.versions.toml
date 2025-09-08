@@ -10,6 +10,10 @@ tika = "2.9.2"
 pdfbox = "3.0.3"
 poi = "5.2.5"
 testcontainers = "1.20.3"
+mockk = "1.13.12"
+wiremock = "2.35.2"
+restassured = "5.5.0"
+spring-restdocs = "3.0.1"
 
 [libraries]
 # ── CORE
@@ -84,6 +88,11 @@ test-containers = { module = "org.testcontainers:testcontainers", version.ref = 
 test-containers-postgres = { module = "org.testcontainers:postgresql", version.ref = "testcontainers" }
 test-containers-jupiter = { module = "org.testcontainers:junit-jupiter", version.ref = "testcontainers" }
 junit-platform-launcher = { module = "org.junit.platform:junit-platform-launcher" }
+mockk = { module = "io.mockk:mockk", version.ref = "mockk" }
+wiremock = { module = "com.github.tomakehurst:wiremock-jre8", version.ref = "wiremock" }
+rest-assured-webtestclient = { module = "io.rest-assured:spring-web-test-client", version.ref = "restassured" }
+spring-security-test = { module = "org.springframework.security:spring-security-test" }
+spring-restdocs-webtestclient = { module = "org.springframework.restdocs:spring-restdocs-webtestclient", version.ref = "spring-restdocs" }
 
 # ── BOMs
 spring-boot-bom = { module = "org.springframework.boot:spring-boot-dependencies", version.ref = "boot" }
@@ -107,6 +116,9 @@ test = ["boot-starter-test", "kotlin-test-junit5", "mybatis-test"]
 testRuntime = ["junit-platform-launcher"]
 testContainers = ["test-containers-jupiter", "test-containers-postgres", "test-containers"]
 flyway = ["fly-way-core", "fly-way-postgres"]
+testApi = ["spring-security-test", "mockk", "rest-assured-webtestclient"]
+testHttpStub = ["wiremock"]
+testDocs = ["spring-restdocs-webtestclient"]
 
 [plugins]
 spring-boot = { id = "org.springframework.boot", version.ref = "boot" }

@@ -91,6 +91,9 @@ dependencies {
     implementation(libs.bundles.test)
     implementation(libs.bundles.testRuntime)
     implementation(libs.bundles.testContainers)
+    implementation(libs.bundles.testApi)
+    implementation(libs.bundles.testHttpStub)
+    implementation(libs.bundles.testDocs)
 }
 
 kotlin {
@@ -175,4 +178,9 @@ kover {
             // disableForTestTasks.add("nightlyLoadTest")
         }
     }
+}
+
+tasks.test {
+    useJUnitPlatform()
+    systemProperty("org.springframework.restdocs.outputDir", "$buildDir/generated-snippets")
 }

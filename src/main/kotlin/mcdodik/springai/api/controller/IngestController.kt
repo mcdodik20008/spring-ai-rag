@@ -149,10 +149,14 @@ class IngestController(
             ApiResponse(responseCode = "500", description = "Ошибка обработки PDF")
         ]
     )
-    @PostMapping("/pdf", consumes = [MediaType.MULTIPART_FORM_DATA_VALUE])
+    @PostMapping(
+        "/pdf",
+        consumes = [MediaType.MULTIPART_FORM_DATA_VALUE],
+        produces = [MediaType.TEXT_PLAIN_VALUE]
+    )
     fun ingestPdf(
         @Parameter(description = "PDF-файл для загрузки", required = true)
-        @RequestParam("file") file: MultipartFile,
+        @RequestPart("file") file: FilePart, // <— ключ: FilePart, не MultipartFile
 
         @Parameter(description = "Пропустить первые страницы", example = "1")
         @RequestParam("skipPages") skipPages: Int,
@@ -165,10 +169,29 @@ class IngestController(
 
         @Parameter(description = "Порог повторов для удаления дубликатов текста", example = "0.8")
         @RequestParam("repeatThreshold") repeatThreshold: Double,
-    ): ResponseEntity<Any> {
+    ): Mono<ResponseEntity<String>> {
         val params = PdfCleanRequest(skipPages, throwPagesFromEnd, headerFooterLines, repeatThreshold)
-        rag.ingest(file, params)
-        return ResponseEntity.status(HttpStatus.CREATED).body(response)
+
+        return DataBufferUtils.join(file.content())
+            .map { dataBuffer ->
+                val bytes = ByteArray(dataBuffer.readableByteCount())
+                dataBuffer.read(bytes)
+                DataBufferUtils.release(dataBuffer)
+                CustomMultipartFile(
+                    name = "file",
+                    originalFilename = file.filename(),
+                    contentType = "application/pdf",
+                    content = bytes
+                )
+            }
+            .flatMap { mf ->
+                Mono.fromCallable {
+                    rag.ingest(mf, params)
+                    ResponseEntity.status(HttpStatus.CREATED)
+                        .contentType(MediaType.TEXT_PLAIN)
+                        .body(response)
+                }.subscribeOn(Schedulers.boundedElastic())
+            }
     }
 
     private fun guessContentType(filename: String): String? =

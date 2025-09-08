@@ -19,10 +19,8 @@ spring:
             enabled: true
     codec:
         max-in-memory-size: 64MB
-
     jackson:
         default-property-inclusion: non_null
-
     datasource:
         url: jdbc:postgresql://localhost:5432/${POSRGRES_DB_NAME:ragdb}
         username: ${POSTGRES_USERNAME:postgres}
@@ -40,11 +38,9 @@ spring:
     sql:
         init:
             mode: never
-
     web:
         resources:
             add-mappings: false
-
     # phi3:mini owl/t-lite gemma3:1b-it-qat qwen3:0.6b
     # qwen2.5:0.5b llama3.2:1b-instruct-q4_K_M
     ai:

@@ -18,3 +18,4 @@ class SpringAiApplication
 fun main(args: Array<String>) {
     runApplication<SpringAiApplication>(*args)
 }
+

@@ -13,9 +13,10 @@ import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import reactor.core.publisher.Flux
+import kotlinx.coroutines.reactive.awaitSingle
 
 @RestController
-@RequestMapping("/api/ask")
+@RequestMapping("/api")
 class AskController(
     private val rag: RagService
 ) {
@@ -32,11 +33,6 @@ class AskController(
                         mediaType = MediaType.TEXT_EVENT_STREAM_VALUE,
                         array = ArraySchema(schema = Schema(implementation = String::class)),
                     ),
-                    // Альтернативная документация как NDJSON (если переключишься)
-                    Content(
-                        mediaType = "application/x-ndjson",
-                        array = ArraySchema(schema = Schema(implementation = String::class)),
-                    )
                 ]
             ),
             ApiResponse(responseCode = "400", description = "Неверный запрос"),
@@ -44,8 +40,9 @@ class AskController(
         ]
     )
     @PostMapping(
+        "/ask",
         consumes = [MediaType.APPLICATION_JSON_VALUE],
-        produces = [MediaType.TEXT_EVENT_STREAM_VALUE] // чётко фиксируем SSE
+        produces = [MediaType.TEXT_EVENT_STREAM_VALUE]
     )
     suspend fun ask(
         @io.swagger.v3.oas.annotations.parameters.RequestBody(
@@ -55,4 +52,29 @@ class AskController(
         )
         @RequestBody req: AskRequest,
     ): Flux<String> = rag.ask(req.question)
+
+    @Operation(
+        summary = "Задать вопрос RAG",
+        description = "Принимает вопрос и возвращает готовый ответ одной строкой.",
+        responses = [
+            ApiResponse(
+                responseCode = "200",
+                description = "Текст ответа",
+                content = [Content(mediaType = MediaType.TEXT_PLAIN_VALUE,
+                    schema = Schema(implementation = String::class))]
+            ),
+            ApiResponse(responseCode = "400", description = "Неверный запрос"),
+            ApiResponse(responseCode = "500", description = "Внутренняя ошибка")
+        ]
+    )
+    @PostMapping(
+        "/ask-text",
+        consumes = [MediaType.APPLICATION_JSON_VALUE],
+        produces = [MediaType.TEXT_PLAIN_VALUE]
+    )
+    suspend fun askAwait(@RequestBody req: AskRequest): String =
+        rag.ask(req.question)
+            .collectList()
+            .map { it.joinToString(separator = "") }
+            .awaitSingle()
 }

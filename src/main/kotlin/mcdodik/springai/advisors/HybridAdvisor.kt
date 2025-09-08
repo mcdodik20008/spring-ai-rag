@@ -1,5 +1,8 @@
 package mcdodik.springai.advisors
 
+import mcdodik.springai.api.dto.CleanRequestParams
+import mcdodik.springai.api.dto.EmptyParams
+import mcdodik.springai.api.dto.PdfCleanRequest
 import mcdodik.springai.config.Loggable
 import mcdodik.springai.config.advisors.VectorAdvisorProperties
 import mcdodik.springai.config.chatmodel.ChatModelPrompts

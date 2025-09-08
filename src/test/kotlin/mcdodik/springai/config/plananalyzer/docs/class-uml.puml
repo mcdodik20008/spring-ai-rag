@@ -1,0 +1,22 @@
+@startuml
+package "plananalyzer.datasource" {
+  class ExplainProxyDataSource implements DataSource
+  class ProxyConnection implements Connection
+  class ProxyStatement implements Statement
+  class ProxyPreparedStatement implements PreparedStatement
+}
+
+package "plananalyzer" {
+  interface PlanSink
+  class FilesystemPlanSink
+  class PgMustardSink
+  class CapturedPlan
+}
+
+ExplainProxyDataSource --> ProxyConnection
+ProxyConnection --> ProxyStatement
+ProxyConnection --> ProxyPreparedStatement
+ExplainProxyDataSource --> "0..*" PlanSink
+FilesystemPlanSink ..|> PlanSink
+PgMustardSink ..|> PlanSink
+@enduml

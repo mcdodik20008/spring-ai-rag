@@ -1,13 +1,13 @@
 package mcdodik.springai.db.mybatis.mapper
 
+import mcdodik.springai.config.testcontainer.AbstractPgIT
 import mcdodik.springai.db.entity.rag.DocumentInfo
-import mcdodik.springai.db.testcontainer.AbstractPgIT
 import org.assertj.core.api.Assertions.assertThat
 import org.mybatis.spring.boot.test.autoconfigure.MybatisTest
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.jdbc.core.JdbcTemplate
 import java.time.LocalDateTime
-import java.util.*
+import java.util.UUID
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull

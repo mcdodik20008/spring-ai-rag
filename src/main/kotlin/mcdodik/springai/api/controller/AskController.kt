@@ -1,56 +1,80 @@
 package mcdodik.springai.api.controller
 
+import io.swagger.v3.oas.annotations.Operation
+import io.swagger.v3.oas.annotations.media.ArraySchema
+import io.swagger.v3.oas.annotations.media.Content
+import io.swagger.v3.oas.annotations.media.Schema
+import io.swagger.v3.oas.annotations.responses.ApiResponse
 import mcdodik.springai.api.dto.AskRequest
 import mcdodik.springai.rag.service.RagService
-import org.springframework.ai.chat.client.ChatClient
-import org.springframework.beans.factory.annotation.Qualifier
-import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import reactor.core.publisher.Flux
+import kotlinx.coroutines.reactive.awaitSingle
 
-/**
- * REST controller for handling question-answering and summarization requests.
- *
- * @param rag Service responsible for retrieving answers using RAG (Retrieval-Augmented Generation)
- * @param summarizer Chat client used for summarizing content. This client is specifically named "openRouterChatClient".
- */
 @RestController
-@RequestMapping("/api/ask")
+@RequestMapping("/api")
 class AskController(
-    private val rag: RagService,
-    @Qualifier("openRouterChatClient")
-    private val summarizer: ChatClient,
+    private val rag: RagService
 ) {
-    /**
-     * Handles POST requests to the "/api/ask" endpoint.
-     * Accepts a JSON body with a question and returns a stream of answer chunks.
-     *
-     * @param req The request object containing the question.
-     * @return A [Flux] emitting string chunks of the generated answer.
-     */
-    @PostMapping
+    @Operation(
+        summary = "Задать вопрос RAG",
+        description = "Принимает вопрос и возвращает поток строк (чанки ответа). " +
+            "Рекомендуемый медиатип — text/event-stream (SSE).",
+        responses = [
+            ApiResponse(
+                responseCode = "200",
+                description = "Стрим чанков текста",
+                content = [
+                    Content(
+                        mediaType = MediaType.TEXT_EVENT_STREAM_VALUE,
+                        array = ArraySchema(schema = Schema(implementation = String::class)),
+                    ),
+                ]
+            ),
+            ApiResponse(responseCode = "400", description = "Неверный запрос"),
+            ApiResponse(responseCode = "500", description = "Внутренняя ошибка")
+        ]
+    )
+    @PostMapping(
+        "/ask",
+        consumes = [MediaType.APPLICATION_JSON_VALUE],
+        produces = [MediaType.TEXT_EVENT_STREAM_VALUE]
+    )
     suspend fun ask(
+        @io.swagger.v3.oas.annotations.parameters.RequestBody(
+            required = true,
+            description = "Тело запроса с вопросом",
+            content = [Content(schema = Schema(implementation = AskRequest::class))]
+        )
         @RequestBody req: AskRequest,
-    ): Flux<String> {
-        return rag.ask(req.question)
-    }
+    ): Flux<String> = rag.ask(req.question)
 
-    /**
-     * Handles GET requests to the "/api/ask" endpoint.
-     * Accepts a query parameter "quest" representing the input text to summarize.
-     * Returns a stream of summary chunks.
-     *
-     * @param quest The input text to be summarized.
-     * @return A [Flux] emitting string chunks of the generated summary.
-     */
-    @GetMapping
-    suspend fun summarize(
-        @RequestParam quest: String,
-    ): Flux<String> {
-        return summarizer.prompt(quest).stream().content()
-    }
+    @Operation(
+        summary = "Задать вопрос RAG",
+        description = "Принимает вопрос и возвращает готовый ответ одной строкой.",
+        responses = [
+            ApiResponse(
+                responseCode = "200",
+                description = "Текст ответа",
+                content = [Content(mediaType = MediaType.TEXT_PLAIN_VALUE,
+                    schema = Schema(implementation = String::class))]
+            ),
+            ApiResponse(responseCode = "400", description = "Неверный запрос"),
+            ApiResponse(responseCode = "500", description = "Внутренняя ошибка")
+        ]
+    )
+    @PostMapping(
+        "/ask-text",
+        consumes = [MediaType.APPLICATION_JSON_VALUE],
+        produces = [MediaType.TEXT_PLAIN_VALUE]
+    )
+    suspend fun askAwait(@RequestBody req: AskRequest): String =
+        rag.ask(req.question)
+            .collectList()
+            .map { it.joinToString(separator = "") }
+            .awaitSingle()
 }

@@ -5,7 +5,7 @@ import mcdodik.springai.scheduling.model.ChunkForTfidf
 import mcdodik.springai.scheduling.model.ChunkTfidfUpdate
 import org.apache.ibatis.annotations.Mapper
 import org.apache.ibatis.annotations.Param
-import java.util.*
+import java.util.UUID
 
 @Mapper
 interface TfidfMapper {
@@ -16,7 +16,7 @@ interface TfidfMapper {
 
     fun updateTfidf(
         @Param("u") update: ChunkTfidfUpdate,
-    )
+    ): Int
 
     fun selectAllWithTfidf(
         @Param("limit") limit: Int,
@@ -25,7 +25,7 @@ interface TfidfMapper {
 
     fun findCandidatesByAnyTerms(
         @Param("id") id: UUID,
-        @Param("t") terms: List<String>,
+        @Param("terms") terms: List<String>,
         @Param("limit") limit: Int,
     ): List<ChunkForDedup>
 
@@ -33,5 +33,5 @@ interface TfidfMapper {
         @Param("dupId") dupId: UUID,
         @Param("keepId") keepId: UUID,
         @Param("sim") simScore: Double,
-    )
+    ): Int
 }

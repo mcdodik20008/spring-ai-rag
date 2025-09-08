@@ -38,7 +38,6 @@ class RagService(
             .content()
             .onErrorResume { e ->
                 logger.error("RagService.ask: stream error", e)
-                // ✅ вычисляем только при подписке и на пуле для блокирующих
                 Mono.fromCallable {
                     chat
                         .prompt("Ответь на русском")

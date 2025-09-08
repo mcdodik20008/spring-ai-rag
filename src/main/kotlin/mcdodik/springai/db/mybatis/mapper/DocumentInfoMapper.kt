@@ -3,7 +3,7 @@ package mcdodik.springai.db.mybatis.mapper
 import mcdodik.springai.db.entity.rag.DocumentInfo
 import org.apache.ibatis.annotations.Mapper
 import org.apache.ibatis.annotations.Param
-import java.util.*
+import java.util.UUID
 
 /**
  * Mapper interface for interacting with the DocumentInfo database table using MyBatis.

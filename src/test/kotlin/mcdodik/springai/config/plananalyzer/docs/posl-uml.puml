@@ -1,0 +1,23 @@
+@startuml
+actor Test as T
+participant JdbcTemplate as J
+participant ExplainProxyDataSource as DS
+participant ProxyConnection as C
+participant ProxyPreparedStatement as PS
+participant "Postgres" as PG
+participant "PlanSink(s)" as S
+
+T -> J : queryForList("SELECT ... WHERE v = ?", "a")
+J -> DS : getConnection()
+DS -> C : (return proxied Connection)
+J -> C : prepareStatement(sql)
+C -> PS : (return proxied PreparedStatement)
+J -> PS : setString(1,"a")
+J -> PS : executeQuery()
+PS -> PG : EXPLAIN (ANALYZE, FORMAT JSON) sql [params]
+PG --> PS : plan.json
+PS -> S : accept(CapturedPlan{sql, params, planJson})
+PS -> PG : SELECT ... [params]
+PG --> PS : rows
+PS --> J : ResultSet
+@enduml

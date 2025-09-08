@@ -19,10 +19,8 @@ spring:
             enabled: true
     codec:
         max-in-memory-size: 64MB
-
     jackson:
         default-property-inclusion: non_null
-
     datasource:
         url: jdbc:postgresql://localhost:5432/${POSRGRES_DB_NAME:ragdb}
         username: ${POSTGRES_USERNAME:postgres}
@@ -40,11 +38,9 @@ spring:
     sql:
         init:
             mode: never
-
     web:
         resources:
             add-mappings: false
-
     # phi3:mini owl/t-lite gemma3:1b-it-qat qwen3:0.6b
     # qwen2.5:0.5b llama3.2:1b-instruct-q4_K_M
     ai:
@@ -69,11 +65,24 @@ mybatis:
 
 logging:
     level:
-        #    root: INFO
+        root: INFO
         mcdodik: DEBUG
-        org.flywaydb: debug
-#    reactor.netty.http.client: DEBUG
-#    org.springframework.ai: DEBUG
+        org.flywaydb: DEBUG
+
+        # WebClient + Reactor Netty
+#        reactor.netty.http.client: DEBUG
+#        reactor.netty.transport: DEBUG
+#        reactor.netty.resources: DEBUG
+
+        # Spring WebFlux
+        org.springframework.web: DEBUG
+        org.springframework.web.reactive: DEBUG
+        org.springframework.http.client: DEBUG
+        org.springframework.web.client.RestTemplate: DEBUG
+
+        # Чтобы видеть фильтры и обмен данными
+        org.springframework.web.reactive.function.client.ExchangeFunctions: TRACE
+        org.springframework.web.reactive.function.client.ExchangeFilterFunctions: TRACE
 
 management:
     endpoints:
@@ -84,7 +93,6 @@ management:
         health:
             probes:
                 enabled: true
-
 
 app:
     ratelimit:

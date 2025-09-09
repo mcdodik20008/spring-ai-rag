@@ -1,9 +1,9 @@
-package mcdodik.springai.rag.application
+package mcdodik.springai.rag.service.impl
 
 import mcdodik.springai.db.mybatis.mapper.Bm25Mapper
-import mcdodik.springai.rag.api.Retriever
 import mcdodik.springai.rag.model.RetrievedDoc
 import mcdodik.springai.rag.model.ScoreType
+import mcdodik.springai.rag.service.api.Retriever
 import org.springframework.stereotype.Component
 
 @Component

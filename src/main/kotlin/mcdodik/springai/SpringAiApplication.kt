@@ -1,7 +1,7 @@
 package mcdodik.springai
 
-import mcdodik.springai.config.advisors.VectorAdvisorProperties
-import mcdodik.springai.config.chatmodel.OpenRouterProperties
+import mcdodik.springai.advisors.config.VectorAdvisorProperties
+import mcdodik.springai.api.config.OpenRouterProperties
 import mcdodik.springai.scheduling.config.DedupProperties
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.context.properties.EnableConfigurationProperties

@@ -1,9 +1,9 @@
-package mcdodik.springai.rag.application
+package mcdodik.springai.rag.service.impl
 
 import mcdodik.springai.extensions.toRetrievedDoc
-import mcdodik.springai.rag.api.Retriever
 import mcdodik.springai.rag.model.RetrievedDoc
 import mcdodik.springai.rag.model.ScoreType
+import mcdodik.springai.rag.service.api.Retriever
 import org.springframework.ai.vectorstore.SearchRequest
 import org.springframework.ai.vectorstore.VectorStore
 
@@ -15,11 +15,13 @@ class VectorStoreRetriever(
         topK: Int,
         threshold: Double?,
     ): List<RetrievedDoc> =
-        vectorStore.similaritySearch(
-            SearchRequest.builder()
-                .query(query)
-                .topK(topK)
-                .similarityThreshold(threshold ?: 0.0)
-                .build(),
-        ).map { it.toRetrievedDoc(ScoreType.VECTOR) }
+        vectorStore
+            .similaritySearch(
+                SearchRequest
+                    .builder()
+                    .query(query)
+                    .topK(topK)
+                    .similarityThreshold(threshold ?: 0.0)
+                    .build(),
+            ).map { it.toRetrievedDoc(ScoreType.VECTOR) }
 }

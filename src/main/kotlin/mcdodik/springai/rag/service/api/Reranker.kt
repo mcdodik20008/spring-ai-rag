@@ -1,4 +1,4 @@
-package mcdodik.springai.rag.api
+package mcdodik.springai.rag.service.api
 
 import mcdodik.springai.rag.model.RetrievedDoc
 import mcdodik.springai.rag.model.ScoredDoc

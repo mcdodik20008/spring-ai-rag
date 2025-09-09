@@ -1,8 +1,8 @@
-package mcdodik.springai.rag.application
+package mcdodik.springai.rag.service.impl
 
-import mcdodik.springai.rag.api.ContextBuilder
 import mcdodik.springai.rag.model.Metadata
 import mcdodik.springai.rag.model.RetrievedDoc
+import mcdodik.springai.rag.service.api.ContextBuilder
 
 class MarkdownContextBuilder : ContextBuilder {
     override fun build(

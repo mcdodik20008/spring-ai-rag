@@ -1,7 +1,7 @@
-package mcdodik.springai.rag.application
+package mcdodik.springai.rag.service.impl
 
 import mcdodik.springai.db.mybatis.mapper.DocumentInfoMapper
-import mcdodik.springai.rag.api.SummaryService
+import mcdodik.springai.rag.service.api.SummaryService
 
 class DbSummaryService(
     private val mapper: DocumentInfoMapper,

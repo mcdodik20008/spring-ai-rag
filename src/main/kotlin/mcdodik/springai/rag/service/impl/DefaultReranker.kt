@@ -1,9 +1,9 @@
-package mcdodik.springai.rag.application
+package mcdodik.springai.rag.service.impl
 
-import mcdodik.springai.rag.api.Reranker
 import mcdodik.springai.rag.model.Metadata
 import mcdodik.springai.rag.model.RetrievedDoc
 import mcdodik.springai.rag.model.ScoredDoc
+import mcdodik.springai.rag.service.api.Reranker
 
 class DefaultReranker : Reranker {
     override fun rerank(

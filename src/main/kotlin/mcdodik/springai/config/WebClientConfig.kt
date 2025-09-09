@@ -30,7 +30,8 @@ class WebClientConfig {
     @Primary
     fun webClient(): WebClient {
         val provider =
-            ConnectionProvider.builder("openrouter-pool")
+            ConnectionProvider
+                .builder("openrouter-pool")
                 .maxConnections(100) // подбери под нагрузку
                 .pendingAcquireMaxCount(1_000)
                 .pendingAcquireTimeout(Duration.ofSeconds(10))
@@ -41,7 +42,8 @@ class WebClientConfig {
                 .build()
 
         val http =
-            HttpClient.create(provider)
+            HttpClient
+                .create(provider)
                 .compress(true) // gzip
                 .keepAlive(true)
                 .followRedirect(true)
@@ -53,13 +55,13 @@ class WebClientConfig {
                 }
         // .wiretap(true) // включай при отладке
 
-        return WebClient.builder()
+        return WebClient
+            .builder()
             .clientConnector(ReactorClientHttpConnector(http))
             // .baseUrl("https://openrouter.ai") // если используешь только OpenRouter; иначе оставь без baseUrl
             .codecs { cfg ->
                 cfg.defaultCodecs().maxInMemorySize(4 * 1024 * 1024) // 4MB buffer
-            }
-            .filter(defaultHeadersFilter())
+            }.filter(defaultHeadersFilter())
             .filter(logRequest())
             .filter(logResponse())
             .filter(retryOn429Filter(maxRetries = 3))
@@ -72,8 +74,8 @@ class WebClientConfig {
         maxRetries: Int = 3,
         defaultBackoff: Duration = Duration.ofSeconds(1),
         maxBackoff: Duration = Duration.ofSeconds(15),
-    ): ExchangeFilterFunction {
-        return ExchangeFilterFunction { request, next ->
+    ): ExchangeFilterFunction =
+        ExchangeFilterFunction { request, next ->
 
             fun attempt(tryNo: Int): Mono<ClientResponse> =
                 next.exchange(request).flatMap { resp ->
@@ -82,7 +84,8 @@ class WebClientConfig {
 
                     if (isRetryable) {
                         // важно: освободить соединение (прочитать/дренировать тело) перед ретраем
-                        resp.bodyToMono(Void::class.java)
+                        resp
+                            .bodyToMono(Void::class.java)
                             .onErrorResume { Mono.empty() }
                             .then(
                                 if (tryNo >= maxRetries) {
@@ -99,7 +102,6 @@ class WebClientConfig {
 
             attempt(1)
         }
-    }
 
     private fun map429ToException(
         resp: ClientResponse,
@@ -131,7 +133,8 @@ class WebClientConfig {
                     defaultBackoff.multipliedBy(max(1, ra.toLong())).coerceAtMost(maxBackoff)
 
                 else -> {
-                    runCatching { ZonedDateTime.parse(ra, DateTimeFormatter.RFC_1123_DATE_TIME) }.getOrNull()
+                    runCatching { ZonedDateTime.parse(ra, DateTimeFormatter.RFC_1123_DATE_TIME) }
+                        .getOrNull()
                         ?.let { date ->
                             val delta = Duration.between(ZonedDateTime.now(date.zone), date)
                             if (!delta.isNegative) delta else defaultBackoff
@@ -146,7 +149,8 @@ class WebClientConfig {
     private fun defaultHeadersFilter(): ExchangeFilterFunction =
         ExchangeFilterFunction.ofRequestProcessor { req: ClientRequest ->
             val mutated =
-                ClientRequest.from(req)
+                ClientRequest
+                    .from(req)
                     .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE)
                     .header(HttpHeaders.ACCEPT_ENCODING, "gzip")
                     .header(HttpHeaders.USER_AGENT, "spring-ai-rag/1.0 (+webclient)")

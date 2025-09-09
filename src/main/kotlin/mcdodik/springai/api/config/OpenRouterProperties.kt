@@ -1,4 +1,4 @@
-package mcdodik.springai.config.chatmodel
+package mcdodik.springai.api.config
 
 import org.springframework.boot.context.properties.ConfigurationProperties
 

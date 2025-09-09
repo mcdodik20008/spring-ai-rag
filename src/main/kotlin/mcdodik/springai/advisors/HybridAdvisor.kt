@@ -1,13 +1,13 @@
 package mcdodik.springai.advisors
 
+import mcdodik.springai.advisors.config.ChatModelPrompts
+import mcdodik.springai.advisors.config.VectorAdvisorProperties
 import mcdodik.springai.config.Loggable
-import mcdodik.springai.config.advisors.VectorAdvisorProperties
-import mcdodik.springai.config.chatmodel.ChatModelPrompts
-import mcdodik.springai.rag.api.ContextBuilder
-import mcdodik.springai.rag.api.Reranker
-import mcdodik.springai.rag.api.Retriever
-import mcdodik.springai.rag.api.SummaryService
 import mcdodik.springai.rag.model.Metadata
+import mcdodik.springai.rag.service.api.ContextBuilder
+import mcdodik.springai.rag.service.api.Reranker
+import mcdodik.springai.rag.service.api.Retriever
+import mcdodik.springai.rag.service.api.SummaryService
 import org.springframework.ai.chat.client.ChatClientRequest
 import org.springframework.ai.chat.client.ChatClientResponse
 import org.springframework.ai.chat.client.advisor.api.AdvisorChain

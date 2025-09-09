@@ -1,8 +1,8 @@
 package mcdodik.springai.api.service
 
+import mcdodik.springai.advisors.config.ChatModelPrompts
+import mcdodik.springai.api.config.ChatModelsConfig.LLMTaskType
 import mcdodik.springai.config.Loggable
-import mcdodik.springai.config.chatmodel.ChatModelPrompts
-import mcdodik.springai.config.chatmodel.ChatModelsConfig.LLMTaskType
 import mcdodik.springai.db.entity.prompt.ChunkingPromptTemplate
 import mcdodik.springai.db.mybatis.mapper.ChunkingPromptTemplateMapper
 import mcdodik.springai.extensions.extractBetween
@@ -46,17 +46,22 @@ class PromptGenerationService(
 
         // 3. Запрашиваем LLM
         val chatClient = dynamicOpenRouterChatClient(LLMTaskType.PROMPT_GEN, null)
-        val rawResponse = chatClient.prompt(prompt).call().content().orEmpty()
+        val rawResponse =
+            chatClient
+                .prompt(prompt)
+                .call()
+                .content()
+                .orEmpty()
         logger.debug("Raw LLM response:\n$rawResponse")
 
         // 4. Пытаемся вырезать из ответа по тегам
         val generated =
-            rawResponse.extractBetween("<<<PROMPT_BEGIN", "PROMPT_END>>>")
+            rawResponse
+                .extractBetween("<<<PROMPT_BEGIN", "PROMPT_END>>>")
                 .ifBlank {
                     logger.warn("No prompt extracted from LLM, using fallback")
                     fallbackPrompt(domainName, sanitizedDesc)
-                }
-                .trim()
+                }.trim()
                 .take(MAX_PROMPT_CHARS)
 
         // 5. Генерация вектора для темы (чтобы findByTopic работал)
@@ -102,12 +107,12 @@ class PromptGenerationService(
 
         // Пересчитываем similarity локально как 1 - distance (для cosine)
         val reranked =
-            ann.map { t ->
-                val dist = cosineDistance(qEmb, t.topicEmbedding ?: emptyList())
-                val sim = if (dist.isFinite()) 1.0 - dist else -1.0
-                t to sim
-            }
-                .sortedByDescending { it.second }
+            ann
+                .map { t ->
+                    val dist = cosineDistance(qEmb, t.topicEmbedding ?: emptyList())
+                    val sim = if (dist.isFinite()) 1.0 - dist else -1.0
+                    t to sim
+                }.sortedByDescending { it.second }
                 .filter { it.second >= minSim }
                 .take(k)
 

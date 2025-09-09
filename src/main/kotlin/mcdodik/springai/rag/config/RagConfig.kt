@@ -1,16 +1,15 @@
-package mcdodik.springai.config
+package mcdodik.springai.rag.config
 
 import mcdodik.springai.db.mybatis.mapper.Bm25Mapper
 import mcdodik.springai.db.mybatis.mapper.DocumentInfoMapper
-import mcdodik.springai.rag.api.Retriever
-import mcdodik.springai.rag.application.DbSummaryService
-import mcdodik.springai.rag.application.DefaultReranker
-import mcdodik.springai.rag.application.HybridRetriever
-import mcdodik.springai.rag.application.MarkdownContextBuilder
-import mcdodik.springai.rag.application.PostgresBm25Retriever
-import mcdodik.springai.rag.application.VectorStoreRetriever
-import mcdodik.springai.rag.config.HybridConfig
 import mcdodik.springai.rag.model.FuseMode
+import mcdodik.springai.rag.service.api.Retriever
+import mcdodik.springai.rag.service.impl.DbSummaryService
+import mcdodik.springai.rag.service.impl.DefaultReranker
+import mcdodik.springai.rag.service.impl.HybridRetriever
+import mcdodik.springai.rag.service.impl.MarkdownContextBuilder
+import mcdodik.springai.rag.service.impl.PostgresBm25Retriever
+import mcdodik.springai.rag.service.impl.VectorStoreRetriever
 import org.springframework.ai.transformer.splitter.TokenTextSplitter
 import org.springframework.ai.vectorstore.VectorStore
 import org.springframework.beans.factory.annotation.Qualifier

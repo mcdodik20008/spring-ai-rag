@@ -1,10 +1,10 @@
-package mcdodik.springai.rag.application
+package mcdodik.springai.rag.service.impl
 
-import mcdodik.springai.rag.api.Reranker
 import mcdodik.springai.rag.model.Metadata
 import mcdodik.springai.rag.model.RetrievedDoc
 import mcdodik.springai.rag.model.ScoreType
 import mcdodik.springai.rag.model.ScoredDoc
+import mcdodik.springai.rag.service.api.Reranker
 import kotlin.math.sqrt
 
 class HybridReranker(
@@ -85,9 +85,7 @@ class HybridReranker(
         return ScoredDoc(rd, final)
     }
 
-    override fun dedup(scored: List<ScoredDoc>): List<ScoredDoc> {
-        return scored.distinctBy { Metadata.fileName(it.doc) to Metadata.chunkIndex(it.doc) }
-    }
+    override fun dedup(scored: List<ScoredDoc>): List<ScoredDoc> = scored.distinctBy { Metadata.fileName(it.doc) to Metadata.chunkIndex(it.doc) }
 
     private fun cosineSimilarity(
         a: FloatArray,

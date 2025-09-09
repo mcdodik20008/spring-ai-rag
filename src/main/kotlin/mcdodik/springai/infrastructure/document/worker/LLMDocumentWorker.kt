@@ -1,9 +1,9 @@
 package mcdodik.springai.infrastructure.document.worker
 
 import mcdodik.springai.api.dto.CleanRequestParams
-import mcdodik.springai.config.chatmodel.ChatModelTemplates.EXTRACT_CHUNKS_PROMPT_PHILOSOPHY
 import mcdodik.springai.extensions.featAllTextFromObsidianMd
 import mcdodik.springai.extensions.fetchInfoFromFile
+import mcdodik.springai.infrastructure.document.cofig.ChatModelTemplates.EXTRACT_CHUNKS_PROMPT_PHILOSOPHY
 import org.springframework.ai.chat.client.ChatClient
 import org.springframework.ai.document.Document
 import org.springframework.beans.factory.annotation.Qualifier
@@ -13,9 +13,7 @@ class LLMDocumentWorker(
     @Qualifier("openRouterChatClient")
     private val chunkExtractor: ChatClient,
 ) : DocumentWorker {
-    override fun supports(file: MultipartFile): Boolean {
-        return file.contentType == "text/markdown" || file.originalFilename?.endsWith(".md") == true
-    }
+    override fun supports(file: MultipartFile): Boolean = file.contentType == "text/markdown" || file.originalFilename?.endsWith(".md") == true
 
     override fun process(
         file: MultipartFile,

@@ -1,11 +1,11 @@
-package mcdodik.springai.rag.application
+package mcdodik.springai.rag.service.impl
 
 import mcdodik.springai.config.Loggable
-import mcdodik.springai.rag.api.Retriever
 import mcdodik.springai.rag.config.HybridConfig
 import mcdodik.springai.rag.model.FuseMode
 import mcdodik.springai.rag.model.RetrievedDoc
 import mcdodik.springai.rag.model.ScoreType
+import mcdodik.springai.rag.service.api.Retriever
 import kotlin.system.measureNanoTime
 
 class HybridRetriever(

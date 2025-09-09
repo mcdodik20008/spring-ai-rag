@@ -1,4 +1,4 @@
-package mcdodik.springai.config.youtube
+package mcdodik.springai.infrastructure.youtube.config
 
 import org.springframework.stereotype.Component
 import org.springframework.web.reactive.function.client.ClientRequest

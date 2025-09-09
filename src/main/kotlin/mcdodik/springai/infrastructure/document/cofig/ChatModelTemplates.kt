@@ -1,4 +1,4 @@
-package mcdodik.springai.config.chatmodel
+package mcdodik.springai.infrastructure.document.cofig
 
 object ChatModelTemplates {
     val GENERATE_CHUNKING_PROMPT_PROMPT =

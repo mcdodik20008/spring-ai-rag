@@ -1,16 +1,16 @@
-package mcdodik.springai.config.chatmodel
+package mcdodik.springai.api.config
 
 import mcdodik.springai.advisors.VectorAdvisor
-import mcdodik.springai.config.advisors.VectorAdvisorProperties
-import mcdodik.springai.config.chatmodel.ChatModelsConfig.LLMTaskType.CHUNKING
-import mcdodik.springai.config.chatmodel.ChatModelsConfig.LLMTaskType.DEFAULT
-import mcdodik.springai.config.chatmodel.ChatModelsConfig.LLMTaskType.PROMPT_GEN
-import mcdodik.springai.config.chatmodel.ChatModelsConfig.LLMTaskType.SUMMARY
+import mcdodik.springai.advisors.config.VectorAdvisorProperties
+import mcdodik.springai.api.config.ChatModelsConfig.LLMTaskType.CHUNKING
+import mcdodik.springai.api.config.ChatModelsConfig.LLMTaskType.DEFAULT
+import mcdodik.springai.api.config.ChatModelsConfig.LLMTaskType.PROMPT_GEN
+import mcdodik.springai.api.config.ChatModelsConfig.LLMTaskType.SUMMARY
 import mcdodik.springai.openrouter.OpenRouterChat
-import mcdodik.springai.rag.api.ContextBuilder
-import mcdodik.springai.rag.api.Reranker
-import mcdodik.springai.rag.api.Retriever
-import mcdodik.springai.rag.api.SummaryService
+import mcdodik.springai.rag.service.api.ContextBuilder
+import mcdodik.springai.rag.service.api.Reranker
+import mcdodik.springai.rag.service.api.Retriever
+import mcdodik.springai.rag.service.api.SummaryService
 import org.springframework.ai.chat.client.ChatClient
 import org.springframework.ai.chat.client.advisor.api.BaseAdvisor
 import org.springframework.ai.ollama.OllamaEmbeddingModel

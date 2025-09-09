@@ -1,4 +1,4 @@
-package mcdodik.springai.config.advisors
+package mcdodik.springai.advisors.config
 
 import org.springframework.boot.context.properties.ConfigurationProperties
 

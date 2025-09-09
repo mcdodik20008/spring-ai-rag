@@ -11,45 +11,39 @@ data class DocumentInfo(
     @field:Schema(
         description = "Уникальный идентификатор документа (UUID v4)",
         format = "uuid",
-        example = "5b1f3e0b-9c5d-4a07-8f3a-0d7c9a2b9e11"
+        example = "5b1f3e0b-9c5d-4a07-8f3a-0d7c9a2b9e11",
     )
     val id: UUID = UUID.randomUUID(),
-
     @field:Schema(
         description = "Имя исходного файла без пути",
-        example = "invoice_2024_07_15.pdf"
+        example = "invoice_2024_07_15.pdf",
     )
     val fileName: String,
-
     @field:Schema(
         description = "Расширение файла",
-        example = "pdf"
+        example = "pdf",
     )
     val extension: String,
-
     @field:Schema(
         description = "Хэш содержимого (например, SHA-256, hex)",
-        example = "a3f1c2...ef9b"
+        example = "a3f1c2...ef9b",
     )
     val hash: String,
-
     @field:Schema(
         description = "Количество чанков, на которое был разбит файл при индексации",
         example = "12",
-        minimum = "0"
+        minimum = "0",
     )
     val chunkCount: Int,
-
     @field:Schema(
         description = "Дата/время индексации (локальное)",
         format = "date-time",
-        example = "2025-08-20T14:23:11"
+        example = "2025-08-20T14:23:11",
     )
     val createdAt: LocalDateTime,
-
     @field:Schema(
         description = "Краткая аннотация/резюме содержимого",
-        example = "Инвойс за июль 2024 г., сумма 124 500 ₽, контрагент ООО «Ромашка»"
+        example = "Инвойс за июль 2024 г., сумма 124 500 ₽, контрагент ООО «Ромашка»",
     )
     val summary: String?,
 ) {

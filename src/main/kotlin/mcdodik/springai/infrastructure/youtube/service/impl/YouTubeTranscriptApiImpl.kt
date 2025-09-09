@@ -17,64 +17,68 @@ import kotlinx.coroutines.reactor.awaitSingle
 @Component
 class YouTubeTranscriptApiImpl(
     @Qualifier("youtubeWebClient")
-    private val webClient: WebClient
+    private val webClient: WebClient,
 ) : YouTubeTranscriptApi, Loggable {
-
     private val mapper = jacksonObjectMapper()
 
     override suspend fun fetch(
         videoId: String,
-        languages: List<String>
+        languages: List<String>,
     ): List<TranscriptEntry> {
         val tracks = list(videoId)
 
-        val track = tracks.firstOrNull { it.languageCode in languages }
-            ?: throw IllegalArgumentException("No transcript found for $languages")
+        val track =
+            tracks.firstOrNull { it.languageCode in languages }
+                ?: throw IllegalArgumentException("No transcript found for $languages")
 
-        val vtt = webClient.get()
-            .uri(track.baseUrl + if (track.baseUrl.contains("fmt=")) "" else "&fmt=vtt")
-            .retrieve()
-            .onStatus({ status -> !status.is2xxSuccessful }) { resp ->
-                resp.bodyToMono(String::class.java).flatMap { body ->
-                    logger.error("Error ${resp.statusCode()} from YouTube, body:\n$body")
-                    Mono.error(RuntimeException("YouTube error: ${resp.statusCode()}"))
+        val vtt =
+            webClient.get()
+                .uri(track.baseUrl + if (track.baseUrl.contains("fmt=")) "" else "&fmt=vtt")
+                .retrieve()
+                .onStatus({ status -> !status.is2xxSuccessful }) { resp ->
+                    resp.bodyToMono(String::class.java).flatMap { body ->
+                        logger.error("Error ${resp.statusCode()} from YouTube, body:\n$body")
+                        Mono.error(RuntimeException("YouTube error: ${resp.statusCode()}"))
+                    }
                 }
-            }
-            .bodyToMono(String::class.java)
-            .doOnNext { body -> logger.debug("VTT response body:\n$body") }
-            .awaitSingle()
+                .bodyToMono(String::class.java)
+                .doOnNext { body -> logger.debug("VTT response body:\n$body") }
+                .awaitSingle()
 
         logger.debug(
             """
             response fro youtube: $vtt
-        """.trimIndent()
+            """.trimIndent(),
         )
 
         return vttToPlainText(vtt)
     }
 
     private suspend fun list(videoId: String): List<CaptionTrack> {
-        val html = webClient.get()
-            .uri("/watch?v={v}&hl=en", videoId)
-            .retrieve()
-            .bodyToMono(String::class.java)
-            .awaitSingle()
+        val html =
+            webClient.get()
+                .uri("/watch?v={v}&hl=en", videoId)
+                .retrieve()
+                .bodyToMono(String::class.java)
+                .awaitSingle()
 
-        val playerJson = extractPlayerResponseJson(html)
-            ?: throw ResponseStatusException(
-                HttpStatus.BAD_GATEWAY,
-                "YouTube watch page parsed without ytInitialPlayerResponse"
-            )
+        val playerJson =
+            extractPlayerResponseJson(html)
+                ?: throw ResponseStatusException(
+                    HttpStatus.BAD_GATEWAY,
+                    "YouTube watch page parsed without ytInitialPlayerResponse",
+                )
 
         val root = mapper.readTree(playerJson)
-        val tracksNode = root.path("captions")
-            .path("playerCaptionsTracklistRenderer")
-            .path("captionTracks")
+        val tracksNode =
+            root.path("captions")
+                .path("playerCaptionsTracklistRenderer")
+                .path("captionTracks")
 
         if (!tracksNode.isArray || tracksNode.isEmpty) {
             throw ResponseStatusException(
                 HttpStatus.NOT_FOUND,
-                "No captions available for video $videoId"
+                "No captions available for video $videoId",
             )
         }
 
@@ -144,8 +148,8 @@ class YouTubeTranscriptApiImpl(
                             TranscriptEntry(
                                 start = start,
                                 duration = (end!! - start),
-                                text = text.toString().trim()
-                            )
+                                text = text.toString().trim(),
+                            ),
                         )
                         text.clear()
                     }
@@ -163,13 +167,17 @@ class YouTubeTranscriptApiImpl(
                 TranscriptEntry(
                     start = start!!,
                     duration = (end!! - start!!),
-                    text = text.toString().trim()
-                )
+                    text = text.toString().trim(),
+                ),
             )
         }
         return result
     }
 
-    private fun hmsToSeconds(h: String, m: String, s: String, ms: String): Double =
-        h.toInt() * 3600 + m.toInt() * 60 + s.toInt() + ms.toInt() / 1000.0
+    private fun hmsToSeconds(
+        h: String,
+        m: String,
+        s: String,
+        ms: String,
+    ): Double = h.toInt() * 3600 + m.toInt() * 60 + s.toInt() + ms.toInt() / 1000.0
 }

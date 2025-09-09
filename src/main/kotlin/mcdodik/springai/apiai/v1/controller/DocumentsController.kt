@@ -27,29 +27,28 @@ import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import reactor.core.publisher.Mono
 
-
 @Tag(name = "Documents", description = "Документы, чанки и управление контентом (Заглушка)")
 @RestController
 @RequestMapping("/v1", produces = [MediaType.APPLICATION_JSON_VALUE])
 class DocumentsController(
     private val documentsService: DocumentsService,
 ) {
-
     @Operation(
         summary = "Получить документ по ID",
-        description = "Возвращает метаданные одного документа."
+        description = "Возвращает метаданные одного документа.",
     )
     @ApiResponses(
         value = [
             ApiResponse(
-                responseCode = "200", description = "Документ найден",
-                content = [Content(schema = Schema(implementation = DocumentDto::class))]
+                responseCode = "200",
+                description = "Документ найден",
+                content = [Content(schema = Schema(implementation = DocumentDto::class))],
             ),
             ApiResponse(responseCode = "401", description = "Неавторизовано"),
             ApiResponse(responseCode = "403", description = "Доступ запрещён"),
             ApiResponse(responseCode = "404", description = "Документ не найден"),
-            ApiResponse(responseCode = "500", description = "Внутренняя ошибка")
-        ]
+            ApiResponse(responseCode = "500", description = "Внутренняя ошибка"),
+        ],
     )
     @GetMapping("/documents/{docId}")
     fun getDocument(
@@ -59,45 +58,41 @@ class DocumentsController(
 
     @Operation(
         summary = "Список документов",
-        description = "Возвращает страницу документов по базе знаний с фильтрами."
+        description = "Возвращает страницу документов по базе знаний с фильтрами.",
     )
     @ApiResponses(
         value = [
             ApiResponse(
-                responseCode = "200", description = "Ок",
-                content = [Content(schema = Schema(implementation = PageDocumentDto::class))]
+                responseCode = "200",
+                description = "Ок",
+                content = [Content(schema = Schema(implementation = PageDocumentDto::class))],
             ),
             ApiResponse(responseCode = "400", description = "Неверные параметры"),
             ApiResponse(responseCode = "401", description = "Неавторизовано"),
             ApiResponse(responseCode = "403", description = "Доступ запрещён"),
             ApiResponse(responseCode = "429", description = "Лимит запросов превышен"),
-            ApiResponse(responseCode = "500", description = "Внутренняя ошибка")
-        ]
+            ApiResponse(responseCode = "500", description = "Внутренняя ошибка"),
+        ],
     )
     @GetMapping("/documents")
     fun listDocuments(
         @Parameter(description = "ID базы знаний", example = "kb-legal-ru")
         @RequestParam("kb_id") kbId: String,
-
         @Parameter(description = "Поисковый запрос (full-text)", example = "договор поставки")
         @RequestParam("q", required = false) q: String?,
-
         @Parameter(description = "Статус документа", example = "READY", schema = Schema(allowableValues = ["PENDING", "READY", "FAILED"], defaultValue = "READY"))
         @RequestParam("status", required = false) status: String?,
-
         @Parameter(description = "Тег фильтрации", example = "contract")
         @RequestParam("tag", required = false) tag: String?,
-
         @Parameter(description = "Размер страницы", example = "50", schema = Schema(defaultValue = "50", minimum = "1", maximum = "500"))
         @RequestParam("limit", defaultValue = "50") limit: Int,
-
         @Parameter(description = "Смещение", example = "0", schema = Schema(defaultValue = "0", minimum = "0"))
         @RequestParam("offset", defaultValue = "0") offset: Int,
     ): Mono<PageDto<DocumentDto>> = documentsService.list(kbId, q, status, tag, limit, offset)
 
     @Operation(
         summary = "Удалить документ",
-        description = "Удаляет документ по ID. Возвращает 204 при успехе."
+        description = "Удаляет документ по ID. Возвращает 204 при успехе.",
     )
     @ApiResponses(
         value = [
@@ -105,8 +100,8 @@ class DocumentsController(
             ApiResponse(responseCode = "401", description = "Неавторизовано"),
             ApiResponse(responseCode = "403", description = "Доступ запрещён"),
             ApiResponse(responseCode = "404", description = "Документ не найден"),
-            ApiResponse(responseCode = "500", description = "Внутренняя ошибка")
-        ]
+            ApiResponse(responseCode = "500", description = "Внутренняя ошибка"),
+        ],
     )
     @DeleteMapping("/documents/{docId}")
     fun deleteDocument(
@@ -116,39 +111,37 @@ class DocumentsController(
 
     @Operation(
         summary = "Список чанков документа",
-        description = "Возвращает страницу чанков по документу с опциональным поиском."
+        description = "Возвращает страницу чанков по документу с опциональным поиском.",
     )
     @ApiResponses(
         value = [
             ApiResponse(
-                responseCode = "200", description = "Ок",
-                content = [Content(schema = Schema(implementation = PageChunkDto::class))]
+                responseCode = "200",
+                description = "Ок",
+                content = [Content(schema = Schema(implementation = PageChunkDto::class))],
             ),
             ApiResponse(responseCode = "400", description = "Неверные параметры"),
             ApiResponse(responseCode = "401", description = "Неавторизовано"),
             ApiResponse(responseCode = "403", description = "Доступ запрещён"),
             ApiResponse(responseCode = "404", description = "Документ не найден"),
-            ApiResponse(responseCode = "500", description = "Внутренняя ошибка")
-        ]
+            ApiResponse(responseCode = "500", description = "Внутренняя ошибка"),
+        ],
     )
     @GetMapping("/documents/{docId}/chunks")
     fun listChunks(
         @Parameter(description = "Идентификатор документа", example = "doc_01HZX6Z7Z6W0R7W3E2KQ1VQ1V4")
         @PathVariable docId: String,
-
         @Parameter(description = "Размер страницы", example = "50", schema = Schema(defaultValue = "50", minimum = "1", maximum = "1000"))
         @RequestParam("limit", defaultValue = "50") limit: Int,
-
         @Parameter(description = "Смещение", example = "0", schema = Schema(defaultValue = "0", minimum = "0"))
         @RequestParam("offset", defaultValue = "0") offset: Int,
-
         @Parameter(description = "Поиск по тексту чанка", example = "неустойка")
         @RequestParam("search", required = false) search: String?,
     ): Mono<PageDto<ChunkDto>> = documentsService.listChunks(docId, limit, offset, search)
 
     @Operation(
         summary = "Upsert чанков",
-        description = "Создаёт или обновляет чанки документа. При `embedIfMissing=true` отсутствующие эмбеддинги будут рассчитаны автоматически."
+        description = "Создаёт или обновляет чанки документа. При `embedIfMissing=true` отсутствующие эмбеддинги будут рассчитаны автоматически.",
     )
     @ApiResponses(
         value = [
@@ -159,19 +152,21 @@ class DocumentsController(
             ApiResponse(responseCode = "403", description = "Доступ запрещён"),
             ApiResponse(responseCode = "404", description = "Документ не найден"),
             ApiResponse(responseCode = "429", description = "Лимит запросов превышен"),
-            ApiResponse(responseCode = "500", description = "Внутренняя ошибка")
-        ]
+            ApiResponse(responseCode = "500", description = "Внутренняя ошибка"),
+        ],
     )
     @PostMapping("/chunks:upsert", consumes = [MediaType.APPLICATION_JSON_VALUE])
     fun upsertChunks(
         @RequestBody(
             required = true,
             description = "Чанки для upsert",
-            content = [Content(
-                schema = Schema(implementation = ChunksUpsertRequestDto::class),
-                examples = [ExampleObject(
-                    name = "upsertExample",
-                    value = """
+            content = [
+                Content(
+                    schema = Schema(implementation = ChunksUpsertRequestDto::class),
+                    examples = [
+                        ExampleObject(
+                            name = "upsertExample",
+                            value = """
                     {
                       "docId": "doc_01HZX6Z7Z6W0R7W3E2KQ1VQ1V4",
                       "chunks": [
@@ -180,11 +175,14 @@ class DocumentsController(
                       ],
                       "embedIfMissing": true
                     }
-                    """
-                )]
-            )]
+                    """,
+                        ),
+                    ],
+                ),
+            ],
         )
-        @Valid @org.springframework.web.bind.annotation.RequestBody
+        @Valid
+        @org.springframework.web.bind.annotation.RequestBody
         req: ChunksUpsertRequestDto,
     ): Mono<Void> = documentsService.upsertChunks(req)
 }

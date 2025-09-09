@@ -9,20 +9,21 @@ import reactor.core.publisher.Mono
 
 @Component
 class WebClientBodyLoggingFilter(
-    private val log: org.slf4j.Logger = org.slf4j.LoggerFactory.getLogger("webclient.body")
+    private val log: org.slf4j.Logger = org.slf4j.LoggerFactory.getLogger("webclient.body"),
 ) : ExchangeFilterFunction {
-
-    private val TEXT_MEDIA = setOf("text/", "application/json", "application/xml")
-
-    override fun filter(request: ClientRequest, next: ExchangeFunction): Mono<ClientResponse> {
+    override fun filter(
+        request: ClientRequest,
+        next: ExchangeFunction,
+    ): Mono<ClientResponse> {
         log.debug("➡️ {} {}", request.method(), request.url())
         request.headers().forEach { (k, v) -> log.debug("   {}: {}", k, v) }
 
         return next.exchange(request).flatMap { resp ->
             val ct = resp.headers().contentType().orElse(null)
-            val isText = ct?.let { t ->
-                TEXT_MEDIA.any { prefix -> t.toString().startsWith(prefix) }
-            } ?: false
+            val isText =
+                ct?.let { t ->
+                    TEXT_MEDIA.any { prefix -> t.toString().startsWith(prefix) }
+                } ?: false
 
             if (!isText) {
                 log.debug("⬅️ {} {} (non-text body)", resp.statusCode(), request.url())
@@ -34,15 +35,20 @@ class WebClientBodyLoggingFilter(
                 val preview = if (body.length > 2000) body.substring(0, 2000) + "…[truncated]" else body
                 log.debug("⬅️ {} {} body:\n{}", resp.statusCode(), request.url(), preview)
 
-                val rebuilt = ClientResponse
-                    .create(resp.statusCode())
-                    .headers { h -> resp.headers().asHttpHeaders().forEach { (k, v) -> h.addAll(k, v) } }
-                    .cookies { c -> resp.cookies().forEach { (k, v) -> c.addAll(k, v) } }
-                    .body(body)
-                    .build()
+                val rebuilt =
+                    ClientResponse
+                        .create(resp.statusCode())
+                        .headers { h -> resp.headers().asHttpHeaders().forEach { (k, v) -> h.addAll(k, v) } }
+                        .cookies { c -> resp.cookies().forEach { (k, v) -> c.addAll(k, v) } }
+                        .body(body)
+                        .build()
 
                 Mono.just(rebuilt)
             }
         }
+    }
+
+    companion object {
+        private val TEXT_MEDIA = setOf("text/", "application/json", "application/xml")
     }
 }

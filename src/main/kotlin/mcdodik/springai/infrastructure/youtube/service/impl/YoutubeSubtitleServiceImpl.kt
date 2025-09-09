@@ -12,23 +12,24 @@ import java.nio.charset.StandardCharsets
 
 @Service
 class YoutubeSubtitleServiceImpl(
-    private val yt: YouTubeTranscriptApi
+    private val yt: YouTubeTranscriptApi,
 ) : YoutubeSubtitleService {
-
     override suspend fun getFile(videoId: String): MultipartFile {
         val id = normalizeVideoId(videoId)
 
-        val entries: List<TranscriptEntry> = try {
-            yt.fetch(id, languages = listOf("ru", "en"))
-        } catch (e: IllegalArgumentException) {
-            throw ResponseStatusException(HttpStatus.NOT_FOUND, "Автосубтитры (ru/en) не найдены для видео $id", e)
-        } catch (e: Exception) {
-            throw ResponseStatusException(HttpStatus.BAD_GATEWAY, "Не удалось получить субтитры с YouTube", e)
-        }
+        val entries: List<TranscriptEntry> =
+            try {
+                yt.fetch(id, languages = listOf("ru", "en"))
+            } catch (e: IllegalArgumentException) {
+                throw ResponseStatusException(HttpStatus.NOT_FOUND, "Автосубтитры (ru/en) не найдены для видео $id", e)
+            } catch (e: Exception) {
+                throw ResponseStatusException(HttpStatus.BAD_GATEWAY, "Не удалось получить субтитры с YouTube", e)
+            }
 
-        val text = entries.joinToString(separator = " ") { it.text }
-            .replace(Regex("\\s+"), " ")
-            .trim()
+        val text =
+            entries.joinToString(separator = " ") { it.text }
+                .replace(Regex("\\s+"), " ")
+                .trim()
 
         if (text.isBlank()) {
             throw ResponseStatusException(HttpStatus.NOT_FOUND, "Пустые субтитры для видео $id")
@@ -41,7 +42,7 @@ class YoutubeSubtitleServiceImpl(
             "file",
             filename,
             "text/plain; charset=utf-8",
-            bytes
+            bytes,
         )
     }
 

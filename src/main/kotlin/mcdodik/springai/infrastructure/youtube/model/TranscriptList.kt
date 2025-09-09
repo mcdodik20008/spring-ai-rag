@@ -1,7 +1,7 @@
 package mcdodik.springai.infrastructure.youtube.model
 
 class TranscriptList(
-    private val transcripts: List<Transcript>
+    private val transcripts: List<Transcript>,
 ) : Iterable<Transcript> {
     override fun iterator(): Iterator<Transcript> = transcripts.iterator()
 

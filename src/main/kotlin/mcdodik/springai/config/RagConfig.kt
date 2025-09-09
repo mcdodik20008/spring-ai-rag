@@ -1,22 +1,16 @@
 package mcdodik.springai.config
 
-import mcdodik.springai.advisors.HybridAdvisor
-import mcdodik.springai.config.advisors.VectorAdvisorProperties
 import mcdodik.springai.db.mybatis.mapper.Bm25Mapper
 import mcdodik.springai.db.mybatis.mapper.DocumentInfoMapper
-import mcdodik.springai.rag.api.ContextBuilder
-import mcdodik.springai.rag.api.Reranker
 import mcdodik.springai.rag.api.Retriever
-import mcdodik.springai.rag.api.SummaryService
 import mcdodik.springai.rag.application.DbSummaryService
 import mcdodik.springai.rag.application.DefaultReranker
 import mcdodik.springai.rag.application.HybridRetriever
 import mcdodik.springai.rag.application.MarkdownContextBuilder
 import mcdodik.springai.rag.application.PostgresBm25Retriever
 import mcdodik.springai.rag.application.VectorStoreRetriever
+import mcdodik.springai.rag.config.HybridConfig
 import mcdodik.springai.rag.model.FuseMode
-import mcdodik.springai.rag.model.HybridConfig
-import org.springframework.ai.ollama.OllamaEmbeddingModel
 import org.springframework.ai.transformer.splitter.TokenTextSplitter
 import org.springframework.ai.vectorstore.VectorStore
 import org.springframework.beans.factory.annotation.Qualifier
@@ -63,16 +57,6 @@ class RagConfig {
                     rrfK = 60,
                 ),
         )
-
-    @Bean
-    fun hybridAdvisor(
-        props: VectorAdvisorProperties,
-        embeddingModel: OllamaEmbeddingModel,
-        hybridRetriever: Retriever,
-        reranker: Reranker,
-        contextBuilder: ContextBuilder,
-        summaryService: SummaryService,
-    ) = HybridAdvisor(props, embeddingModel, hybridRetriever, reranker, contextBuilder, summaryService)
 
     @Bean
     fun tokenTextSplitter(): TokenTextSplitter =

@@ -1,8 +1,5 @@
 package mcdodik.springai.advisors
 
-import mcdodik.springai.api.dto.CleanRequestParams
-import mcdodik.springai.api.dto.EmptyParams
-import mcdodik.springai.api.dto.PdfCleanRequest
 import mcdodik.springai.config.Loggable
 import mcdodik.springai.config.advisors.VectorAdvisorProperties
 import mcdodik.springai.config.chatmodel.ChatModelPrompts
@@ -25,7 +22,8 @@ class HybridAdvisor(
     private val reranker: Reranker,
     private val contextBuilder: ContextBuilder,
     private val summaryService: SummaryService,
-) : BaseAdvisor, Loggable {
+) : BaseAdvisor,
+    Loggable {
     override fun before(
         req: ChatClientRequest,
         chain: AdvisorChain,
@@ -53,7 +51,8 @@ class HybridAdvisor(
 
         val userEmb = embeddingModel.embed(userPrompt)
         val reranked =
-            reranker.rerank(userEmb, raw)
+            reranker
+                .rerank(userEmb, raw)
                 .asSequence()
                 .filter { it.score.isFinite() && it.score >= properties.rerankSimilarityThreshold }
                 .sortedByDescending { it.score }

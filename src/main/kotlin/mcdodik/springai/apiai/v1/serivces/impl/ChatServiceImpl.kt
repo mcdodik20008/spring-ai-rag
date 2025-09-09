@@ -5,7 +5,7 @@ import mcdodik.springai.apiai.v1.dto.chat.ChatRequestDto
 import mcdodik.springai.apiai.v1.dto.chat.ChatResponseDto
 import mcdodik.springai.apiai.v1.serivces.ChatService
 import mcdodik.springai.config.Loggable
-import mcdodik.springai.rag.service.RagService
+import mcdodik.springai.rag.service.api.RagService
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.context.annotation.Primary
 import org.springframework.http.codec.ServerSentEvent

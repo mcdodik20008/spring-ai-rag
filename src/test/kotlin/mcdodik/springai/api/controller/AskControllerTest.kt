@@ -4,7 +4,7 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import mcdodik.springai.api.dto.AskRequest
-import mcdodik.springai.rag.service.RagService
+import mcdodik.springai.rag.service.api.RagService
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -33,23 +33,27 @@ import reactor.core.publisher.Flux
 @AutoConfigureRestDocs
 @AutoConfigureWebTestClient
 @ExtendWith(org.springframework.restdocs.RestDocumentationExtension::class)
-@TestPropertySource(properties = [
-    "logging.level.org.springframework.web=DEBUG",
-    "logging.level.org.springframework.web.reactive.result.method.annotation=DEBUG"
-])
+@TestPropertySource(
+    properties = [
+        "logging.level.org.springframework.web=DEBUG",
+        "logging.level.org.springframework.web.reactive.result.method.annotation=DEBUG",
+    ],
+)
 class AskControllerTest {
-
     @Autowired
     lateinit var ragService: RagService
+
     @Autowired
     lateinit var webTestClient: WebTestClient
 
     @BeforeEach
     fun setUp(restDocs: RestDocumentationContextProvider) {
         // только конфиг REST Docs как фильтр; document(...) используем в consumeWith ниже
-        webTestClient = webTestClient.mutate()
-            .filter(WebTestClientRestDocumentation.documentationConfiguration(restDocs))
-            .build()
+        webTestClient =
+            webTestClient
+                .mutate()
+                .filter(WebTestClientRestDocumentation.documentationConfiguration(restDocs))
+                .build()
     }
 
     @Test
@@ -57,21 +61,24 @@ class AskControllerTest {
         val q = "Кто такой Глен Гульд?"
         every { ragService.ask(q) } returns Flux.just("Глен ", "Гульд", " — ", "пианист")
 
-        webTestClient.post()
+        webTestClient
+            .post()
             .uri("/api/ask")
             .contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.TEXT_EVENT_STREAM)
             .bodyValue(AskRequest(q))
             .exchange()
-            .expectStatus().isOk
-            .expectHeader().contentTypeCompatibleWith(MediaType.TEXT_EVENT_STREAM)
+            .expectStatus()
+            .isOk
+            .expectHeader()
+            .contentTypeCompatibleWith(MediaType.TEXT_EVENT_STREAM)
             .expectBody()
             .consumeWith(
                 WebTestClientRestDocumentation.document(
                     "ask-sse",
                     requestFields(fieldWithPath("question").description("Вопрос пользователя")),
-                    responseHeaders(headerWithName("Content-Type").description("text/event-stream; charset=UTF-8"))
-                )
+                    responseHeaders(headerWithName("Content-Type").description("text/event-stream; charset=UTF-8")),
+                ),
             )
         verify(exactly = 1) { ragService.ask(q) }
     }
@@ -82,17 +89,21 @@ class AskControllerTest {
         val chunks = listOf("Глен ", "Гульд", " — ", "пианист")
         every { ragService.ask(q) } returns Flux.fromIterable(chunks)
 
-        val body: List<String> = webTestClient.post()
-            .uri("/api/rag/ask")
-            .contentType(MediaType.APPLICATION_JSON)
-            .accept(MediaType.TEXT_EVENT_STREAM)
-            .bodyValue(AskRequest(q))
-            .exchange()
-            .expectStatus().isOk
-            .expectHeader().contentTypeCompatibleWith(MediaType.TEXT_EVENT_STREAM)
-            .expectBodyList(String::class.java)
-            .returnResult()
-            .responseBody!!
+        val body: List<String> =
+            webTestClient
+                .post()
+                .uri("/api/rag/ask")
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.TEXT_EVENT_STREAM)
+                .bodyValue(AskRequest(q))
+                .exchange()
+                .expectStatus()
+                .isOk
+                .expectHeader()
+                .contentTypeCompatibleWith(MediaType.TEXT_EVENT_STREAM)
+                .expectBodyList(String::class.java)
+                .returnResult()
+                .responseBody!!
 
         assertThat(body).isEqualTo(chunks)
         verify(exactly = 1) { ragService.ask(q) }
@@ -107,7 +118,6 @@ class AskControllerTest {
     @Configuration
     class PermitAllSecurity {
         @Bean
-        fun securityWebFilterChain(http: org.springframework.security.config.web.server.ServerHttpSecurity) =
-            http.csrf { it.disable() }.authorizeExchange { it.anyExchange().permitAll() }.build()
+        fun securityWebFilterChain(http: org.springframework.security.config.web.server.ServerHttpSecurity) = http.csrf { it.disable() }.authorizeExchange { it.anyExchange().permitAll() }.build()
     }
 }

@@ -31,18 +31,18 @@ class WebClientConfig {
     fun webClient(): WebClient {
         val provider =
             ConnectionProvider.builder("openrouter-pool")
-                .maxConnections(100)                         // подбери под нагрузку
+                .maxConnections(100) // подбери под нагрузку
                 .pendingAcquireMaxCount(1_000)
                 .pendingAcquireTimeout(Duration.ofSeconds(10))
                 .maxIdleTime(Duration.ofSeconds(30))
                 .maxLifeTime(Duration.ofMinutes(5))
                 .evictInBackground(Duration.ofSeconds(30))
-                .lifo()                                      // лучше для бурстов
+                .lifo() // лучше для бурстов
                 .build()
 
         val http =
             HttpClient.create(provider)
-                .compress(true)                              // gzip
+                .compress(true) // gzip
                 .keepAlive(true)
                 .followRedirect(true)
                 .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 5_000)
@@ -73,7 +73,6 @@ class WebClientConfig {
         defaultBackoff: Duration = Duration.ofSeconds(1),
         maxBackoff: Duration = Duration.ofSeconds(15),
     ): ExchangeFilterFunction {
-
         return ExchangeFilterFunction { request, next ->
 
             fun attempt(tryNo: Int): Mono<ClientResponse> =
@@ -91,7 +90,7 @@ class WebClientConfig {
                                 } else {
                                     val delay = computeRetryDelay(resp, defaultBackoff, maxBackoff, tryNo)
                                     Mono.delay(delay).flatMap { attempt(tryNo + 1) }
-                                }
+                                },
                             )
                     } else {
                         Mono.just(resp)
@@ -102,7 +101,10 @@ class WebClientConfig {
         }
     }
 
-    private fun map429ToException(resp: ClientResponse, tryNo: Int): Throwable {
+    private fun map429ToException(
+        resp: ClientResponse,
+        tryNo: Int,
+    ): Throwable {
         val retryAfter = resp.headers().header("Retry-After").firstOrNull()
         val status = resp.statusCode()
         return org.springframework.web.reactive.function.client.WebClientResponseException.create(
@@ -110,7 +112,7 @@ class WebClientConfig {
             "Upstream rate limited after $tryNo tries ($status), Retry-After=$retryAfter",
             resp.headers().asHttpHeaders(),
             ByteArray(0),
-            null
+            null,
         )
     }
 
@@ -118,23 +120,24 @@ class WebClientConfig {
         resp: ClientResponse,
         defaultBackoff: Duration,
         maxBackoff: Duration,
-        tryNo: Int
+        tryNo: Int,
     ): Duration {
         // Retry-After может быть секундами или HTTP-date
         val ra = resp.headers().header("Retry-After").firstOrNull()
-        val base = when {
-            ra == null -> defaultBackoff.multipliedBy(1L shl (tryNo - 1))
-            ra.all { it.isDigit() } ->
-                defaultBackoff.multipliedBy(max(1, ra.toLong())).coerceAtMost(maxBackoff)
+        val base =
+            when {
+                ra == null -> defaultBackoff.multipliedBy(1L shl (tryNo - 1))
+                ra.all { it.isDigit() } ->
+                    defaultBackoff.multipliedBy(max(1, ra.toLong())).coerceAtMost(maxBackoff)
 
-            else -> {
-                runCatching { ZonedDateTime.parse(ra, DateTimeFormatter.RFC_1123_DATE_TIME) }.getOrNull()
-                    ?.let { date ->
-                        val delta = Duration.between(ZonedDateTime.now(date.zone), date)
-                        if (!delta.isNegative) delta else defaultBackoff
-                    } ?: defaultBackoff
+                else -> {
+                    runCatching { ZonedDateTime.parse(ra, DateTimeFormatter.RFC_1123_DATE_TIME) }.getOrNull()
+                        ?.let { date ->
+                            val delta = Duration.between(ZonedDateTime.now(date.zone), date)
+                            if (!delta.isNegative) delta else defaultBackoff
+                        } ?: defaultBackoff
+                }
             }
-        }
         // джиттер 0..300мс, чтобы не биться в такт
         val jitterMs = Random.nextLong(0, 300)
         return base.plusMillis(jitterMs).coerceAtMost(maxBackoff)
@@ -142,15 +145,17 @@ class WebClientConfig {
 
     private fun defaultHeadersFilter(): ExchangeFilterFunction =
         ExchangeFilterFunction.ofRequestProcessor { req: ClientRequest ->
-            val mutated = ClientRequest.from(req)
-                .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE)
-                .header(HttpHeaders.ACCEPT_ENCODING, "gzip")
-                .header(HttpHeaders.USER_AGENT, "spring-ai-rag/1.0 (+webclient)")
-                .build()
+            val mutated =
+                ClientRequest.from(req)
+                    .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE)
+                    .header(HttpHeaders.ACCEPT_ENCODING, "gzip")
+                    .header(HttpHeaders.USER_AGENT, "spring-ai-rag/1.0 (+webclient)")
+                    .build()
             Mono.just(mutated)
         }
 
     // Заглушки, оставляем твои реализационные фильтры
     private fun logRequest(): ExchangeFilterFunction = ExchangeFilterFunction.ofRequestProcessor { Mono.just(it) }
+
     private fun logResponse(): ExchangeFilterFunction = ExchangeFilterFunction.ofResponseProcessor { Mono.just(it) }
 }

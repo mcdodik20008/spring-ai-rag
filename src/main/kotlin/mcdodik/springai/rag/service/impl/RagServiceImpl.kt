@@ -1,4 +1,4 @@
-package mcdodik.springai.rag.service
+package mcdodik.springai.rag.service.impl
 
 import mcdodik.springai.api.dto.CleanRequestParams
 import mcdodik.springai.config.Loggable
@@ -6,6 +6,7 @@ import mcdodik.springai.db.entity.rag.DocumentInfo
 import mcdodik.springai.db.mybatis.mapper.DocumentInfoMapper
 import mcdodik.springai.extensions.featAllTextFromObsidianMd
 import mcdodik.springai.infrastructure.document.worker.DocumentWorkerFactory
+import mcdodik.springai.rag.service.api.RagService
 import org.springframework.ai.chat.client.ChatClient
 import org.springframework.ai.vectorstore.VectorStore
 import org.springframework.beans.factory.annotation.Qualifier
@@ -20,7 +21,7 @@ import kotlinx.coroutines.reactive.asFlow
 import kotlinx.coroutines.withContext
 
 @Service
-class RagService(
+class RagServiceImpl(
     @Qualifier("ollamaChatClient")
     private val chat: ChatClient,
     @Qualifier("customPgVectorStore")
@@ -29,32 +30,33 @@ class RagService(
     private val documentWorkerFactory: DocumentWorkerFactory,
     @Qualifier("openRouterChatClient")
     private val summarizer: ChatClient,
-) {
-    fun ask(question: String): Flux<String> {
-        return chat
+) : RagService {
+    override fun ask(question: String): Flux<String> =
+        chat
             .prompt("Ответь на русском")
             .user(question)
             .stream()
             .content()
             .onErrorResume { e ->
                 logger.error("RagService.ask: stream error", e)
-                Mono.fromCallable {
-                    chat
-                        .prompt("Ответь на русском")
-                        .user(question)
-                        .call() // синхронный
-                        .content()
-                        .orEmpty()
-                }
-                    .subscribeOn(reactor.core.scheduler.Schedulers.boundedElastic())
-            }
-            .doOnSubscribe { logger.debug("RagService.ask: subscribe question='{}'", question.take(80)) }
+                Mono
+                    .fromCallable {
+                        chat
+                            .prompt("Ответь на русском")
+                            .user(question)
+                            .call()
+                            .content()
+                            .orEmpty()
+                    }.subscribeOn(
+                        reactor.core.scheduler.Schedulers
+                            .boundedElastic(),
+                    )
+            }.doOnSubscribe { logger.debug("RagService.ask: subscribe question='{}'", question.take(80)) }
             .doOnNext { chunk -> logger.trace("RagService.ask: chunk[{}]", chunk.length) }
             .doOnError { t -> logger.error("RagService.ask: stream error", t) }
             .doOnComplete { logger.debug("RagService.ask: completed") }
-    }
 
-    fun askFlow(question: String): Flow<String> {
+    override fun askFlow(question: String): Flow<String> {
         val flux =
             chat
                 .prompt("Ответь на русском")
@@ -62,19 +64,25 @@ class RagService(
                 .stream()
                 .content() // Flux<String>
 
-        return flux.asFlow()
+        return flux
+            .asFlow()
             .catch { e ->
                 logger.warn("RagService.askFlow stream error, fallback to call(): {}", e.message)
                 // синхронный fallback на IO-пуле
                 val oneShot =
                     withContext(Dispatchers.IO) {
-                        chat.prompt("Ответь на русском").user(question).call().content().orEmpty()
+                        chat
+                            .prompt("Ответь на русском")
+                            .user(question)
+                            .call()
+                            .content()
+                            .orEmpty()
                     }
                 emit(oneShot)
             }
     }
 
-    fun ingest(
+    override fun ingest(
         file: MultipartFile,
         params: CleanRequestParams,
     ) {
@@ -84,7 +92,8 @@ class RagService(
         logger.info("summarizing file ${file.originalFilename}")
         val text = file.featAllTextFromObsidianMd()
         val summary =
-            summarizer.prompt()
+            summarizer
+                .prompt()
                 .user("Вот текст, который нужно суммировать:\n$text")
                 .call()
                 .content() ?: "no summary"

@@ -41,7 +41,8 @@ class VectorAdvisor(
     private val reranker: Reranker,
     private val contextBuilder: ContextBuilder,
     private val summaryService: SummaryService,
-) : BaseAdvisor, Loggable {
+) : BaseAdvisor,
+    Loggable {
     override fun before(
         req: ChatClientRequest,
         chain: AdvisorChain,
@@ -72,7 +73,8 @@ class VectorAdvisor(
 
         val userEmb = embeddingModel.embed(userPrompt)
         val reranked =
-            reranker.rerank(userEmb, raw)
+            reranker
+                .rerank(userEmb, raw)
                 .asSequence()
                 .filter { it.score.isFinite() && it.score >= properties.rerankSimilarityThreshold }
                 .sortedByDescending { it.score }
@@ -90,7 +92,7 @@ class VectorAdvisor(
                 summaryService.summariesByFileName(fileNames)
             } catch (e: Exception) {
                 logger.warn("Summaries failed, continue without", e)
-                emptyMap<String, String>()
+                emptyMap()
             }
 
         val docSummary =

@@ -29,11 +29,14 @@ class ChatModelsConfig {
     fun ollamaChatClient(
         chatModel: OpenAiChatModel,
         @Qualifier("hybridAdvisor")
-        advisor: BaseAdvisor,
+        hybridAdvisor: BaseAdvisor,
+        @Qualifier("russianAdvisor")
+        russianAdvisor: BaseAdvisor,
     ): ChatClient =
         ChatClient
             .builder(chatModel)
-            .defaultAdvisors(advisor)
+            .defaultAdvisors(hybridAdvisor)
+            .defaultAdvisors(russianAdvisor)
             .build()
 
     @Bean
@@ -45,8 +48,8 @@ class ChatModelsConfig {
         reranker: Reranker,
         contextBuilder: ContextBuilder,
         summaryService: SummaryService,
-    ): BaseAdvisor {
-        return VectorAdvisor(
+    ): BaseAdvisor =
+        VectorAdvisor(
             properties = properties,
             embeddingModel = embeddingModel,
             retriever = retriever,
@@ -54,7 +57,6 @@ class ChatModelsConfig {
             contextBuilder = contextBuilder,
             summaryService = summaryService,
         )
-    }
 
     @Bean
     @Qualifier("openRouterChatClient")
@@ -79,8 +81,8 @@ class ChatModelsConfig {
     fun dynamicOpenRouterChatClient(
         props: OpenRouterProperties,
         webClient: WebClient,
-    ): (LLMTaskType?, String?) -> ChatClient {
-        return { taskType, overrideModel ->
+    ): (LLMTaskType?, String?) -> ChatClient =
+        { taskType, overrideModel ->
 
             val modelName =
                 overrideModel ?: when (taskType) {
@@ -103,7 +105,6 @@ class ChatModelsConfig {
 
             ChatClient.builder(model).build()
         }
-    }
 
     enum class LLMTaskType {
         SUMMARY,

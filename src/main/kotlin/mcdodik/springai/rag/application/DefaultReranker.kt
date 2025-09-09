@@ -10,19 +10,18 @@ class DefaultReranker : Reranker {
         userEmbedding: FloatArray,
         raw: List<RetrievedDoc>,
     ): List<ScoredDoc> =
-        raw.mapNotNull { doc ->
-            val emb = Metadata.embedding(doc) ?: return@mapNotNull null
-            if (emb.size != userEmbedding.size) return@mapNotNull null
+        raw
+            .mapNotNull { doc ->
+                val emb = Metadata.embedding(doc) ?: return@mapNotNull null
+                if (emb.size != userEmbedding.size) return@mapNotNull null
 
-            val sim = cosineSimilarity(userEmbedding, emb)
-            if (!sim.isFinite()) return@mapNotNull null
+                val sim = cosineSimilarity(userEmbedding, emb)
+                if (!sim.isFinite()) return@mapNotNull null
 
-            ScoredDoc(doc, sim)
-        }.sortedByDescending { it.score }
+                ScoredDoc(doc, sim)
+            }.sortedByDescending { it.score }
 
-    override fun dedup(scored: List<ScoredDoc>): List<ScoredDoc> {
-        return scored.distinctBy { Metadata.fileName(it.doc) to Metadata.chunkIndex(it.doc) }
-    }
+    override fun dedup(scored: List<ScoredDoc>): List<ScoredDoc> = scored.distinctBy { Metadata.fileName(it.doc) to Metadata.chunkIndex(it.doc) }
 
     private fun cosineSimilarity(
         a: FloatArray,

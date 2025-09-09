@@ -8,5 +8,5 @@ data class PageChunkDto(
     @Schema(description = "Элементы") val items: List<ChunkDto>,
     @Schema(description = "Всего") val total: Long,
     @Schema(description = "Смещение") val offset: Int,
-    @Schema(description = "Лимит") val limit: Int
+    @Schema(description = "Лимит") val limit: Int,
 )

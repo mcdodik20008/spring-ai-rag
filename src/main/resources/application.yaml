@@ -70,9 +70,9 @@ logging:
         org.flywaydb: DEBUG
 
         # WebClient + Reactor Netty
-#        reactor.netty.http.client: DEBUG
-#        reactor.netty.transport: DEBUG
-#        reactor.netty.resources: DEBUG
+        #  reactor.netty.http.client: DEBUG
+        #  reactor.netty.transport: DEBUG
+        #  reactor.netty.resources: DEBUG
 
         # Spring WebFlux
         org.springframework.web: DEBUG

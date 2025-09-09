@@ -1,4 +1,6 @@
-package mcdodik.springai.rag.model
+package mcdodik.springai.rag.config
+
+import mcdodik.springai.rag.model.FuseMode
 
 data class HybridConfig(
     val vecWeight: Double = 0.5,

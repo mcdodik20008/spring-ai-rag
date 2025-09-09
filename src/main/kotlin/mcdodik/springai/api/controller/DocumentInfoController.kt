@@ -27,43 +27,46 @@ import java.util.UUID
 class DocumentInfoController(
     private val service: DocumentInfoService,
 ) {
-
     @Operation(
         summary = "Список всех документов",
-        description = "Возвращает полный список метаданных документов."
+        description = "Возвращает полный список метаданных документов.",
     )
     @ApiResponses(
         value = [
             ApiResponse(
                 responseCode = "200",
                 description = "Список найден",
-                content = [Content(
-                    mediaType = MediaType.APPLICATION_JSON_VALUE,
-                    array = ArraySchema(schema = Schema(implementation = DocumentInfo::class)),
-                    examples = [ExampleObject(
-                        name = "documentsExample",
-                        value = EXAMPLE_BODY
-                    )]
-                )]
-            )
-        ]
+                content = [
+                    Content(
+                        mediaType = MediaType.APPLICATION_JSON_VALUE,
+                        array = ArraySchema(schema = Schema(implementation = DocumentInfo::class)),
+                        examples = [
+                            ExampleObject(
+                                name = "documentsExample",
+                                value = EXAMPLE_BODY,
+                            ),
+                        ],
+                    ),
+                ],
+            ),
+        ],
     )
     @GetMapping
     fun getAll(): List<DocumentInfo> = service.getAll()
 
     @Operation(
         summary = "Получить документ по ID",
-        description = "Возвращает метаданные одного документа по UUID."
+        description = "Возвращает метаданные одного документа по UUID.",
     )
     @ApiResponses(
         value = [
             ApiResponse(
                 responseCode = "200",
                 description = "Документ найден",
-                content = [Content(schema = Schema(implementation = DocumentInfo::class))]
+                content = [Content(schema = Schema(implementation = DocumentInfo::class))],
             ),
-            ApiResponse(responseCode = "404", description = "Документ не найден")
-        ]
+            ApiResponse(responseCode = "404", description = "Документ не найден"),
+        ],
     )
     @GetMapping("/{id}")
     fun getById(
@@ -71,46 +74,48 @@ class DocumentInfoController(
             description = "UUID документа",
             required = true,
             example = "5b1f3e0b-9c5d-4a07-8f3a-0d7c9a2b9e11",
-            schema = Schema(format = "uuid")
+            schema = Schema(format = "uuid"),
         )
         @PathVariable id: UUID,
     ): DocumentInfo = service.getById(id)
 
     @Operation(
         summary = "Найти документы по имени файла",
-        description = "Фильтрует документы по точному имени файла (без пути)."
+        description = "Фильтрует документы по точному имени файла (без пути).",
     )
     @ApiResponses(
         value = [
             ApiResponse(
                 responseCode = "200",
                 description = "Список найден",
-                content = [Content(
-                    mediaType = MediaType.APPLICATION_JSON_VALUE,
-                    array = ArraySchema(schema = Schema(implementation = DocumentInfo::class))
-                )]
-            )
-        ]
+                content = [
+                    Content(
+                        mediaType = MediaType.APPLICATION_JSON_VALUE,
+                        array = ArraySchema(schema = Schema(implementation = DocumentInfo::class)),
+                    ),
+                ],
+            ),
+        ],
     )
     @GetMapping("/by-file-name")
     fun getByFileName(
         @Parameter(
             description = "Имя файла без пути; регистр учитывается (если сервис так реализован)",
             example = "invoice_2024_07_15.pdf",
-            schema = Schema(defaultValue = "sample.pdf")
+            schema = Schema(defaultValue = "sample.pdf"),
         )
         @RequestParam fileName: String,
     ): List<DocumentInfo> = service.getByFileName(fileName)
 
     @Operation(
         summary = "Удалить документ по ID",
-        description = "Удаляет документ по UUID. Возвращает 204 No Content при успехе."
+        description = "Удаляет документ по UUID. Возвращает 204 No Content при успехе.",
     )
     @ApiResponses(
         value = [
             ApiResponse(responseCode = "204", description = "Удалено"),
-            ApiResponse(responseCode = "404", description = "Документ не найден")
-        ]
+            ApiResponse(responseCode = "404", description = "Документ не найден"),
+        ],
     )
     @DeleteMapping("/{id}")
     fun delete(
@@ -118,7 +123,7 @@ class DocumentInfoController(
             description = "UUID документа для удаления",
             required = true,
             example = "5b1f3e0b-9c5d-4a07-8f3a-0d7c9a2b9e11",
-            schema = Schema(format = "uuid")
+            schema = Schema(format = "uuid"),
         )
         @PathVariable id: UUID,
     ): ResponseEntity<Void> {
@@ -140,4 +145,3 @@ class DocumentInfoController(
 ]"""
     }
 }
-

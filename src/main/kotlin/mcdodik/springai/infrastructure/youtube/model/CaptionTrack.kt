@@ -6,5 +6,5 @@ data class CaptionTrack(
     val vssId: String?,
     val languageCode: String,
     val kind: String? = null,
-    val isTranslatable: Boolean = false
+    val isTranslatable: Boolean = false,
 )

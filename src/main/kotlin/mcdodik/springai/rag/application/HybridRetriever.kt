@@ -2,8 +2,8 @@ package mcdodik.springai.rag.application
 
 import mcdodik.springai.config.Loggable
 import mcdodik.springai.rag.api.Retriever
+import mcdodik.springai.rag.config.HybridConfig
 import mcdodik.springai.rag.model.FuseMode
-import mcdodik.springai.rag.model.HybridConfig
 import mcdodik.springai.rag.model.RetrievedDoc
 import mcdodik.springai.rag.model.ScoreType
 import kotlin.system.measureNanoTime
@@ -11,7 +11,7 @@ import kotlin.system.measureNanoTime
 class HybridRetriever(
     private val vector: Retriever,
     private val bm25: Retriever,
-    private val cfg: HybridConfig = HybridConfig(),
+    private val cfg: HybridConfig,
 ) : Retriever,
     Loggable {
     override fun retrieve(

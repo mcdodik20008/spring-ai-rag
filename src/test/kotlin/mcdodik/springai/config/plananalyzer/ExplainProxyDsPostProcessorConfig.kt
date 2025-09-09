@@ -35,7 +35,9 @@ class ExplainProxyDsPostProcessorConfig :
         if (bean is DataSource && bean !is ExplainProxyDataSource) {
             val env: Environment = ctx.environment
             val excludeDefault =
-                "(?is)\\b(select\\s+version\\(\\)|select\\s+current_user|select\\s+current_schema|pg_namespace|pg_catalog\\.|pg_roles\\b|pg_class\\b|pg_try_advisory_xact_lock|set_config\\(|search_path\\b)"
+                "(?is)\\b(select\\s+version\\(\\)|select\\s+current_user|select\\" +
+                    "s+current_schema|pg_namespace|pg_catalog\\.|pg_roles\\b|pg_class\\" +
+                    "b|pg_try_advisory_xact_lock|set_config\\(|search_path\\b)"
             val opts =
                 ExplainOptions(
                     analyze = env.getProperty("sql.explain.analyze", Boolean::class.java, true),

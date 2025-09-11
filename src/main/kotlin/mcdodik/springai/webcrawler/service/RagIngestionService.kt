@@ -12,7 +12,7 @@ import java.time.format.DateTimeFormatter
 
 @Service
 class RagIngestionService(
-    private val ingestionService: IngestionService
+    private val ingestionService: IngestionService,
 ) {
     companion object {
         private val logger: Logger = LoggerFactory.getLogger(RagIngestionService::class.java)
@@ -30,7 +30,7 @@ class RagIngestionService(
             kbId = DEFAULT_KB_ID,
             file = multipartFile,
             llmChunking = true,
-            chunkingPromptId = null
+            chunkingPromptId = null,
         ).map { documentDto ->
             logger.info("Successfully ingested document: ${documentDto.id}")
             documentDto.id
@@ -64,7 +64,7 @@ class RagIngestionService(
             name = "webcrawl",
             originalFilename = filename,
             contentType = "text/markdown",
-            content = content.toByteArray()
+            content = content.toByteArray(),
         )
     }
 }

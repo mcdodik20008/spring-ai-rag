@@ -3,7 +3,6 @@ package mcdodik.springai.webcrawler.source
 import mcdodik.springai.webcrawler.model.CrawledData
 import org.springframework.stereotype.Component
 import reactor.core.publisher.Flux
-import java.time.LocalDateTime
 
 /**
  * Источник данных с веб-страниц
@@ -15,6 +14,7 @@ class WebPageSource : WebSource {
 
     override fun crawl(): Flux<CrawledData> {
         // TODO: Реализовать парсинг веб-страниц.
+
         /*
          * Для реализации этой функции нужно:
          *

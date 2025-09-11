@@ -11,7 +11,7 @@ import reactor.core.publisher.Mono
 @Service
 class WebCrawlerService(
     private val webSources: List<WebSource>,
-    private val ragIngestionService: RagIngestionService
+    private val ragIngestionService: RagIngestionService,
 ) {
     companion object {
         private val logger: Logger = LoggerFactory.getLogger(WebCrawlerService::class.java)

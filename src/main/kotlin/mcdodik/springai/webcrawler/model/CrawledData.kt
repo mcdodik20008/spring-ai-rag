@@ -10,5 +10,5 @@ data class CrawledData(
     val title: String,
     val content: String,
     val timestamp: LocalDateTime = LocalDateTime.now(),
-    val metadata: Map<String, Any> = emptyMap()
+    val metadata: Map<String, Any> = emptyMap(),
 )

@@ -14,6 +14,7 @@ class TelegramSource : WebSource {
 
     override fun crawl(): Flux<CrawledData> {
         // TODO: Реализовать подключение к Telegram API
+
         /*
          * Для реализации этой функции нужно:
          * DONE

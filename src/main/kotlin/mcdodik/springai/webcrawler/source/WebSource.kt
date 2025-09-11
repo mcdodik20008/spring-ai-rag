@@ -5,5 +5,6 @@ import reactor.core.publisher.Flux
 
 interface WebSource {
     val name: String
+
     fun crawl(): Flux<CrawledData>
 }

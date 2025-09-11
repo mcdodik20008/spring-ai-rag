@@ -13,7 +13,7 @@ import java.util.UUID
 
 @Service
 @Primary
-@Profile("stub")
+//@Profile("stub")
 class PromptsServiceStub : PromptsService {
     override fun list(
         type: String?,

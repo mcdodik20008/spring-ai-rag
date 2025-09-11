@@ -12,7 +12,7 @@ import reactor.core.publisher.Mono
 
 @Primary
 @Service
-@Profile("stub")
+//@Profile("stub")
 class RunsServiceStub : RunsService {
     override fun get(runId: String): Mono<ChatResponseDto> =
         Mono.just(

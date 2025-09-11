@@ -13,7 +13,7 @@ import java.time.Instant
 
 @Primary
 @Service
-@Profile("stub")
+//@Profile("stub")
 class DocumentsServiceStub : DocumentsService {
     override fun get(docId: String): Mono<DocumentDto> =
         Mono.just(

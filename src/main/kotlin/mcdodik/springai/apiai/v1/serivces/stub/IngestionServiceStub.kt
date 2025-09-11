@@ -13,7 +13,7 @@ import java.util.UUID
 
 @Service
 @Primary
-@Profile("stub")
+//@Profile("stub")
 class IngestionServiceStub : IngestionService {
     override fun start(req: IngestionRequestDto): Mono<IngestionResponseDto> = Mono.just(IngestionResponseDto(jobId = "ing_${UUID.randomUUID()}", status = "queued"))
 

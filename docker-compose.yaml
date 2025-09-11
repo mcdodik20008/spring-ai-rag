@@ -1,53 +1,75 @@
-version: "3.9"
-
 services:
-  pgvector:
-    image: ankane/pgvector
-    container_name: pgvector
-    restart: unless-stopped
-    ports:
-      - "5432:5432"
-    environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: ragdb
-    volumes:
-      - ./ci/init:/docker-entrypoint-initdb.d
-      - pg_data:/var/lib/postgresql/data
-    healthcheck:
-      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
-      interval: 10s
-      timeout: 5s
-      retries: 5
+    spring-ai:
+        build:
+            context: ./
+            dockerfile: docker/Dockerfile
+        container_name: spring-ai-api
+        ports:
+            - "8080:8080"
+        networks:
+            - spring-ai-network
+        environment:
+            - SPRING_PROFILES_ACTIVE=docker
+            - POSTGRES_HOSTNAME=pgvector
+            - OLLAMA_HOSTNAME=ollama
 
-  ollama:
-    image: ollama/ollama:latest
-    container_name: ollama
-    restart: unless-stopped
-    ports:
-      - "11434:11434"
-    volumes:
-      - ollama_data:/root/.ollama
-    healthcheck:
-      test: [ "CMD", "curl", "-f", "http://localhost:11434/" ]
-      interval: 30s
-      timeout: 5s
-      retries: 3
+    pgvector:
+        image: ankane/pgvector
+        container_name: pgvector
+        restart: unless-stopped
+        ports:
+            - "5432:5432"
+        networks:
+            - spring-ai-network
+        environment:
+            POSTGRES_USER: postgres
+            POSTGRES_PASSWORD: postgres
+            POSTGRES_DB: ragdb
+        volumes:
+            - ./ci/init:/docker-entrypoint-initdb.d
+            - pg_data:/var/lib/postgresql/data
+        healthcheck:
+            test: [ "CMD-SHELL", "pg_isready -U postgres" ]
+            interval: 10s
+            timeout: 5s
+            retries: 5
 
-  zipkin:
-    image: openzipkin/zipkin:latest
-    container_name: zipkin
-    restart: unless-stopped
-    ports:
-        - "9411:9411"
-    environment:
-        STORAGE_TYPE: mem
-    healthcheck:
-        test: [ "CMD", "curl", "-f", "http://localhost:9411/actuator/health" ]
-        interval: 10s
-        timeout: 5s
-        retries: 5
+    ollama:
+        image: ollama/ollama:latest
+        container_name: ollama
+        restart: unless-stopped
+        ports:
+            - "11434:11434"
+        networks:
+            - spring-ai-network
+        volumes:
+            - ollama_data:/root/.ollama
+        healthcheck:
+            test: [ "CMD", "curl", "-f", "http://localhost:11434/" ]
+            interval: 30s
+            timeout: 5s
+            retries: 3
+
+    zipkin:
+        image: openzipkin/zipkin:latest
+        container_name: zipkin
+        restart: unless-stopped
+        ports:
+            - "9411:9411"
+        networks:
+            - spring-ai-network
+        environment:
+            STORAGE_TYPE: mem
+        healthcheck:
+            test: [ "CMD", "curl", "-f", "http://localhost:9411/actuator/health" ]
+            interval: 10s
+            timeout: 5s
+            retries: 5
 
 volumes:
-  pg_data:
-  ollama_data:
+    pg_data:
+    ollama_data:
+
+networks:
+    spring-ai-network:
+        driver: bridge

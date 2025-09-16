@@ -6,14 +6,13 @@ import mcdodik.springai.apiai.v1.dto.PageDto
 import mcdodik.springai.apiai.v1.dto.chat.ChunkDto
 import mcdodik.springai.apiai.v1.serivces.DocumentsService
 import org.springframework.context.annotation.Primary
-import org.springframework.context.annotation.Profile
 import org.springframework.stereotype.Service
 import reactor.core.publisher.Mono
 import java.time.Instant
 
+// @Profile("stub")
 @Primary
 @Service
-//@Profile("stub")
 class DocumentsServiceStub : DocumentsService {
     override fun get(docId: String): Mono<DocumentDto> =
         Mono.just(

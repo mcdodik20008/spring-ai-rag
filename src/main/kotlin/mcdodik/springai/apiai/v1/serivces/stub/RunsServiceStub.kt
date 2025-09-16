@@ -6,13 +6,12 @@ import mcdodik.springai.apiai.v1.dto.chat.ChatOutputDto
 import mcdodik.springai.apiai.v1.dto.chat.ChatResponseDto
 import mcdodik.springai.apiai.v1.serivces.RunsService
 import org.springframework.context.annotation.Primary
-import org.springframework.context.annotation.Profile
 import org.springframework.stereotype.Service
 import reactor.core.publisher.Mono
 
+// @Profile("stub")
 @Primary
 @Service
-//@Profile("stub")
 class RunsServiceStub : RunsService {
     override fun get(runId: String): Mono<ChatResponseDto> =
         Mono.just(

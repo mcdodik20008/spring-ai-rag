@@ -5,15 +5,14 @@ import mcdodik.springai.apiai.v1.dto.prompt.PromptDto
 import mcdodik.springai.apiai.v1.dto.prompt.PromptType
 import mcdodik.springai.apiai.v1.serivces.PromptsService
 import org.springframework.context.annotation.Primary
-import org.springframework.context.annotation.Profile
 import org.springframework.stereotype.Service
 import reactor.core.publisher.Mono
 import java.time.Instant
 import java.util.UUID
 
+// @Profile("stub")
 @Service
 @Primary
-//@Profile("stub")
 class PromptsServiceStub : PromptsService {
     override fun list(
         type: String?,

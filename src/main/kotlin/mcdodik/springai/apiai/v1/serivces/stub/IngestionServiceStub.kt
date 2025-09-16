@@ -5,15 +5,14 @@ import mcdodik.springai.apiai.v1.dto.ingestion.IngestionRequestDto
 import mcdodik.springai.apiai.v1.dto.ingestion.IngestionResponseDto
 import mcdodik.springai.apiai.v1.serivces.IngestionService
 import org.springframework.context.annotation.Primary
-import org.springframework.context.annotation.Profile
 import org.springframework.stereotype.Service
 import reactor.core.publisher.Mono
 import java.time.Instant
 import java.util.UUID
 
+// @Profile("stub")
 @Service
 @Primary
-//@Profile("stub")
 class IngestionServiceStub : IngestionService {
     override fun start(req: IngestionRequestDto): Mono<IngestionResponseDto> = Mono.just(IngestionResponseDto(jobId = "ing_${UUID.randomUUID()}", status = "queued"))
 

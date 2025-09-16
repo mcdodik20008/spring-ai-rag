@@ -160,7 +160,7 @@ class IngestController(
     )
     fun ingestPdf(
         @Parameter(description = "PDF-файл для загрузки", required = true)
-        @RequestPart("file") file: FilePart, // <— ключ: FilePart, не MultipartFile
+        @RequestPart("file") file: FilePart,
         @Parameter(description = "Пропустить первые страницы", example = "1")
         @RequestParam("skipPages") skipPages: Int,
         @Parameter(description = "Отбросить страницы с конца", example = "2")

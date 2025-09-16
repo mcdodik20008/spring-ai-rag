@@ -1,20 +1,22 @@
-# Build stage
-FROM gradle:8.5-jdk17 AS build
-WORKDIR /app
-COPY . .
-RUN gradle clean assemble --no-daemon
-
-# Run stage
+# docker/Dockerfile
 FROM eclipse-temurin:17-jre-jammy
 WORKDIR /app
-COPY --from=build /app/build/libs/spring-ai-*.jar app.jar
 
-# Create a non-root user
-RUN useradd -m appuser && chown -R appuser:appuser /app
+# параметризуем имя файла; по умолчанию берём единственный jar из build/libs
+ARG JAR_FILE=build/libs/*.jar
+COPY ${JAR_FILE} app.jar
+
+# безопасный пользователь
+RUN useradd -m -U -s /bin/false appuser && chown -R appuser:appuser /app
 USER appuser
 
-# Expose the application port
+ENV TZ=Europe/Moscow \
+    JAVA_TOOL_OPTIONS="-XX:MaxRAMPercentage=75 -XX:+AlwaysActAsServerClassMachine -Dfile.encoding=UTF-8"
+
 EXPOSE 8080
 
-# Run the application
-ENTRYPOINT ["java", "-jar", "app.jar"]
+# при наличии actuator можно включить healthcheck (иначе удалите)
+# HEALTHCHECK --interval=30s --timeout=3s --start-period=20s --retries=3 \
+#   CMD wget -qO- http://localhost:8080/actuator/health || exit 1
+
+ENTRYPOINT ["java","-jar","/app/app.jar"]

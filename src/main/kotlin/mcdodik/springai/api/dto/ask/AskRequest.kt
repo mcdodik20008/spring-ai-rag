@@ -1,4 +1,4 @@
-package mcdodik.springai.api.dto
+package mcdodik.springai.api.dto.ask
 
 import io.swagger.v3.oas.annotations.media.Schema
 

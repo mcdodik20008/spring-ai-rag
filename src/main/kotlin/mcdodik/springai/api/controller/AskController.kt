@@ -5,7 +5,7 @@ import io.swagger.v3.oas.annotations.media.ArraySchema
 import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
-import mcdodik.springai.api.dto.AskRequest
+import mcdodik.springai.api.dto.ask.AskRequest
 import mcdodik.springai.rag.service.api.RagService
 import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.PostMapping

@@ -1,6 +1,6 @@
 package mcdodik.springai.rag.service.api
 
-import mcdodik.springai.api.dto.CleanRequestParams
+import mcdodik.springai.api.dto.ingest.CleanRequestParams
 import org.springframework.web.multipart.MultipartFile
 import reactor.core.publisher.Flux
 import kotlinx.coroutines.flow.Flow

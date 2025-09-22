@@ -1,6 +1,6 @@
 package mcdodik.springai.infrastructure.document.worker
 
-import mcdodik.springai.api.dto.CleanRequestParams
+import mcdodik.springai.api.dto.ingest.CleanRequestParams
 import mcdodik.springai.extensions.fetchInfoFromFile
 import mcdodik.springai.infrastructure.document.reader.CodeAwareTikaReaderFactory
 import org.springframework.ai.document.Document
@@ -12,9 +12,7 @@ class MarkdownDocumentWorker(
     private val textSplitter: TokenTextSplitter,
     private val readerFactory: CodeAwareTikaReaderFactory,
 ) : DocumentWorker {
-    override fun supports(file: MultipartFile): Boolean {
-        return file.contentType == "text/markdown" || file.originalFilename?.endsWith(".md") == true
-    }
+    override fun supports(file: MultipartFile): Boolean = file.contentType == "text/markdown" || file.originalFilename?.endsWith(".md") == true
 
     override fun process(
         file: MultipartFile,

@@ -1,6 +1,6 @@
 package mcdodik.springai.infrastructure.document.worker
 
-import mcdodik.springai.api.dto.CleanRequestParams
+import mcdodik.springai.api.dto.ingest.CleanRequestParams
 import org.springframework.ai.document.Document
 import org.springframework.stereotype.Component
 import org.springframework.web.multipart.MultipartFile

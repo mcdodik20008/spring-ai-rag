@@ -1,4 +1,4 @@
-package mcdodik.springai.api.dto
+package mcdodik.springai.api.dto.prompt
 
 import java.util.UUID
 

@@ -1,6 +1,6 @@
 package mcdodik.springai.infrastructure.cleaner
 
-import mcdodik.springai.api.dto.PdfCleanRequest
+import mcdodik.springai.api.dto.ingest.PdfCleanRequest
 import org.springframework.stereotype.Component
 import java.io.InputStream
 

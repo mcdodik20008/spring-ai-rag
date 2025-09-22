@@ -1,6 +1,6 @@
 package mcdodik.springai.infrastructure.multipart
 
-import mcdodik.springai.api.dto.CustomMultipartFile
+import mcdodik.springai.api.dto.ingest.CustomMultipartFile
 import org.springframework.http.MediaType
 import org.springframework.stereotype.Service
 import org.springframework.web.multipart.MultipartFile

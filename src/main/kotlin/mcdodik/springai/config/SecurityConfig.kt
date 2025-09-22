@@ -1,4 +1,4 @@
-package mcdodik.springai.apiai.v1.config
+package mcdodik.springai.config
 
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
@@ -17,7 +17,8 @@ class SecurityConfig(
     @Bean
     fun springSecurityFilterChain(http: ServerHttpSecurity): SecurityWebFilterChain {
         if (!enabled) {
-            return http.csrf { it.disable() }
+            return http
+                .csrf { it.disable() }
                 .authorizeExchange { it.anyExchange().permitAll() }
                 .build()
         }

@@ -1,6 +1,6 @@
 package mcdodik.springai.infrastructure.document.worker
 
-import mcdodik.springai.api.dto.CleanRequestParams
+import mcdodik.springai.api.dto.ingest.CleanRequestParams
 import mcdodik.springai.extensions.featAllTextFromObsidianMd
 import mcdodik.springai.extensions.fetchInfoFromFile
 import mcdodik.springai.infrastructure.document.cofig.ChatModelTemplates.EXTRACT_CHUNKS_PROMPT_PHILOSOPHY

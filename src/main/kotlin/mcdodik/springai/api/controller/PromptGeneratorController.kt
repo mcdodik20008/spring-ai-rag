@@ -8,8 +8,8 @@ import io.swagger.v3.oas.annotations.parameters.RequestBody
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.responses.ApiResponses
 import io.swagger.v3.oas.annotations.tags.Tag
-import mcdodik.springai.api.dto.FindByTopicRequest
-import mcdodik.springai.api.dto.FindByTopicResponse
+import mcdodik.springai.api.dto.prompt.FindByTopicRequest
+import mcdodik.springai.api.dto.prompt.FindByTopicResponse
 import mcdodik.springai.api.service.PromptGenerationService
 import mcdodik.springai.db.entity.prompt.ChunkingPromptTemplate
 import mcdodik.springai.db.entity.prompt.PromptGenerationRequest
@@ -40,7 +40,7 @@ class PromptGeneratorController(
         ],
     )
     @PostMapping("/generate", consumes = [MediaType.APPLICATION_JSON_VALUE])
-    fun generatePrompt(
+    suspend fun generatePrompt(
         @RequestBody(
             required = true,
             description = "Домен и пользовательское описание для генерации шаблона",
@@ -63,9 +63,7 @@ class PromptGeneratorController(
         )
         @org.springframework.web.bind.annotation.RequestBody
         request: PromptGenerationRequest,
-    ): ChunkingPromptTemplate {
-        return service.generatePrompt(request.domainName, request.userDescription)
-    }
+    ): ChunkingPromptTemplate = service.generatePrompt(request.domainName, request.userDescription)
 
     @Operation(
         summary = "Найти шаблоны по теме",

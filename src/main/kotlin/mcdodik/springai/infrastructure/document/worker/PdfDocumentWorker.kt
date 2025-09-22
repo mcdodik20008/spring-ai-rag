@@ -1,7 +1,7 @@
 package mcdodik.springai.infrastructure.document.worker
 
-import mcdodik.springai.api.dto.CleanRequestParams
-import mcdodik.springai.api.dto.PdfCleanRequest
+import mcdodik.springai.api.dto.ingest.CleanRequestParams
+import mcdodik.springai.api.dto.ingest.PdfCleanRequest
 import mcdodik.springai.extensions.fetchInfoFromFile
 import mcdodik.springai.infrastructure.cleaner.DocumentCleaner
 import mcdodik.springai.infrastructure.document.reader.CodeAwareTikaReaderFactory
@@ -17,9 +17,7 @@ class PdfDocumentWorker(
     private val cleaner: DocumentCleaner,
     private val readerFactory: CodeAwareTikaReaderFactory,
 ) : DocumentWorker {
-    override fun supports(file: MultipartFile): Boolean {
-        return file.contentType == "application/pdf" || file.originalFilename?.endsWith(".pdf") == true
-    }
+    override fun supports(file: MultipartFile): Boolean = file.contentType == "application/pdf" || file.originalFilename?.endsWith(".pdf") == true
 
     override fun process(
         file: MultipartFile,

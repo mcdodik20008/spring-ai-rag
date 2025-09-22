@@ -15,6 +15,9 @@ import org.springframework.ai.ollama.OllamaEmbeddingModel
 import org.springframework.stereotype.Service
 import java.time.LocalDateTime
 import java.util.UUID
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.withContext
 
 @Service
 class PromptGenerationService(
@@ -22,74 +25,81 @@ class PromptGenerationService(
     private val mapper: ChunkingPromptTemplateMapper,
     private val embeddingModel: OllamaEmbeddingModel,
 ) {
-    fun generatePrompt(
+    suspend fun generatePrompt(
         domainName: String,
         userDescription: String,
-    ): ChunkingPromptTemplate {
-        require(domainName.isNotBlank()) { "domainName is blank" }
-        require(userDescription.isNotBlank()) { "userDescription is blank" }
+    ): ChunkingPromptTemplate =
+        coroutineScope {
+            require(domainName.isNotBlank()) { "domainName is blank" }
+            require(userDescription.isNotBlank()) { "userDescription is blank" }
 
-        val sanitizedDesc = userDescription.sanitize()
+            val sanitizedDesc = userDescription.sanitize()
 
-        // 1. Генерация системного промпта
-        val systemPrompt = ChatModelPrompts.generateChunkingPrompt(domainName, sanitizedDesc)
-        logger.debug("System prompt:\n$systemPrompt")
+            // 1. Системный промпт
+            val systemPrompt = ChatModelPrompts.generateChunkingPrompt(domainName, sanitizedDesc)
+            logger.debug("System prompt:\n$systemPrompt")
 
-        // 2. Формируем Prompt для LLM
-        val prompt =
-            Prompt(
-                listOf(
-                    SystemMessage(systemPrompt),
-                    UserMessage(userDescription),
-                ),
-            )
+            // 2. Prompt
+            val prompt =
+                Prompt(
+                    listOf(
+                        SystemMessage(systemPrompt),
+                        UserMessage(userDescription),
+                    ),
+                )
 
-        // 3. Запрашиваем LLM
-        val chatClient = dynamicOpenRouterChatClient(LLMTaskType.PROMPT_GEN, null)
-        val rawResponse =
-            chatClient
-                .prompt(prompt)
-                .call()
-                .content()
-                .orEmpty()
-        logger.debug("Raw LLM response:\n$rawResponse")
+            // 3. Запрашиваем LLM (блокирующий клиент -> offload)
+            val chatClient = dynamicOpenRouterChatClient(LLMTaskType.PROMPT_GEN, null)
 
-        // 4. Пытаемся вырезать из ответа по тегам
-        val generated =
-            rawResponse
-                .extractBetween("<<<PROMPT_BEGIN", "PROMPT_END>>>")
-                .ifBlank {
-                    logger.warn("No prompt extracted from LLM, using fallback")
-                    fallbackPrompt(domainName, sanitizedDesc)
-                }.trim()
-                .take(MAX_PROMPT_CHARS)
+            val rawResponse =
+                withContext(Dispatchers.IO) {
+                    chatClient
+                        .prompt(prompt)
+                        .call() // потенциально блокирует WebClient внутри
+                        .content()
+                        .orEmpty()
+                }
+            logger.debug("Raw LLM response:\n$rawResponse")
 
-        // 5. Генерация вектора для темы (чтобы findByTopic работал)
-        val topicEmbedding =
-            try {
-                embeddingModel.embed(domainName).toList()
-            } catch (e: Exception) {
-                logger.error("Failed to generate topic embedding")
-                emptyList()
+            // 4. Вырезаем по тегам
+            val generated =
+                rawResponse
+                    .extractBetween("<<<PROMPT_BEGIN", "PROMPT_END>>>")
+                    .ifBlank {
+                        logger.warn("No prompt extracted from LLM, using fallback")
+                        fallbackPrompt(domainName, sanitizedDesc)
+                    }.trim()
+                    .take(MAX_PROMPT_CHARS)
+
+            // 5. Эмбеддинг темы (тоже блокирующий -> offload)
+            val topicEmbedding =
+                withContext(Dispatchers.IO) {
+                    try {
+                        embeddingModel.embed(domainName).toList()
+                    } catch (e: Exception) {
+                        logger.error("Failed to generate topic embedding", e)
+                        emptyList()
+                    }
+                }
+
+            // 6. Сущность
+            val entity =
+                ChunkingPromptTemplate(
+                    id = UUID.randomUUID(),
+                    domainName = domainName,
+                    userDescription = userDescription,
+                    generatedPrompt = generated,
+                    topicEmbedding = topicEmbedding,
+                    createdAt = LocalDateTime.now(),
+                )
+
+            // 7. Сохранение (MyBatis/JDBC -> offload)
+            withContext(Dispatchers.IO) {
+                mapper.insert(entity)
             }
-
-        // 6. Создаём сущность
-        val entity =
-            ChunkingPromptTemplate(
-                id = UUID.randomUUID(),
-                domainName = domainName,
-                userDescription = userDescription,
-                generatedPrompt = generated,
-                topicEmbedding = topicEmbedding,
-                createdAt = LocalDateTime.now(),
-            )
-
-        // 7. Сохраняем
-        mapper.insert(entity)
-        logger.info("Prompt template saved: ${entity.id} (topicEmbedding size=${topicEmbedding.size})")
-
-        return entity
-    }
+            logger.info("Prompt template saved: ${entity.id} (topicEmbedding size=${topicEmbedding.size})")
+            entity
+        }
 
     fun findByTopic(
         topic: String,

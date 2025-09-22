@@ -3,7 +3,7 @@ package mcdodik.springai.api.controller
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
-import mcdodik.springai.api.dto.AskRequest
+import mcdodik.springai.api.dto.ask.AskRequest
 import mcdodik.springai.rag.service.api.RagService
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach

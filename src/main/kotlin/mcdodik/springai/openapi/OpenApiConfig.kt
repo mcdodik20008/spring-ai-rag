@@ -9,22 +9,22 @@ import org.springframework.context.annotation.Configuration
 
 @Configuration
 class OpenApiConfig {
-    @Bean
-    fun openAPI(): OpenAPI {
-        val bearer =
-            SecurityScheme()
-                .type(SecurityScheme.Type.HTTP)
-                .scheme("bearer")
-                .bearerFormat("JWT")
-
-        return OpenAPI()
-            .components(Components().addSecuritySchemes("bearerAuth", bearer))
-//            .addSecurityItem(SecurityRequirement().addList("bearerAuth"))
-            .info(
-                Info()
-                    .title("RAG Service API") // общий заголовок по умолчанию
-                    .version("v1")
-                    .description("Глобальная спецификация сервиса RAG"),
-            )
-    }
+//    @Bean
+//    fun openAPI(): OpenAPI {
+//        val bearer =
+//            SecurityScheme()
+//                .type(SecurityScheme.Type.HTTP)
+//                .scheme("bearer")
+//                .bearerFormat("JWT")
+//
+//        return OpenAPI()
+//            .components(Components().addSecuritySchemes("bearerAuth", bearer))
+// //            .addSecurityItem(SecurityRequirement().addList("bearerAuth"))
+//            .info(
+//                Info()
+//                    .title("RAG Service API") // общий заголовок по умолчанию
+//                    .version("v1")
+//                    .description("Глобальная спецификация сервиса RAG"),
+//            )
+//    }
 }

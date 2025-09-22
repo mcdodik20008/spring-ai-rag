@@ -1,6 +1,6 @@
 package mcdodik.springai.infrastructure.cleaner
 
-import mcdodik.springai.api.dto.PdfCleanRequest
+import mcdodik.springai.api.dto.ingest.PdfCleanRequest
 import mcdodik.springai.extensions.hasGlyph
 import org.apache.pdfbox.Loader
 import org.apache.pdfbox.pdmodel.PDDocument

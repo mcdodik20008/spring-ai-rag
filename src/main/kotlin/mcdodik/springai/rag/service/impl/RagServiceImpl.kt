@@ -1,6 +1,6 @@
 package mcdodik.springai.rag.service.impl
 
-import mcdodik.springai.api.dto.CleanRequestParams
+import mcdodik.springai.api.dto.ingest.CleanRequestParams
 import mcdodik.springai.config.Loggable
 import mcdodik.springai.db.entity.rag.DocumentInfo
 import mcdodik.springai.db.mybatis.mapper.DocumentInfoMapper
@@ -33,7 +33,7 @@ class RagServiceImpl(
 ) : RagService {
     override fun ask(question: String): Flux<String> =
         chat
-            .prompt("Ответь на русском")
+            .prompt()
             .user(question)
             .stream()
             .content()
@@ -42,7 +42,7 @@ class RagServiceImpl(
                 Mono
                     .fromCallable {
                         chat
-                            .prompt("Ответь на русском")
+                            .prompt()
                             .user(question)
                             .call()
                             .content()
@@ -59,16 +59,15 @@ class RagServiceImpl(
     override fun askFlow(question: String): Flow<String> {
         val flux =
             chat
-                .prompt("Ответь на русском")
+                .prompt()
                 .user(question)
                 .stream()
-                .content() // Flux<String>
+                .content()
 
         return flux
             .asFlow()
             .catch { e ->
                 logger.warn("RagService.askFlow stream error, fallback to call(): {}", e.message)
-                // синхронный fallback на IO-пуле
                 val oneShot =
                     withContext(Dispatchers.IO) {
                         chat

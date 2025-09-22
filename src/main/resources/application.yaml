@@ -41,17 +41,17 @@ spring:
     web:
         resources:
             add-mappings: false
-    # phi3:mini owl/t-lite gemma3:1b-it-qat qwen3:0.6b
-    # qwen2.5:0.5b llama3.2:1b-instruct-q4_K_M
+    # phi3:mini owl/t-lite gemma3:1b-it-qat
+    # qwen2.5:0.5b qwen3:0.6b
     ai:
         openai:
-            base-url: http://localhost:11434
+            base-url: http://192.168.0.15:11434
             api-key: dummy # обязателен (любая непустая строка)
             chat:
                 options:
-                    model: llama3.2:1b-instruct-q4_K_M
+                    model: qwen2.5:7b-instruct
         ollama:
-            base-url: http://localhost:11434
+            base-url: http://192.168.0.15:11434
             embedding:
                 model: ${OLLAMA_EMBEDDING_MODEL:nomic-embed-text}
                 options:
@@ -119,10 +119,10 @@ mcdodik:
         top-p: 0.95
         api-key: ${OPENROUTER_API_KEY}
         models:
-            default: deepseek/deepseek-r1:free  #mistralai/mistral-nemo #openai/gpt-oss-20b
-            summary: deepseek/deepseek-r1:free
-            promptGen: deepseek/deepseek-r1:free
-            chunking: deepseek/deepseek-r1:free
+            default: qwen/qwen3-next-80b-a3b-instruct  #mistralai/mistral-nemo #openai/gpt-oss-20b
+            summary: qwen/qwen3-next-80b-a3b-instruct
+            promptGen: qwen/qwen3-next-80b-a3b-instruct
+            chunking: qwen/qwen3-next-80b-a3b-instruct
     advisors:
         vector:
             topK: 24

@@ -1,4 +1,4 @@
-package mcdodik.springai.api.dto
+package mcdodik.springai.api.dto.prompt
 
 /** Request DTO for topic search. */
 data class FindByTopicRequest(

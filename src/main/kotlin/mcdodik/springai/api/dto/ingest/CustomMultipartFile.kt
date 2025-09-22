@@ -1,4 +1,4 @@
-package mcdodik.springai.api.dto
+package mcdodik.springai.api.dto.ingest
 
 import org.springframework.web.multipart.MultipartFile
 import java.io.ByteArrayInputStream

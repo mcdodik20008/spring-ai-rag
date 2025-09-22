@@ -9,9 +9,9 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.responses.ApiResponses
 import io.swagger.v3.oas.annotations.tags.Tag
 import jakarta.validation.Valid
-import mcdodik.springai.api.dto.CustomMultipartFile
-import mcdodik.springai.api.dto.EmptyParams
-import mcdodik.springai.api.dto.PdfCleanRequest
+import mcdodik.springai.api.dto.ingest.CustomMultipartFile
+import mcdodik.springai.api.dto.ingest.EmptyParams
+import mcdodik.springai.api.dto.ingest.PdfCleanRequest
 import mcdodik.springai.infrastructure.youtube.model.YoutubeIngestRequest
 import mcdodik.springai.infrastructure.youtube.service.api.YoutubeSubtitleService
 import mcdodik.springai.rag.service.api.RagService
@@ -87,7 +87,6 @@ class IngestController(
                     content = bytes,
                 )
             }.flatMap { mf ->
-                // переносим «тяжёлую» работу на boundedElastic
                 Mono
                     .fromCallable {
                         rag.ingest(mf, EmptyParams)

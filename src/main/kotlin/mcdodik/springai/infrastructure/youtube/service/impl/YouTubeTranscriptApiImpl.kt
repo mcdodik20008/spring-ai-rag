@@ -2,7 +2,6 @@ package mcdodik.springai.infrastructure.youtube.service.impl
 
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
-import com.github.jknack.handlebars.internal.text.StringEscapeUtils
 import mcdodik.springai.config.Loggable
 import mcdodik.springai.infrastructure.youtube.model.CaptionTrack
 import mcdodik.springai.infrastructure.youtube.model.TranscriptEntry
@@ -299,8 +298,8 @@ class YouTubeTranscriptApiImpl(
         if (start != null && text.isNotBlank()) {
             result.add(
                 TranscriptEntry(
-                    start = start!!,
-                    duration = (end!! - start!!),
+                    start = start,
+                    duration = (end!! - start),
                     text = text.toString().trim(),
                 ),
             )

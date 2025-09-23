@@ -2,7 +2,11 @@ package mcdodik.springai.api.models
 
 import java.time.Instant
 
-data class Entry(val status: Int, val body: ByteArray, val createdAt: Long = Instant.now().epochSecond) {
+data class Entry(
+    val status: Int,
+    val body: ByteArray,
+    val createdAt: Long = Instant.now().epochSecond,
+) {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false

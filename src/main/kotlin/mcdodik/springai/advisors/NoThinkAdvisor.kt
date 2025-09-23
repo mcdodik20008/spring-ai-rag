@@ -20,7 +20,5 @@ class NoThinkAdvisor : BaseAdvisor {
         TODO("Not yet implemented")
     }
 
-    override fun getOrder(): Int {
-        return 40
-    }
+    override fun getOrder(): Int = 40
 }

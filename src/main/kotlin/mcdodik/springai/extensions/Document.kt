@@ -16,12 +16,11 @@ fun Document.fetchInfoFromFile(
     this.metadata[MetadataKey.HASH.key] = file.sha256()
 }
 
-fun Document.toRetrievedDoc(defaultType: ScoreType = ScoreType.VECTOR): RetrievedDoc {
-    return RetrievedDoc(
+fun Document.toRetrievedDoc(defaultType: ScoreType = ScoreType.VECTOR): RetrievedDoc =
+    RetrievedDoc(
         id = this.metadata[MetadataKey.ID.key].toString(),
         content = this.text ?: "",
         metadata = metadata,
         score = 0.0,
         type = defaultType,
     )
-}

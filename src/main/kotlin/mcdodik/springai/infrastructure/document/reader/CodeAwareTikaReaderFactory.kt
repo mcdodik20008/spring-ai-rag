@@ -6,7 +6,5 @@ import org.springframework.stereotype.Component
 
 @Component
 class CodeAwareTikaReaderFactory {
-    fun create(resource: InputStreamResource): DocumentReader {
-        return CodeAwareTikaReader(resource)
-    }
+    fun create(resource: InputStreamResource): DocumentReader = CodeAwareTikaReader(resource)
 }

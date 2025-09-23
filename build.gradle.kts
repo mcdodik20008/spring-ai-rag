@@ -87,6 +87,8 @@ dependencies {
     //
     implementation(libs.bundles.dev)
 
+    implementation("org.apache.commons:commons-text:1.11.0")
+
     // ──────────── Dev / Test ────────────
     implementation(libs.bundles.test)
     implementation(libs.bundles.testRuntime)

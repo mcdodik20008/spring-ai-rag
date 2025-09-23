@@ -51,14 +51,14 @@ class OpenRouterChat(
         // 3) вызов
         val resp: OpenRouterResponse =
             try {
-                webClient.post()
+                webClient
+                    .post()
                     .uri(endpoint)
                     .contentType(MediaType.APPLICATION_JSON)
                     .headers {
                         it.setBearerAuth(apiKey) // Authorization: Bearer ...
                         it.accept = listOf(MediaType.APPLICATION_JSON)
-                    }
-                    .bodyValue(requestBody)
+                    }.bodyValue(requestBody)
                     .retrieve()
                     .bodyToMono(OpenRouterResponse::class.java)
                     .block() ?: error("Empty response")
@@ -69,13 +69,17 @@ class OpenRouterChat(
 
         // 4) разбор
         val content =
-            resp.choices.firstOrNull()?.message?.content
+            resp.choices
+                .firstOrNull()
+                ?.message
+                ?.content
                 ?: error("Missing content in OpenRouter response")
 
         val generation = Generation(AssistantMessage(content))
 
         val metadata =
-            ChatResponseMetadata.builder()
+            ChatResponseMetadata
+                .builder()
                 .id(resp.id)
                 .model(resp.model)
                 .usage(
@@ -84,10 +88,10 @@ class OpenRouterChat(
                         resp.usage?.completionTokens ?: 0,
                         resp.usage?.totalTokens ?: 0,
                     ),
-                )
-                .build()
+                ).build()
 
-        return ChatResponse.builder()
+        return ChatResponse
+            .builder()
             .generations(listOf(generation))
             .metadata(metadata)
             .build()

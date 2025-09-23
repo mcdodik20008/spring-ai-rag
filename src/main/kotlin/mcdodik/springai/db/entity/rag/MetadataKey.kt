@@ -1,6 +1,8 @@
 package mcdodik.springai.db.entity.rag
 
-enum class MetadataKey(val key: String) {
+enum class MetadataKey(
+    val key: String,
+) {
     ID("id"),
     EMBEDDING("embedding"),
     TYPE("type"),

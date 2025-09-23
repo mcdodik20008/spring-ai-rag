@@ -59,7 +59,8 @@ class FloatListTypeHandler : BaseTypeHandler<List<Float>>() {
         }
 
         return try {
-            value.removePrefix("[")
+            value
+                .removePrefix("[")
                 .removeSuffix("]")
                 .split(",")
                 .map { it.trim().toFloat() }

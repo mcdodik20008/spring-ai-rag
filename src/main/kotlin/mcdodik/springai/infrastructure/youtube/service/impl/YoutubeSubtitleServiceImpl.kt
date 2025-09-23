@@ -27,7 +27,8 @@ class YoutubeSubtitleServiceImpl(
             }
 
         val text =
-            entries.joinToString(separator = " ") { it.text }
+            entries
+                .joinToString(separator = " ") { it.text }
                 .replace(Regex("\\s+"), " ")
                 .trim()
 

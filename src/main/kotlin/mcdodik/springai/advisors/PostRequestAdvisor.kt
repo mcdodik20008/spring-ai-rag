@@ -9,9 +9,7 @@ class PostRequestAdvisor : BaseAdvisor {
     override fun before(
         chatClientRequest: ChatClientRequest,
         advisorChain: AdvisorChain,
-    ): ChatClientRequest {
-        return chatClientRequest
-    }
+    ): ChatClientRequest = chatClientRequest
 
     override fun after(
         chatClientResponse: ChatClientResponse,
@@ -20,7 +18,5 @@ class PostRequestAdvisor : BaseAdvisor {
         TODO("Проверить на галюны, повторы слов и если что, то зафейлить ответ")
     }
 
-    override fun getOrder(): Int {
-        return 50
-    }
+    override fun getOrder(): Int = 50
 }

@@ -1,7 +1,8 @@
 package mcdodik.springai.extensions
 
 fun String?.sanitize(): String =
-    this?.replace("\u0000", "")
+    this
+        ?.replace("\u0000", "")
         ?.replace("\r\n", "\n")
         ?.trim()
         ?: ""

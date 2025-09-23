@@ -2,11 +2,10 @@ package mcdodik.springai.extensions
 
 import org.apache.pdfbox.pdmodel.font.PDFont
 
-fun PDFont.hasGlyph(ch: Char): Boolean {
-    return try {
+fun PDFont.hasGlyph(ch: Char): Boolean =
+    try {
         this.encode(ch.toString())
         true
     } catch (_: Exception) {
         false
     }
-}

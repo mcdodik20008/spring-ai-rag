@@ -161,8 +161,7 @@ class RagAdminController(
                 val r2 = runExclusive("dedup-merge", dedupLock) { dedup.mergeDuplicates() }
                 val total = Duration.between(startAll, Instant.now()).toMillis()
                 CombinedStatus(results = listOf(r1, r2), totalDurationMs = total)
-            }
-            .subscribeOn(Schedulers.boundedElastic())
+            }.subscribeOn(Schedulers.boundedElastic())
 
     private inline fun runExclusive(
         opName: String,

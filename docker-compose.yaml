@@ -43,11 +43,7 @@ services:
 
     # --- Ваш Spring-AI API (только внутренняя сеть) ---
     spring-ai:
-        build:
-            context: .
-            dockerfile: docker/Dockerfile
-            # args:
-            #   JAR_FILE: build/libs/spring-ai-rag-0.1.jar
+        image: mcdodik/spring-ai
         container_name: spring-ai-api
         environment:
             SPRING_PROFILES_ACTIVE: docker

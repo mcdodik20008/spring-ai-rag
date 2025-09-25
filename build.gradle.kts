@@ -1,3 +1,4 @@
+import java.io.ByteArrayOutputStream
 import kotlinx.kover.features.jvm.AggregationType
 import kotlinx.kover.features.jvm.CoverageUnit
 import kotlinx.kover.gradle.plugin.dsl.GroupingEntityType
@@ -12,6 +13,8 @@ plugins {
     id("org.jlleitschuh.gradle.ktlint") version "12.1.1"
     id("com.diffplug.spotless") version "7.2.1"
     id("org.jetbrains.kotlinx.kover") version "0.9.1"
+
+    id("com.google.cloud.tools.jib") version "3.4.3"
 }
 
 group = "mcdodik"
@@ -26,6 +29,9 @@ java {
 configurations {
     compileOnly {
         extendsFrom(configurations.annotationProcessor.get())
+    }
+    all {
+        exclude(group = "org.springframework", module = "spring-webmvc")
     }
 }
 
@@ -44,6 +50,8 @@ configurations.all {
 dependencies {
     implementation(platform(libs.spring.boot.bom))
     implementation(platform(libs.spring.ai.bom))
+
+    // view
     implementation("org.springframework.boot:spring-boot-starter-thymeleaf")
 
     // ──────────── CORE ────────────
@@ -186,4 +194,52 @@ kover {
 tasks.test {
     useJUnitPlatform()
     systemProperty("org.springframework.restdocs.outputDir", "$buildDir/generated-snippets")
+}
+
+/** ───────────────────────────── Docker push “в одну кнопку” ───────────────────────────── */
+
+fun gitShortSha(): String =
+    ByteArrayOutputStream().use { os ->
+        exec {
+            commandLine("git", "rev-parse", "--short", "HEAD")
+            standardOutput = os
+        }.assertNormalExitValue()
+        os.toString().trim()
+    }
+
+val imageName = "mcdodik/spring-ai"
+
+jib {
+    from { image = "eclipse-temurin:17-jre-jammy" }
+    to {
+        image = imageName
+        tags =
+            setOf(
+                (project.version.toString().ifBlank { "dev" }),
+                gitShortSha(),
+                "latest",
+            )
+    }
+    container {
+        mainClass = "org.springframework.boot.loader.launch.JarLauncher"
+        ports = listOf("8080")
+        user = "10001:10001"
+        environment = mapOf("TZ" to "Europe/Moscow", "LANG" to "C.UTF-8")
+        jvmFlags =
+            listOf(
+                "-XX:MaxRAMPercentage=75",
+                "-XX:InitialRAMPercentage=25",
+                "-XX:+AlwaysActAsServerClassMachine",
+                "-Dfile.encoding=UTF-8",
+                "-XX:+ExitOnOutOfMemoryError",
+                "-XX:+HeapDumpOnOutOfMemoryError",
+                "-XX:HeapDumpPath=/tmp/heap.hprof",
+            )
+    }
+}
+
+tasks.register("releaseImage") {
+    group = "release"
+    description = "Build & push Docker image via Jib with tags (version, gitSha, latest)"
+    dependsOn("jib")
 }

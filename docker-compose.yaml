@@ -58,11 +58,6 @@ services:
             # JAVA_TOOL_OPTIONS: "-XX:MaxRAMPercentage=75 -Dfile.encoding=UTF-8"
         ports:
             - "8080:8080"
-        depends_on:
-            pgvector:
-                condition: service_healthy
-            ollama:
-                condition: service_healthy
         restart: unless-stopped
         networks:
             - spring-ai-network
@@ -79,12 +74,6 @@ services:
         volumes:
             - ./ci/init:/docker-entrypoint-initdb.d
             - pg_data:/var/lib/postgresql/data
-        healthcheck:
-            test: [ "CMD-SHELL", "pg_isready -U postgres -d ragdb" ]
-            interval: 10s
-            timeout: 5s
-            retries: 10
-            start_period: 20s
         restart: unless-stopped
         networks:
             - spring-ai-network

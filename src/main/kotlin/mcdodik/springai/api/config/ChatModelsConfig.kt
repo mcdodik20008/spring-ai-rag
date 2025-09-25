@@ -1,5 +1,6 @@
 package mcdodik.springai.api.config
 
+import mcdodik.springai.advisors.PostRequestAdvisor
 import mcdodik.springai.advisors.VectorAdvisor
 import mcdodik.springai.advisors.config.VectorAdvisorProperties
 import mcdodik.springai.api.config.ChatModelsConfig.LLMTaskType.CHUNKING
@@ -34,12 +35,15 @@ class ChatModelsConfig {
         hybridAdvisor: BaseAdvisor,
         @Qualifier("russianAdvisor")
         russianAdvisor: BaseAdvisor,
+        @Qualifier("postRequestAdvisor")
+        postRequestAdvisor: PostRequestAdvisor,
         memory: MessageWindowChatMemory,
     ): ChatClient =
         ChatClient
             .builder(chatModel)
             .defaultAdvisors(hybridAdvisor)
             .defaultAdvisors(russianAdvisor)
+            .defaultAdvisors(postRequestAdvisor)
             .defaultAdvisors(MessageChatMemoryAdvisor.builder(memory).build())
             .build()
 

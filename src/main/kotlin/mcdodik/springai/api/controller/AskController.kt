@@ -85,4 +85,24 @@ class AskController(
             .collectList()
             .map { it.joinToString(separator = "") }
             .awaitSingle()
+
+    @PostMapping(
+        "/ask-text-any",
+        consumes = [MediaType.APPLICATION_JSON_VALUE],
+        produces = [MediaType.APPLICATION_JSON_VALUE],
+    )
+    suspend fun askAwaitAny(
+        @RequestBody req: AskRequest,
+    ): AskTextResponse =
+        AskTextResponse(
+            rag
+                .ask(req.question)
+                .collectList()
+                .map { it.joinToString("") }
+                .awaitSingle(),
+        )
 }
+
+data class AskTextResponse(
+    val answer: String,
+)

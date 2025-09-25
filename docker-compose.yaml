@@ -1,11 +1,51 @@
 version: "3.9"
 
+networks:
+    edge:        # внешняя
+        driver: bridge
+    spring-ai-network:  # внутренняя
+        driver: bridge
+
+volumes:
+    pg_data:
+    ollama_data:
+    n8n_db_data:
+    n8n_data:
+    letsencrypt:
+
 services:
+#    # --- Traefik (HTTPS + ACME) ---
+#    traefik:
+#        image: traefik:v3.1
+#        container_name: traefik
+#        command:
+#            - --providers.docker=true
+#            - --providers.docker.exposedbydefault=false
+#            - --entrypoints.web.address=:80
+#            - --entrypoints.websecure.address=:443
+#            # redirect 80 -> 443
+#            - --entrypoints.web.http.redirections.entryPoint.to=websecure
+#            - --entrypoints.web.http.redirections.entryPoint.scheme=https
+#            # ACME (HTTP-01)
+#            - --certificatesresolvers.le.acme.httpchallenge=true
+#            - --certificatesresolvers.le.acme.httpchallenge.entrypoint=web
+#            - --certificatesresolvers.le.acme.email=${LETSENCRYPT_EMAIL}
+#            - --certificatesresolvers.le.acme.storage=/letsencrypt/acme.json
+#        ports:
+#            - "80:80"
+#            - "443:443"
+#        volumes:
+#            - letsencrypt:/letsencrypt
+#            - /var/run/docker.sock:/var/run/docker.sock:ro
+#        networks:
+#            - edge
+#        restart: unless-stopped
+
+    # --- Ваш Spring-AI API (только внутренняя сеть) ---
     spring-ai:
         build:
             context: .
             dockerfile: docker/Dockerfile
-            # если нужен точный jar:
             # args:
             #   JAR_FILE: build/libs/spring-ai-rag-0.1.jar
         container_name: spring-ai-api
@@ -13,14 +53,16 @@ services:
             SPRING_PROFILES_ACTIVE: docker
             POSTGRES_HOSTNAME: pgvector
             OLLAMA_HOSTNAME: ollama
-            # при необходимости:
+            OPENROUTER_API_KEY:  ${OPENROUTER_API_KEY}
             # SPRING_ZIPKIN_BASE_URL: http://zipkin:9411
             # JAVA_TOOL_OPTIONS: "-XX:MaxRAMPercentage=75 -Dfile.encoding=UTF-8"
         ports:
             - "8080:8080"
         depends_on:
-            pgvector: { condition: service_healthy }
-            ollama: { condition: service_healthy }
+            pgvector:
+                condition: service_healthy
+            ollama:
+                condition: service_healthy
         restart: unless-stopped
         networks:
             - spring-ai-network
@@ -69,10 +111,91 @@ services:
         networks:
             - spring-ai-network
 
-volumes:
-    pg_data:
-    ollama_data:
+    # --- n8n Postgres ---
+    n8n-db:
+        image: postgres:15
+        container_name: n8n-db
+        environment:
+            POSTGRES_DB: ${N8N_DB_DATABASE:-n8n}
+            POSTGRES_USER: ${N8N_DB_USER:-n8n}
+            POSTGRES_PASSWORD: ${N8N_DB_PASSWORD:-n8n_password}
+            TZ: ${GENERIC_TIMEZONE:-Europe/Riga}
+        volumes:
+            - n8n_db_data:/var/lib/postgresql/data
+        healthcheck:
+            test: ["CMD-SHELL", "pg_isready -U ${N8N_DB_USER:-n8n} -d ${N8N_DB_DATABASE:-n8n}"]
+            interval: 10s
+            timeout: 5s
+            retries: 10
+        networks:
+            - spring-ai-network
+        restart: unless-stopped
 
-networks:
-    spring-ai-network:
-        driver: bridge
+    # --- n8n (UI + Webhooks через Traefik) ---
+    n8n:
+        image: n8nio/n8n:latest
+        container_name: n8n
+        depends_on:
+            n8n-db:
+                condition: service_healthy
+        environment:
+            # базовые
+            N8N_HOST: ${N8N_EDITOR_DOMAIN}
+            N8N_PORT: 5678
+            N8N_PROTOCOL: https
+            GENERIC_TIMEZONE: ${GENERIC_TIMEZONE:-Europe/Riga}
+
+            # внешние URL'ы (ВАЖНО!)
+            N8N_EDITOR_BASE_URL: https://${N8N_EDITOR_DOMAIN}
+            WEBHOOK_URL: https://${N8N_WEBHOOK_DOMAIN}
+
+            # хранилище
+            DB_TYPE: postgresdb
+            DB_POSTGRESDB_HOST: n8n-db
+            DB_POSTGRESDB_PORT: 5432
+            DB_POSTGRESDB_DATABASE: ${N8N_DB_DATABASE}
+            DB_POSTGRESDB_USER: ${N8N_DB_USER}
+            DB_POSTGRESDB_PASSWORD: ${N8N_DB_PASSWORD}
+
+            # безопасность/приватность
+            N8N_ENCRYPTION_KEY: ${N8N_ENCRYPTION_KEY}
+            N8N_SECURE_COOKIE: false
+            N8N_DIAGNOSTICS_ENABLED: "false"
+            N8N_PERSONALIZATION_ENABLED: "false"
+            N8N_BASIC_AUTH_ACTIVE: ${N8N_BASIC_AUTH_ACTIVE}
+            N8N_BASIC_AUTH_USER: ${N8N_BASIC_AUTH_USER}
+            N8N_BASIC_AUTH_PASSWORD: ${N8N_BASIC_AUTH_PASSWORD}
+
+            # выполнение
+            EXECUTIONS_MODE: regular
+            EXECUTIONS_DATA_SAVE_ON_SUCCESS: none
+            EXECUTIONS_DATA_SAVE_ON_ERROR: all
+        volumes:
+            - n8n_data:/home/node/.n8n
+        ports:
+            - "5678:5678"
+        labels:
+            - traefik.enable=true
+
+            # UI n8n (https://n8n.<domain>)
+            - traefik.http.routers.n8n-editor.rule=Host(`${N8N_EDITOR_DOMAIN}`)
+            - traefik.http.routers.n8n-editor.entrypoints=websecure
+            - traefik.http.routers.n8n-editor.tls.certresolver=le
+            - traefik.http.services.n8n-editor.loadbalancer.server.port=5678
+
+            # Webhooks (https://bot.<domain>/webhook...)
+            - traefik.http.routers.n8n-webhook.rule=Host(`${N8N_WEBHOOK_DOMAIN}`) && PathPrefix(`/webhook`)
+            - traefik.http.routers.n8n-webhook.entrypoints=websecure
+            - traefik.http.routers.n8n-webhook.tls.certresolver=le
+            - traefik.http.services.n8n-webhook.loadbalancer.server.port=5678
+
+            # безопасные заголовки (опционально)
+            - traefik.http.middlewares.sec-headers.headers.stsSeconds=31536000
+            - traefik.http.middlewares.sec-headers.headers.forceSTSHeader=true
+            - traefik.http.middlewares.sec-headers.headers.stsIncludeSubdomains=true
+            - traefik.http.routers.n8n-editor.middlewares=sec-headers
+            - traefik.http.routers.n8n-webhook.middlewares=sec-headers
+        networks:
+            - edge            # чтобы Traefik видел сервис
+            - spring-ai-network
+        restart: unless-stopped

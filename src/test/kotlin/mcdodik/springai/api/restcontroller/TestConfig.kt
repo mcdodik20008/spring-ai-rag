@@ -1,4 +1,4 @@
-package mcdodik.springai.api.controller
+package mcdodik.springai.api.restcontroller
 
 import io.mockk.mockk
 import mcdodik.springai.rag.service.api.RagService

@@ -44,6 +44,7 @@ configurations.all {
 dependencies {
     implementation(platform(libs.spring.boot.bom))
     implementation(platform(libs.spring.ai.bom))
+    implementation("org.springframework.boot:spring-boot-starter-thymeleaf")
 
     // ──────────── CORE ────────────
     implementation(libs.bundles.core)

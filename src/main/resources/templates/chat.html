@@ -15,6 +15,14 @@
         .message-content { max-width:70%; padding:12px 16px; border-radius:18px; word-wrap:break-word; }
         .message.user .message-content { background:#343541; color:#fff; }
         .message.bot .message-content { background:#fff; color:#333; border:1px solid #ddd; }
+
+        /* MD: базовые стили */
+        .message.bot .message-content h1,.message.bot .message-content h2,.message.bot .message-content h3 { margin: 0.4em 0 0.3em; }
+        .message.bot .message-content p { margin: 0.3em 0; }
+        .message.bot .message-content ul, .message.bot .message-content ol { margin: 0.3em 0 0.3em 1.2em; }
+        .message.bot .message-content code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; padding: 0.1em 0.3em; border-radius: 4px; background: #f0f1f3; }
+        .message.bot .message-content pre { background: #0f172a; color: #e5e7eb; padding: 12px; border-radius: 10px; overflow: auto; }
+        .message.bot .message-content pre code { background: transparent; padding: 0; }
         .loading { color:#999; font-style:italic; }
         .chat-input { display:flex; padding:20px; background:#fff; border-top:1px solid #ddd; }
         .chat-input input { flex:1; padding:12px 16px; border:1px solid #ddd; border-radius:25px; outline:none; font-size:16px; }
@@ -22,6 +30,9 @@
         .chat-input button:hover { background:#2a2b32; }
         .chat-input button:disabled { background:#ccc; cursor:not-allowed; }
     </style>
+    <!-- Markdown parser + sanitizer -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js" integrity="" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/dompurify@3.1.6/dist/purify.min.js" integrity="" crossorigin="anonymous"></script>
 </head>
 <body>
 <div class="chat-container">
@@ -41,13 +52,49 @@
     const messageInput = document.getElementById('messageInput');
     const sendButton = document.getElementById('sendButton');
 
+    // Настройка marked (по желанию)
+    if (window.marked) {
+        marked.setOptions({
+            breaks: true,        // переносы строк как в ChatGPT
+            gfm: true,           // GitHub Flavored Markdown
+            mangle: false,       // не ломать e-mail
+            headerIds: false     // не генерить id заголовков
+        });
+    }
+
+    function renderMarkdownToHtml(mdText) {
+        try {
+            const rawHtml = window.marked ? marked.parse(mdText ?? '') : (mdText ?? '');
+            // Санация HTML перед вставкой
+            return window.DOMPurify ? DOMPurify.sanitize(rawHtml) : rawHtml;
+        } catch (e) {
+            console.error('MD render error:', e);
+            // Фоллбэк на простое экранирование
+            const div = document.createElement('div');
+            div.textContent = mdText ?? '';
+            return div.innerHTML;
+        }
+    }
+
     function addMessage(text, isUser = false, isLoading = false) {
         const messageDiv = document.createElement('div');
         messageDiv.className = `message ${isUser ? 'user' : 'bot'}`;
         const contentDiv = document.createElement('div');
         contentDiv.className = 'message-content';
-        if (isLoading) { contentDiv.classList.add('loading'); contentDiv.textContent = 'Думаю...'; }
-        else { contentDiv.textContent = text; }
+
+        if (isLoading) {
+            contentDiv.classList.add('loading');
+            contentDiv.textContent = 'Думаю...';
+        } else {
+            if (isUser) {
+                // пользователь — всегда как текст
+                contentDiv.textContent = text;
+            } else {
+                // бот — рендерим как markdown
+                contentDiv.innerHTML = renderMarkdownToHtml(text || '');
+            }
+        }
+
         messageDiv.appendChild(contentDiv);
         chatMessages.appendChild(messageDiv);
         chatMessages.scrollTop = chatMessages.scrollHeight;
@@ -70,6 +117,7 @@
             });
             if (!resp.ok) throw new Error(`HTTP ${resp.status}: ${resp.statusText}`);
             const answer = await resp.text();
+
             botMsg.remove();
             addMessage(answer || 'Пустой ответ', false);
         } catch (e) {

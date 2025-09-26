@@ -99,6 +99,10 @@ management:
         tracing:
             endpoint: http://${ZIPKIN_URL:localhost}:9411/api/v2/spans
 
+app:
+    security:
+        enabled: false
+
 mcdodik:
     openrouter:
         enabled: true

@@ -22,7 +22,7 @@ services:
             POSTGRES_HOSTNAME: pgvector
             OLLAMA_HOSTNAME: ollama
             ZIPKIN_URL: zipkin
-            OPENROUTER_API_KEY: sk-or-v1
+            OPENROUTER_API_KEY: ${OPENROUTER_API_KEY:-sk-or-v1}
             OPEN_ROUTER_MODEL_DEFAULT: x-ai/grok-4-fast:free
             OPEN_ROUTER_MODEL_SUMMARY: x-ai/grok-4-fast:free
             OPEN_ROUTER_MODEL_PROMPT_GEN: x-ai/grok-4-fast:free

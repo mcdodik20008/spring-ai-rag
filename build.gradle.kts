@@ -18,7 +18,7 @@ plugins {
 }
 
 group = "mcdodik"
-version = "0.0.1-SNAPSHOT"
+version = "0.0.2-SNAPSHOT"
 
 java {
     toolchain {
@@ -208,7 +208,6 @@ fun gitShortSha(): String =
     }
 
 val imageName = "mcdodik/spring-ai"
-
 jib {
     from { image = "eclipse-temurin:17-jre-jammy" }
     to {
@@ -221,7 +220,6 @@ jib {
             )
     }
     container {
-        mainClass = "org.springframework.boot.loader.launch.JarLauncher"
         ports = listOf("8080")
         user = "10001:10001"
         environment = mapOf("TZ" to "Europe/Moscow", "LANG" to "C.UTF-8")

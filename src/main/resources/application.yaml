@@ -6,8 +6,6 @@ server:
 spring:
     application:
         name: spring-ai
-    profiles:
-        active: stub
     main:
         web-application-type: reactive
     webflux:
@@ -21,8 +19,9 @@ spring:
         max-in-memory-size: 64MB
     jackson:
         default-property-inclusion: non_null
+
     datasource:
-        url: jdbc:postgresql://localhost:5432/${POSRGRES_DB_NAME:ragdb}
+        url: jdbc:postgresql://${POSTGRES_HOSTNAME:localhost}:5432/${POSTGRES_DB_NAME:ragdb}
         username: ${POSTGRES_USERNAME:postgres}
         password: ${POSTGRES_PASSWORD:postgres}
     jpa:
@@ -45,13 +44,13 @@ spring:
     # qwen2.5:0.5b qwen3:0.6b
     ai:
         openai:
-            base-url: http://192.168.0.15:11434
+            base-url: http://${OLLAMA_HOSTNAME:localhost}:11434
             api-key: dummy # обязателен (любая непустая строка)
             chat:
                 options:
                     model: qwen2.5:7b-instruct
         ollama:
-            base-url: http://192.168.0.15:11434
+            base-url: http://${OLLAMA_HOSTNAME:localhost}:11434
             embedding:
                 model: ${OLLAMA_EMBEDDING_MODEL:nomic-embed-text}
                 options:
@@ -67,7 +66,7 @@ logging:
     level:
         root: INFO
         mcdodik: DEBUG
-        org.flywaydb: DEBUG
+#        org.flywaydb: DEBUG
 
         # WebClient + Reactor Netty
         #  reactor.netty.http.client: DEBUG
@@ -75,14 +74,14 @@ logging:
         #  reactor.netty.resources: DEBUG
 
         # Spring WebFlux
-        org.springframework.web: DEBUG
-        org.springframework.web.reactive: DEBUG
-        org.springframework.http.client: DEBUG
-        org.springframework.web.client.RestTemplate: DEBUG
+#        org.springframework.web: DEBUG
+#        org.springframework.web.reactive: DEBUG
+#        org.springframework.http.client: DEBUG
+#        org.springframework.web.client.RestTemplate: DEBUG
 
         # Чтобы видеть фильтры и обмен данными
-        org.springframework.web.reactive.function.client.ExchangeFunctions: TRACE
-        org.springframework.web.reactive.function.client.ExchangeFilterFunctions: TRACE
+#        org.springframework.web.reactive.function.client.ExchangeFunctions: TRACE
+#        org.springframework.web.reactive.function.client.ExchangeFilterFunctions: TRACE
 
 management:
     endpoints:
@@ -98,24 +97,7 @@ management:
             probability: 1.0
     zipkin:
         tracing:
-            endpoint: http://localhost:9411/api/v2/spans
-
-app:
-    ratelimit:
-        enabled: true
-        capacity: 20         # burst
-        refill-per-min: 20   # rps ~ 0.33
-    security:
-        enabled: false
-    #    jwk-set-uri: "http://localhost:8081/.well-known/jwks.json" # если JWT
-    #    required-scope: "rag.api"
-    cors:
-        allowed-origins: [ "http://localhost:3000" ]
-        allowed-methods: [ "GET","POST","PUT","DELETE","OPTIONS" ]
-        allowed-headers: [ "*" ]
-    idempotency:
-        enabled: true
-        ttl-seconds: 3600
+            endpoint: http://${ZIPKIN_URL:localhost}:9411/api/v2/spans
 
 mcdodik:
     openrouter:
@@ -144,3 +126,7 @@ mcdodik:
             top-terms-per-doc: 15
             candidate-limit: 500
             similarity-threshold: 0.9
+
+    telegram:
+        token: ${TELEGRAM_BOT_TOKEN}
+        channels: ${TELEGRAM_CHANNELS}

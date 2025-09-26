@@ -14,54 +14,25 @@ volumes:
     letsencrypt:
 
 services:
-    #    # --- Traefik (HTTPS + ACME) ---
-    #    traefik:
-    #        image: traefik:v3.1
-    #        container_name: traefik
-    #        command:
-    #            - --providers.docker=true
-    #            - --providers.docker.exposedbydefault=false
-    #            - --entrypoints.web.address=:80
-    #            - --entrypoints.websecure.address=:443
-    #            # redirect 80 -> 443
-    #            - --entrypoints.web.http.redirections.entryPoint.to=websecure
-    #            - --entrypoints.web.http.redirections.entryPoint.scheme=https
-    #            # ACME (HTTP-01)
-    #            - --certificatesresolvers.le.acme.httpchallenge=true
-    #            - --certificatesresolvers.le.acme.httpchallenge.entrypoint=web
-    #            - --certificatesresolvers.le.acme.email=${LETSENCRYPT_EMAIL}
-    #            - --certificatesresolvers.le.acme.storage=/letsencrypt/acme.json
-    #        ports:
-    #            - "80:80"
-    #            - "443:443"
-    #        volumes:
-    #            - letsencrypt:/letsencrypt
-    #            - /var/run/docker.sock:/var/run/docker.sock:ro
-    #        networks:
-    #            - edge
-    #        restart: unless-stopped
-
     # --- Ваш Spring-AI API (только внутренняя сеть) ---
     spring-ai:
         image: mcdodik/spring-ai
         container_name: spring-ai-api
         environment:
-            SPRING_PROFILES_ACTIVE: docker
             POSTGRES_HOSTNAME: pgvector
             OLLAMA_HOSTNAME: ollama
-            OPENROUTER_API_KEY: ${OPENROUTER_API_KEY}
-            OPEN_ROUTER_MODEL_DEFAULT: ${OPEN_ROUTER_MODEL_DEFAULT}
-            OPEN_ROUTER_MODEL_SUMMARY: ${OPEN_ROUTER_MODEL_SUMMARY}
-            OPEN_ROUTER_MODEL_PROMPT_GEN: ${OPEN_ROUTER_MODEL_PROMPT_GEN}
-            OPEN_ROUTER_MODEL_CHUNKING: ${OPEN_ROUTER_MODEL_CHUNKING}
-            POSTGRES_DB_NAME: ${POSTGRES_DB_NAME}
-            POSTGRES_USERNAME: ${POSTGRES_USERNAME}
-            POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-            OLLAMA_EMBEDDING_MODEL: ${OLLAMA_EMBEDDING_MODEL}
+            ZIPKIN_URL: zipkin
+            OPENROUTER_API_KEY: sk-or-v1
+            OPEN_ROUTER_MODEL_DEFAULT: x-ai/grok-4-fast:free
+            OPEN_ROUTER_MODEL_SUMMARY: x-ai/grok-4-fast:free
+            OPEN_ROUTER_MODEL_PROMPT_GEN: x-ai/grok-4-fast:free
+            OPEN_ROUTER_MODEL_CHUNKING: x-ai/grok-4-fast:free
+            POSTGRES_DB_NAME: ragdb
+            POSTGRES_USERNAME: postgres
+            POSTGRES_PASSWORD: postgres
+            OLLAMA_EMBEDDING_MODEL: nomic-embed-text
             TELEGRAM_BOT_TOKEN: ${TELEGRAM_BOT_TOKEN}
             TELEGRAM_CHANNELS: ${TELEGRAM_CHANNELS}
-            # SPRING_ZIPKIN_BASE_URL: http://zipkin:9411
-            # JAVA_TOOL_OPTIONS: "-XX:MaxRAMPercentage=75 -Dfile.encoding=UTF-8"
         ports:
             - "8080:8080"
         restart: unless-stopped

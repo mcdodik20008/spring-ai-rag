@@ -125,10 +125,10 @@ mcdodik:
         top-p: 0.95
         api-key: ${OPENROUTER_API_KEY}
         models:
-            default: qwen/qwen3-next-80b-a3b-instruct  #mistralai/mistral-nemo #openai/gpt-oss-20b
-            summary: qwen/qwen3-next-80b-a3b-instruct
-            promptGen: qwen/qwen3-next-80b-a3b-instruct
-            chunking: qwen/qwen3-next-80b-a3b-instruct
+            default: ${OPEN_ROUTER_MODEL_DEFAULT:qwen/qwen3-next-80b-a3b-instruct}
+            summary: ${OPEN_ROUTER_MODEL_SUMMARY:qwen/qwen3-next-80b-a3b-instruct}
+            promptGen: ${OPEN_ROUTER_MODEL_PROMPT_GEN:qwen/qwen3-next-80b-a3b-instruct}
+            chunking: ${OPEN_ROUTER_MODEL_CHUNKING:qwen/qwen3-next-80b-a3b-instruct}
     advisors:
         vector:
             topK: 24

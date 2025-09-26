@@ -1,9 +1,9 @@
 version: "3.9"
 
 networks:
-    edge:        # внешняя
+    edge: # внешняя
         driver: bridge
-    spring-ai-network:  # внутренняя
+    spring-ai-network: # внутренняя
         driver: bridge
 
 volumes:
@@ -14,32 +14,32 @@ volumes:
     letsencrypt:
 
 services:
-#    # --- Traefik (HTTPS + ACME) ---
-#    traefik:
-#        image: traefik:v3.1
-#        container_name: traefik
-#        command:
-#            - --providers.docker=true
-#            - --providers.docker.exposedbydefault=false
-#            - --entrypoints.web.address=:80
-#            - --entrypoints.websecure.address=:443
-#            # redirect 80 -> 443
-#            - --entrypoints.web.http.redirections.entryPoint.to=websecure
-#            - --entrypoints.web.http.redirections.entryPoint.scheme=https
-#            # ACME (HTTP-01)
-#            - --certificatesresolvers.le.acme.httpchallenge=true
-#            - --certificatesresolvers.le.acme.httpchallenge.entrypoint=web
-#            - --certificatesresolvers.le.acme.email=${LETSENCRYPT_EMAIL}
-#            - --certificatesresolvers.le.acme.storage=/letsencrypt/acme.json
-#        ports:
-#            - "80:80"
-#            - "443:443"
-#        volumes:
-#            - letsencrypt:/letsencrypt
-#            - /var/run/docker.sock:/var/run/docker.sock:ro
-#        networks:
-#            - edge
-#        restart: unless-stopped
+    #    # --- Traefik (HTTPS + ACME) ---
+    #    traefik:
+    #        image: traefik:v3.1
+    #        container_name: traefik
+    #        command:
+    #            - --providers.docker=true
+    #            - --providers.docker.exposedbydefault=false
+    #            - --entrypoints.web.address=:80
+    #            - --entrypoints.websecure.address=:443
+    #            # redirect 80 -> 443
+    #            - --entrypoints.web.http.redirections.entryPoint.to=websecure
+    #            - --entrypoints.web.http.redirections.entryPoint.scheme=https
+    #            # ACME (HTTP-01)
+    #            - --certificatesresolvers.le.acme.httpchallenge=true
+    #            - --certificatesresolvers.le.acme.httpchallenge.entrypoint=web
+    #            - --certificatesresolvers.le.acme.email=${LETSENCRYPT_EMAIL}
+    #            - --certificatesresolvers.le.acme.storage=/letsencrypt/acme.json
+    #        ports:
+    #            - "80:80"
+    #            - "443:443"
+    #        volumes:
+    #            - letsencrypt:/letsencrypt
+    #            - /var/run/docker.sock:/var/run/docker.sock:ro
+    #        networks:
+    #            - edge
+    #        restart: unless-stopped
 
     # --- Ваш Spring-AI API (только внутренняя сеть) ---
     spring-ai:
@@ -49,7 +49,17 @@ services:
             SPRING_PROFILES_ACTIVE: docker
             POSTGRES_HOSTNAME: pgvector
             OLLAMA_HOSTNAME: ollama
-            OPENROUTER_API_KEY:  ${OPENROUTER_API_KEY}
+            OPENROUTER_API_KEY: ${OPENROUTER_API_KEY}
+            OPEN_ROUTER_MODEL_DEFAULT: ${OPEN_ROUTER_MODEL_DEFAULT}
+            OPEN_ROUTER_MODEL_SUMMARY: ${OPEN_ROUTER_MODEL_SUMMARY}
+            OPEN_ROUTER_MODEL_PROMPT_GEN: ${OPEN_ROUTER_MODEL_PROMPT_GEN}
+            OPEN_ROUTER_MODEL_CHUNKING: ${OPEN_ROUTER_MODEL_CHUNKING}
+            POSTGRES_DB_NAME: ${POSTGRES_DB_NAME}
+            POSTGRES_USERNAME: ${POSTGRES_USERNAME}
+            POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+            OLLAMA_EMBEDDING_MODEL: ${OLLAMA_EMBEDDING_MODEL}
+            TELEGRAM_BOT_TOKEN: ${TELEGRAM_BOT_TOKEN}
+            TELEGRAM_CHANNELS: ${TELEGRAM_CHANNELS}
             # SPRING_ZIPKIN_BASE_URL: http://zipkin:9411
             # JAVA_TOOL_OPTIONS: "-XX:MaxRAMPercentage=75 -Dfile.encoding=UTF-8"
         ports:
@@ -108,7 +118,7 @@ services:
         volumes:
             - n8n_db_data:/var/lib/postgresql/data
         healthcheck:
-            test: ["CMD-SHELL", "pg_isready -U ${N8N_DB_USER:-n8n} -d ${N8N_DB_DATABASE:-n8n}"]
+            test: [ "CMD-SHELL", "pg_isready -U ${N8N_DB_USER:-n8n} -d ${N8N_DB_DATABASE:-n8n}" ]
             interval: 10s
             timeout: 5s
             retries: 10

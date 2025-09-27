@@ -12,6 +12,7 @@ volumes:
     n8n_db_data:
     n8n_data:
     letsencrypt:
+    redis-data:
 
 services:
     # --- Ваш Spring-AI API (только внутренняя сеть) ---
@@ -20,6 +21,7 @@ services:
         container_name: spring-ai-api
         environment:
             POSTGRES_HOSTNAME: pgvector
+            REDIS_HOST_NAME: redis-db
             OLLAMA_HOSTNAME: ollama
             ZIPKIN_URL: zipkin
             OPENROUTER_API_KEY: ${OPENROUTER_API_KEY:-sk-or-v1}
@@ -55,6 +57,13 @@ services:
         networks:
             - spring-ai-network
 
+    redis:
+        image: "redis:7-alpine"
+        container_name: redis-db
+        ports:
+            - "6379:6379"
+        volumes:
+            - redis-data:/data
     ollama:
         image: ollama/ollama:latest
         container_name: ollama

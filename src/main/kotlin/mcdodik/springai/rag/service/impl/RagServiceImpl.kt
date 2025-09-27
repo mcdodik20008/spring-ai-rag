@@ -8,6 +8,8 @@ import mcdodik.springai.extensions.featAllTextFromObsidianMd
 import mcdodik.springai.infrastructure.document.worker.DocumentWorkerFactory
 import mcdodik.springai.rag.service.api.RagService
 import org.springframework.ai.chat.client.ChatClient
+import org.springframework.ai.chat.client.advisor.MessageChatMemoryAdvisor
+import org.springframework.ai.chat.memory.ChatMemory
 import org.springframework.ai.vectorstore.VectorStore
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.stereotype.Service
@@ -31,10 +33,21 @@ class RagServiceImpl(
     @Qualifier("openRouterChatClient")
     private val summarizer: ChatClient,
 ) : RagService {
-    override fun ask(question: String): Flux<String> =
-        chat
-            .prompt()
-            .user(question)
+    override fun ask(
+        question: String,
+        chatMemory: ChatMemory?,
+    ): Flux<String> {
+        var prompt =
+            chat
+                .prompt()
+                .user(question)
+        if (chatMemory != null) {
+            prompt =
+                prompt.advisors(
+                    MessageChatMemoryAdvisor.builder(chatMemory).build(),
+                )
+        }
+        return prompt
             .stream()
             .content()
             .onErrorResume { e ->
@@ -55,6 +68,7 @@ class RagServiceImpl(
             .doOnNext { chunk -> logger.trace("RagService.ask: chunk[{}]", chunk.length) }
             .doOnError { t -> logger.error("RagService.ask: stream error", t) }
             .doOnComplete { logger.debug("RagService.ask: completed") }
+    }
 
     override fun askFlow(question: String): Flow<String> {
         val flux =

@@ -13,9 +13,7 @@ import mcdodik.springai.rag.service.api.Reranker
 import mcdodik.springai.rag.service.api.Retriever
 import mcdodik.springai.rag.service.api.SummaryService
 import org.springframework.ai.chat.client.ChatClient
-import org.springframework.ai.chat.client.advisor.MessageChatMemoryAdvisor
 import org.springframework.ai.chat.client.advisor.api.BaseAdvisor
-import org.springframework.ai.chat.memory.MessageWindowChatMemory
 import org.springframework.ai.ollama.OllamaEmbeddingModel
 import org.springframework.ai.openai.OpenAiChatModel
 import org.springframework.beans.factory.annotation.Qualifier
@@ -37,14 +35,14 @@ class ChatModelsConfig {
         russianAdvisor: BaseAdvisor,
         @Qualifier("postRequestAdvisor")
         postRequestAdvisor: PostRequestAdvisor,
-        memory: MessageWindowChatMemory,
+//        memory: ChatMemory,
     ): ChatClient =
         ChatClient
             .builder(chatModel)
             .defaultAdvisors(hybridAdvisor)
             .defaultAdvisors(russianAdvisor)
             .defaultAdvisors(postRequestAdvisor)
-            .defaultAdvisors(MessageChatMemoryAdvisor.builder(memory).build())
+//            .defaultAdvisors(MessageChatMemoryAdvisor.builder(memory).build())
             .build()
 
     @Bean
@@ -65,13 +63,6 @@ class ChatModelsConfig {
             contextBuilder = contextBuilder,
             summaryService = summaryService,
         )
-
-    @Bean
-    fun chatMemory(): MessageWindowChatMemory =
-        MessageWindowChatMemory
-            .builder()
-            .maxMessages(20)
-            .build()
 
     @Bean
     @Qualifier("openRouterChatClient")

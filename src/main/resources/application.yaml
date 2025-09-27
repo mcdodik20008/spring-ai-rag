@@ -20,6 +20,12 @@ spring:
     jackson:
         default-property-inclusion: non_null
 
+    data:
+        redis:
+            host: ${REDIS_HOST_NAME:localhost}
+            port: 6379
+    session:
+        store-type: redis
     datasource:
         url: jdbc:postgresql://${POSTGRES_HOSTNAME:localhost}:5432/${POSTGRES_DB_NAME:ragdb}
         username: ${POSTGRES_USERNAME:postgres}
@@ -58,6 +64,7 @@ spring:
             # чтобы не плодить лишний ChatModel (и не уехать в /api/chat):
             chat:
                 enabled: false
+
 mybatis:
     mapper-locations: classpath*:db/mybatis/*.xml
     type-handlers-package: classpath*:mcdodik.springai.db.mybatis.handler
@@ -66,7 +73,7 @@ logging:
     level:
         root: INFO
         mcdodik: DEBUG
-#        org.flywaydb: DEBUG
+        #        org.flywaydb: DEBUG
 
         # WebClient + Reactor Netty
         #  reactor.netty.http.client: DEBUG
@@ -74,10 +81,10 @@ logging:
         #  reactor.netty.resources: DEBUG
 
         # Spring WebFlux
-#        org.springframework.web: DEBUG
-#        org.springframework.web.reactive: DEBUG
-#        org.springframework.http.client: DEBUG
-#        org.springframework.web.client.RestTemplate: DEBUG
+        org.springframework.web: DEBUG
+        org.springframework.web.reactive: DEBUG
+        org.springframework.http.client: DEBUG
+        org.springframework.web.client.RestTemplate: DEBUG
 
         # Чтобы видеть фильтры и обмен данными
 #        org.springframework.web.reactive.function.client.ExchangeFunctions: TRACE

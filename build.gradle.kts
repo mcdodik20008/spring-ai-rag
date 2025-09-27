@@ -57,6 +57,11 @@ dependencies {
     // ──────────── CORE ────────────
     implementation(libs.bundles.core)
 
+    // -- session --
+    implementation("jakarta.inject:jakarta.inject-api:2.0.1")
+    implementation("org.springframework.boot:spring-boot-starter-data-redis")
+    implementation("org.springframework.session:spring-session-data-redis")
+
     // ──────────── Security ────────────
     implementation(libs.bundles.security)
 

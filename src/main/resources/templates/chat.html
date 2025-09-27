@@ -113,7 +113,8 @@
             const resp = await fetch(API_URL, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json', 'Accept': 'text/plain' },
-                body: JSON.stringify({ question })
+                body: JSON.stringify({ question }),
+                credentials: 'include'
             });
             if (!resp.ok) throw new Error(`HTTP ${resp.status}: ${resp.statusText}`);
             const answer = await resp.text();

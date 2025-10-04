@@ -5,17 +5,14 @@ import io.swagger.v3.oas.annotations.media.ArraySchema
 import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
-import jakarta.inject.Provider
 import mcdodik.springai.api.dto.ask.AskRequest
 import mcdodik.springai.config.Loggable
 import mcdodik.springai.rag.service.api.RagService
-import org.springframework.ai.chat.memory.ChatMemory
 import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
-import org.springframework.web.server.WebSession
 import reactor.core.publisher.Flux
 import kotlinx.coroutines.reactive.awaitSingle
 
@@ -23,7 +20,6 @@ import kotlinx.coroutines.reactive.awaitSingle
 @RequestMapping("/api")
 class AskController(
     private val rag: RagService,
-    private val chatMemoryProvider: Provider<ChatMemory>,
 ) : Loggable {
     @Operation(
         summary = "Задать вопрос RAG",
@@ -57,14 +53,7 @@ class AskController(
             content = [Content(schema = Schema(implementation = AskRequest::class))],
         )
         @RequestBody req: AskRequest,
-        session: WebSession,
-    ): Flux<String> {
-        val chatMemory =
-            session.attributes.getOrPut(CHAT_MEMORY_KEY) {
-                chatMemoryProvider.get()
-            } as ChatMemory
-        return rag.ask(req.question, chatMemory)
-    }
+    ): Flux<String> = rag.ask(req.question)
 
     @Operation(
         summary = "Задать вопрос RAG",
@@ -91,19 +80,12 @@ class AskController(
     )
     suspend fun askAwait(
         @RequestBody req: AskRequest,
-        session: WebSession,
-    ): String {
-        val chatMemory =
-            session.attributes.getOrPut(CHAT_MEMORY_KEY) {
-                chatMemoryProvider.get()
-            } as ChatMemory
-        logger.info("session creation time: ${session.creationTime}")
-        return rag
-            .ask(req.question, chatMemory)
+    ): String =
+        rag
+            .ask(req.question)
             .collectList()
             .map { it.joinToString(separator = "") }
             .awaitSingle()
-    }
 
     @PostMapping(
         "/ask-text-any",
@@ -112,15 +94,10 @@ class AskController(
     )
     suspend fun askAwaitAny(
         @RequestBody req: AskRequest,
-        session: WebSession,
     ): AskTextResponse {
-        val chatMemory =
-            session.attributes.getOrPut(CHAT_MEMORY_KEY) {
-                chatMemoryProvider.get()
-            } as ChatMemory
         val response =
             rag
-                .ask(req.question, chatMemory)
+                .ask(req.question)
                 .collectList()
                 .map { it.joinToString("") }
                 .awaitSingle()
@@ -129,11 +106,7 @@ class AskController(
         )
     }
 
-    companion object {
-        private const val CHAT_MEMORY_KEY = "chat_memory_session_key"
-    }
+    data class AskTextResponse(
+        val answer: String,
+    )
 }
-
-data class AskTextResponse(
-    val answer: String,
-)

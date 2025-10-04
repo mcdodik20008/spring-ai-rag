@@ -14,7 +14,7 @@
     </select>
 
     <insert id="insert" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
-        INSERT INTO conversations (user_id, title) VALUES (#{userId}, #{title})
+        INSERT INTO conversations (user_id, title) VALUES (#{userId}, #{title}) RETURNING id
     </insert>
 
 </mapper>

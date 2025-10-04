@@ -2,7 +2,9 @@ server:
     port: 8080
     http2:
         enabled: true
-
+    error:
+        whitelabel:
+            enabled: false
 spring:
     application:
         name: spring-ai
@@ -26,6 +28,8 @@ spring:
             port: 6379
     session:
         store-type: redis
+        redis:
+            namespace: spring:ses
     datasource:
         url: jdbc:postgresql://${POSTGRES_HOSTNAME:localhost}:5432/${POSTGRES_DB_NAME:ragdb}
         username: ${POSTGRES_USERNAME:postgres}
@@ -63,6 +67,9 @@ spring:
                     num-ctx: 8192
             # чтобы не плодить лишний ChatModel (и не уехать в /api/chat):
             chat:
+                enabled: false
+        chat:
+            memory:
                 enabled: false
 
 mybatis:
@@ -109,7 +116,7 @@ management:
 app:
     security:
         enabled: false
-
+        required-scope: ""
 mcdodik:
     openrouter:
         enabled: true

@@ -1,18 +1,23 @@
 package mcdodik.springai.db.mybatis.mapper
 
-import mcdodik.springai.db.entity.user.ChatMessageRecord
+import mcdodik.springai.db.entity.user.ChatMessageRow
 import org.apache.ibatis.annotations.Mapper
-import org.apache.ibatis.annotations.Param
 
 @Mapper
 interface ChatMessageMapper {
-    fun findByConversationId(
-        @Param("conversationId") conversationId: Long,
-    ): List<ChatMessageRecord>
+    fun insert(row: ChatMessageRow): Int
 
-    fun insert(record: ChatMessageRecord)
+    fun findLastN(
+        conversationId: Long,
+        limit: Int,
+    ): List<ChatMessageRow>
 
-    fun deleteByConversationId(
-        @Param("conversationId") conversationId: Long,
-    )
+    fun findByConversationId(conversationId: Long): List<ChatMessageRow>
+
+    fun count(conversationId: Long): Long
+
+    fun deleteOldestExceptLast(
+        conversationId: Long,
+        keepLast: Int,
+    ): Int
 }

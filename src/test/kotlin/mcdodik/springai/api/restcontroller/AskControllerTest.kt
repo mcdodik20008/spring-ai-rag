@@ -66,7 +66,7 @@ class AskControllerTest {
             .uri("/api/ask")
             .contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.TEXT_EVENT_STREAM)
-            .bodyValue(AskRequest(q))
+            .bodyValue(AskRequest(q, 123L, 123L))
             .exchange()
             .expectStatus()
             .isOk
@@ -95,7 +95,7 @@ class AskControllerTest {
                 .uri("/api/rag/ask")
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.TEXT_EVENT_STREAM)
-                .bodyValue(AskRequest(q))
+                .bodyValue(AskRequest(q, 123L, 123L))
                 .exchange()
                 .expectStatus()
                 .isOk

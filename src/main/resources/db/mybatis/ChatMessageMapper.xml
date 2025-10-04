@@ -1,28 +1,57 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<!DOCTYPE mapper
-    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="mcdodik.springai.db.mybatis.mapper.ChatMessageMapper">
 
-    <select id="findByConversationId" resultType="mcdodik.springai.db.entity.user.ChatMessageRecord">
+    <insert id="insert">
+        INSERT INTO chat_messages (conversation_id, message_type, content)
+        VALUES (#{conversationId}, #{messageType}, #{content})
+    </insert>
+
+    <!-- Берём последние N, но отдаём в хронологическом порядке -->
+    <select id="findLastN" resultType="mcdodik.springai.db.entity.user.ChatMessageRow">
+        SELECT id,
+               conversation_id AS conversationId,
+               message_type    AS messageType,
+               content,
+               created_at      AS createdAt
+        FROM (
+                 SELECT *
+                 FROM chat_messages
+                 WHERE conversation_id = #{conversationId}
+                 ORDER BY created_at DESC
+                     LIMIT #{limit}
+             ) t
+        ORDER BY created_at ASC
+    </select>
+
+    <select id="findByConversationId"
+            resultType="mcdodik.springai.db.entity.user.ChatMessageRow">
         SELECT
             id,
-            conversation_id as conversationId,
-            message_type as messageType,
+            conversation_id AS conversationId,
+            message_type    AS messageType,
             content,
-            created_at as createdAt
+            created_at      AS createdAt
         FROM chat_messages
         WHERE conversation_id = #{conversationId}
         ORDER BY created_at ASC
     </select>
 
-    <insert id="insert">
-        INSERT INTO chat_messages (conversation_id, message_type, content)
-        VALUES (#{conversationId}, #{messageType}::varchar, #{content})
-    </insert>
+    <select id="count" resultType="long">
+        SELECT COUNT(*) FROM chat_messages WHERE conversation_id = #{conversationId}
+    </select>
 
-    <delete id="deleteByConversationId">
-        DELETE FROM chat_messages WHERE conversation_id = #{conversationId}
+    <!-- Тримим всё, что старше последних keepLast -->
+    <delete id="deleteOldestExceptLast">
+        DELETE FROM chat_messages
+        WHERE id IN (
+            SELECT id
+            FROM chat_messages
+            WHERE conversation_id = #{conversationId}
+            ORDER BY created_at DESC
+            OFFSET #{keepLast}
+        )
     </delete>
 
 </mapper>

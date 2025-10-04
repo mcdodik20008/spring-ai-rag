@@ -160,16 +160,8 @@ class IngestController(
     fun ingestPdf(
         @Parameter(description = "PDF-файл для загрузки", required = true)
         @RequestPart("file") file: FilePart,
-        @Parameter(description = "Пропустить первые страницы", example = "1")
-        @RequestParam("skipPages") skipPages: Int,
-        @Parameter(description = "Отбросить страницы с конца", example = "2")
-        @RequestParam("throwPagesFromEnd") throwPagesFromEnd: Int,
-        @Parameter(description = "Количество строк в header/footer, которые надо выкинуть", example = "3")
-        @RequestParam("headerFooterLines") headerFooterLines: Int,
-        @Parameter(description = "Порог повторов для удаления дубликатов текста", example = "0.8")
-        @RequestParam("repeatThreshold") repeatThreshold: Double,
     ): Mono<ResponseEntity<String>> {
-        val params = PdfCleanRequest(skipPages, throwPagesFromEnd, headerFooterLines, repeatThreshold)
+        val params = EmptyParams
 
         return DataBufferUtils
             .join(file.content())

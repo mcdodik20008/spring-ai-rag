@@ -1,7 +1,7 @@
 package mcdodik.springai.db.mybatis.mapper
 
 import mcdodik.springai.config.testcontainer.AbstractPgIT
-import mcdodik.springai.db.entity.user.ChatMessageRecord
+import mcdodik.springai.db.entity.user.ChatMessageRow
 import mcdodik.springai.db.entity.user.ConversationRecord
 import mcdodik.springai.db.entity.user.UserRecord
 import org.junit.jupiter.api.BeforeEach
@@ -121,15 +121,15 @@ class UserAndConversationMapperTest
             val conversation = createConversationForUser("user_for_messages")
 
             val userMessage =
-                ChatMessageRecord(
+                ChatMessageRow(
                     conversationId = conversation.id!!,
-                    messageType = MessageType.USER,
+                    messageType = MessageType.USER.toString(),
                     content = "Hello, AI!",
                 )
             val aiMessage =
-                ChatMessageRecord(
+                ChatMessageRow(
                     conversationId = conversation.id!!,
-                    messageType = MessageType.ASSISTANT,
+                    messageType = MessageType.ASSISTANT.toString(),
                     content = "Hello, User!",
                 )
 
@@ -141,10 +141,10 @@ class UserAndConversationMapperTest
             // Assert
             assertEquals(2, messages.size)
 
-            assertEquals(MessageType.USER, messages[0].messageType)
+            assertEquals(MessageType.USER.toString(), messages[0].messageType)
             assertEquals("Hello, AI!", messages[0].content)
 
-            assertEquals(MessageType.ASSISTANT, messages[1].messageType)
+            assertEquals(MessageType.ASSISTANT.toString(), messages[1].messageType)
             assertEquals("Hello, User!", messages[1].content)
         }
 
@@ -153,16 +153,16 @@ class UserAndConversationMapperTest
             // Arrange
             val conversation = createConversationForUser("user_to_delete_messages")
             chatMessageMapper.insert(
-                ChatMessageRecord(
+                ChatMessageRow(
                     conversationId = conversation.id!!,
-                    messageType = MessageType.USER,
+                    messageType = MessageType.USER.toString(),
                     content = "Some message",
                 ),
             )
 
             // Act
             val messagesBeforeDelete = chatMessageMapper.findByConversationId(conversation.id!!)
-            chatMessageMapper.deleteByConversationId(conversation.id!!)
+            chatMessageMapper.deleteOldestExceptLast(conversation.id!!, 10)
             val messagesAfterDelete = chatMessageMapper.findByConversationId(conversation.id!!)
 
             // Assert

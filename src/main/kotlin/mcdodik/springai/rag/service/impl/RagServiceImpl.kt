@@ -29,10 +29,7 @@ class RagServiceImpl(
     @Qualifier("openRouterChatClient")
     private val summarizer: ChatClient,
 ) : RagService {
-    override fun ask(
-        question: String,
-        chatMemory: ChatMemory?,
-    ): Flux<String> {
+    override fun ask(question: String): Flux<String> {
         val req = buildDirectAnswerPrompt(chat, question)
         return req
             .stream()

@@ -17,5 +17,5 @@ interface ConversationMapper {
     /**
      * Вставляет новый диалог и обновляет поле 'id' в переданном объекте.
      */
-    fun insert(conversation: ConversationRecord)
+    fun insert(conversation: ConversationRecord): Long
 }

@@ -1,7 +1,7 @@
 package mcdodik.springai.api.dto.user
 
-data class ChatMessageResponse(
-    val id: Long,
+data class CreateMessageRequest(
+    val userId: Long,
     val conversationId: Long,
     val messageType: String,
     val content: String,

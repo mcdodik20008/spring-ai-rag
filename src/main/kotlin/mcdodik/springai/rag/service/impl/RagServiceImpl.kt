@@ -8,17 +8,15 @@ import mcdodik.springai.extensions.featAllTextFromObsidianMd
 import mcdodik.springai.infrastructure.document.worker.DocumentWorker
 import mcdodik.springai.rag.service.api.RagService
 import org.springframework.ai.chat.client.ChatClient
+import org.springframework.ai.chat.memory.ChatMemory
 import org.springframework.ai.vectorstore.VectorStore
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.stereotype.Service
 import org.springframework.web.multipart.MultipartFile
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.reactive.asFlow
-import kotlinx.coroutines.withContext
 
 @Service
 class RagServiceImpl(
@@ -31,7 +29,10 @@ class RagServiceImpl(
     @Qualifier("openRouterChatClient")
     private val summarizer: ChatClient,
 ) : RagService {
-    override fun ask(question: String): Flux<String> {
+    override fun ask(
+        question: String,
+        chatMemory: ChatMemory?,
+    ): Flux<String> {
         val req = buildDirectAnswerPrompt(chat, question)
         return req
             .stream()

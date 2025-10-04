@@ -10,7 +10,6 @@ import org.mybatis.spring.boot.test.autoconfigure.MybatisTest
 import org.springframework.ai.chat.messages.MessageType
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.session.SessionAutoConfiguration
-import org.springframework.context.annotation.Import
 import org.springframework.dao.DuplicateKeyException
 import org.springframework.jdbc.core.JdbcTemplate
 import kotlin.test.Test

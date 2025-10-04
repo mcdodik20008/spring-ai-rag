@@ -14,5 +14,5 @@ data class VectorAdvisorProperties(
     /** Максимум токенов под контекст */
     val maxContextChars: Int = 20000,
     /** Порядок Advisor’а */
-    val order: Int = 0,
+    val order: Int = Integer.MAX_VALUE - 1000,
 )

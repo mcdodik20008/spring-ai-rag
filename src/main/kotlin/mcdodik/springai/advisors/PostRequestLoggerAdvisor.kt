@@ -7,7 +7,7 @@ import org.springframework.ai.chat.client.ChatClientResponse
 import org.springframework.ai.chat.client.advisor.api.AdvisorChain
 import org.springframework.ai.chat.client.advisor.api.BaseAdvisor
 
-class PostRequestAdvisor :
+class PostRequestLoggerAdvisor :
     BaseAdvisor,
     Loggable {
     override fun before(

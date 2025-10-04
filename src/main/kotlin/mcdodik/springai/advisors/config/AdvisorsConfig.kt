@@ -1,7 +1,8 @@
 package mcdodik.springai.advisors.config
 
 import mcdodik.springai.advisors.HybridAdvisor
-import mcdodik.springai.advisors.PostRequestAdvisor
+import mcdodik.springai.advisors.NoThinkAdvisor
+import mcdodik.springai.advisors.PostRequestLoggerAdvisor
 import mcdodik.springai.advisors.RussianAdvisor
 import mcdodik.springai.rag.service.api.ContextBuilder
 import mcdodik.springai.rag.service.api.Reranker
@@ -27,5 +28,8 @@ class AdvisorsConfig {
     fun russianAdvisor() = RussianAdvisor()
 
     @Bean
-    fun postRequestAdvisor() = PostRequestAdvisor()
+    fun postRequestAdvisor() = PostRequestLoggerAdvisor()
+
+    @Bean
+    fun noThinkAdvisor() = NoThinkAdvisor()
 }

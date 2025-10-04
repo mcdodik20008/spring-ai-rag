@@ -1,22 +1,15 @@
 package mcdodik.springai.api.config
 
-import mcdodik.springai.advisors.PostRequestAdvisor
-import mcdodik.springai.advisors.VectorAdvisor
-import mcdodik.springai.advisors.config.VectorAdvisorProperties
+import mcdodik.springai.advisors.PostRequestLoggerAdvisor
 import mcdodik.springai.api.config.ChatModelsConfig.LLMTaskType.CHUNKING
 import mcdodik.springai.api.config.ChatModelsConfig.LLMTaskType.DEFAULT
 import mcdodik.springai.api.config.ChatModelsConfig.LLMTaskType.PROMPT_GEN
 import mcdodik.springai.api.config.ChatModelsConfig.LLMTaskType.SUMMARY
 import mcdodik.springai.openrouter.OpenRouterChat
-import mcdodik.springai.rag.service.api.ContextBuilder
-import mcdodik.springai.rag.service.api.Reranker
-import mcdodik.springai.rag.service.api.Retriever
-import mcdodik.springai.rag.service.api.SummaryService
 import org.springframework.ai.chat.client.ChatClient
 import org.springframework.ai.chat.client.advisor.MessageChatMemoryAdvisor
 import org.springframework.ai.chat.client.advisor.api.BaseAdvisor
 import org.springframework.ai.chat.memory.MessageWindowChatMemory
-import org.springframework.ai.ollama.OllamaEmbeddingModel
 import org.springframework.ai.openai.OpenAiChatModel
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.context.annotation.Bean
@@ -36,35 +29,16 @@ class ChatModelsConfig {
         @Qualifier("russianAdvisor")
         russianAdvisor: BaseAdvisor,
         @Qualifier("postRequestAdvisor")
-        postRequestAdvisor: PostRequestAdvisor,
+        postRequestLoggerAdvisor: PostRequestLoggerAdvisor,
         memory: MessageWindowChatMemory,
     ): ChatClient =
         ChatClient
             .builder(chatModel)
             .defaultAdvisors(hybridAdvisor)
             .defaultAdvisors(russianAdvisor)
-            .defaultAdvisors(postRequestAdvisor)
+            .defaultAdvisors(postRequestLoggerAdvisor)
             .defaultAdvisors(MessageChatMemoryAdvisor.builder(memory).build())
             .build()
-
-    @Bean
-    @Qualifier("vectorAdvisor")
-    fun vectorAdvisor(
-        properties: VectorAdvisorProperties,
-        embeddingModel: OllamaEmbeddingModel,
-        retriever: Retriever,
-        reranker: Reranker,
-        contextBuilder: ContextBuilder,
-        summaryService: SummaryService,
-    ): BaseAdvisor =
-        VectorAdvisor(
-            properties = properties,
-            embeddingModel = embeddingModel,
-            retriever = retriever,
-            reranker = reranker,
-            contextBuilder = contextBuilder,
-            summaryService = summaryService,
-        )
 
     @Bean
     fun chatMemory(): MessageWindowChatMemory =

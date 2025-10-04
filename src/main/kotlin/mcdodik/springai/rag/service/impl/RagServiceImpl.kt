@@ -5,7 +5,7 @@ import mcdodik.springai.config.Loggable
 import mcdodik.springai.db.entity.rag.DocumentInfo
 import mcdodik.springai.db.mybatis.mapper.DocumentInfoMapper
 import mcdodik.springai.extensions.featAllTextFromObsidianMd
-import mcdodik.springai.infrastructure.document.worker.DocumentWorkerFactory
+import mcdodik.springai.infrastructure.document.worker.DocumentWorker
 import mcdodik.springai.rag.service.api.RagService
 import org.springframework.ai.chat.client.ChatClient
 import org.springframework.ai.vectorstore.VectorStore
@@ -27,7 +27,7 @@ class RagServiceImpl(
     @Qualifier("customPgVectorStore")
     private val ragStore: VectorStore,
     private val documentStore: DocumentInfoMapper,
-    private val documentWorkerFactory: DocumentWorkerFactory,
+    private val worker: DocumentWorker,
     @Qualifier("openRouterChatClient")
     private val summarizer: ChatClient,
 ) : RagService {
@@ -86,7 +86,7 @@ class RagServiceImpl(
         params: CleanRequestParams,
     ) {
         logger.info("splitting file to chunks ${file.originalFilename}")
-        val chunks = documentWorkerFactory.process(file, params)
+        val chunks = worker.process(file, params)
 
         logger.info("summarizing file ${file.originalFilename}")
         val text = file.featAllTextFromObsidianMd()

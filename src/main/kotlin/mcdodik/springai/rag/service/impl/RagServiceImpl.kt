@@ -14,11 +14,8 @@ import org.springframework.stereotype.Service
 import org.springframework.web.multipart.MultipartFile
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.reactive.asFlow
-import kotlinx.coroutines.withContext
 
 @Service
 class RagServiceImpl(
@@ -31,55 +28,35 @@ class RagServiceImpl(
     @Qualifier("openRouterChatClient")
     private val summarizer: ChatClient,
 ) : RagService {
-    override fun ask(question: String): Flux<String> =
-        chat
-            .prompt()
-            .user(question)
+    override fun ask(question: String): Flux<String> {
+        val req = buildDirectAnswerPrompt(chat, question)
+        return req
             .stream()
             .content()
             .onErrorResume { e ->
-                logger.error("RagService.ask: stream error", e)
+                logger.warn("ask(): stream failed, fallback to call(): {}", e.toString())
                 Mono
                     .fromCallable {
-                        chat
-                            .prompt()
-                            .user(question)
-                            .call()
-                            .content()
-                            .orEmpty()
+                        req.call().content().orEmpty()
                     }.subscribeOn(
                         reactor.core.scheduler.Schedulers
                             .boundedElastic(),
                     )
-            }.doOnSubscribe { logger.debug("RagService.ask: subscribe question='{}'", question.take(80)) }
-            .doOnNext { chunk -> logger.trace("RagService.ask: chunk[{}]", chunk.length) }
-            .doOnError { t -> logger.error("RagService.ask: stream error", t) }
-            .doOnComplete { logger.debug("RagService.ask: completed") }
-
-    override fun askFlow(question: String): Flow<String> {
-        val flux =
-            chat
-                .prompt()
-                .user(question)
-                .stream()
-                .content()
-
-        return flux
-            .asFlow()
-            .catch { e ->
-                logger.warn("RagService.askFlow stream error, fallback to call(): {}", e.message)
-                val oneShot =
-                    withContext(Dispatchers.IO) {
-                        chat
-                            .prompt("Ответь на русском")
-                            .user(question)
-                            .call()
-                            .content()
-                            .orEmpty()
-                    }
-                emit(oneShot)
-            }
+            }.doOnSubscribe { logger.debug("ask(): q='{}'", question.take(120)) }
+            .doOnNext { logger.trace("ask(): chunk={}", it.length) }
+            .doOnComplete { logger.debug("ask(): completed") }
     }
+
+    override fun askFlow(question: String): Flow<String> = ask(question).asFlow()
+
+    private fun buildDirectAnswerPrompt(
+        chat: ChatClient,
+        question: String,
+    ): ChatClient.ChatClientRequestSpec =
+        chat
+            .prompt()
+            .system("Отвечай кратко и по делу. Русский язык. Не раскрывай ход рассуждений.")
+            .user(question)
 
     override fun ingest(
         file: MultipartFile,
